@@ -1,0 +1,4 @@
+{
+  "entryPoints": ["src/express/app.ts"],
+  "out": "docs"
+}

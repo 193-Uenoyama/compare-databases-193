@@ -1,0 +1,23 @@
+{
+  "psql": {
+    "username": "root",
+    "password": "password",
+    "database": "database",
+    "host": "db",
+    "dialect": "postgres"
+  },
+  "mariadb": {
+    "username": "root",
+    "password": "password",
+    "database": "database",
+    "host": "db",
+    "dialect": "mariadb"
+  },
+  "sqlite": {
+    "username": "root",
+    "password": "password",
+    "database": "database",
+    "host": "/home/db/sqlite.db",
+    "dialect": "sqlite"
+  }
+}

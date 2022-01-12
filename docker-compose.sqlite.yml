@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  node:
+    build: ./container/node-sqlite/
+    volumes:
+      - db-performance-sqlite:/home/db
+    environment:
+      NODE_ENV: sqlite
+
+volumes:
+  db-performance-sqlite:

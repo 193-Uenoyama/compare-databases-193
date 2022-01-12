@@ -1,0 +1,9 @@
+{
+  "restartable": "rs",
+  "watch": ["src"],
+  "ext": "ts",
+  "exec": "ts-node ./src/express/app.ts",
+  "ignore": [
+    "sequelize/*"
+  ]
+}

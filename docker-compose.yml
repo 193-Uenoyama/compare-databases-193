@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  node:
+    build: ./container/node/
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./src:/home/app/
+    environment:
+      NODE_PATH: "/home/app/perfomance-api/"
+    restart: always
+    command: bash
+    tty: true
+
