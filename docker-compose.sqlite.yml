@@ -1,8 +1,10 @@
-version: '3'
+version: '3.7'
 
 services:
   node:
-    build: ./container/node-sqlite/
+    build: 
+      context: "./container/"
+      dockerfile: "Dockerfile.node-sqlite"
     volumes:
       - db-performance-sqlite:/home/db
     environment:

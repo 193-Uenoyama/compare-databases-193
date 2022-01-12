@@ -4,4 +4,9 @@ WORKDIR /home/app/perfomance-api
 
 ENV PATH $PATH:/home/app/perfomance-api/node_modules/.bin/
 
-CMD npm run build
+RUN apt update && \
+    apt install sqlite3
+
+COPY entrypoint.sh /tmp/
+
+CMD [ "/tmp/entrypoint.sh" ]

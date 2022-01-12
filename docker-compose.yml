@@ -1,8 +1,10 @@
-version: '3'
+version: '3.7'
 
 services:
   node:
-    build: ./container/node/
+    build: 
+      context: "./container/"
+      dockerfile: "Dockerfile.node"
     ports:
       - "3000:3000"
     volumes:
@@ -10,6 +12,5 @@ services:
     environment:
       NODE_PATH: "/home/app/perfomance-api/"
     restart: always
-    command: bash
     tty: true
 
