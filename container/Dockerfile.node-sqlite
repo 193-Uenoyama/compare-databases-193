@@ -7,6 +7,4 @@ ENV PATH $PATH:/home/app/perfomance-api/node_modules/.bin/
 RUN apt update && \
     apt install sqlite3
 
-COPY entrypoint.sh /tmp/
-
-CMD [ "/tmp/entrypoint.sh" ]
+CMD [ "node", "dist/express/app.js" ]

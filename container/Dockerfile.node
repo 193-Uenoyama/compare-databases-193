@@ -4,6 +4,4 @@ WORKDIR /home/app/perfomance-api
 
 ENV PATH $PATH:/home/app/perfomance-api/node_modules/.bin/
 
-COPY entrypoint.sh /tmp/
-
-CMD [ "/tmp/entrypoint.sh" ]
+CMD [ "node", "dist/express/app.js" ]
