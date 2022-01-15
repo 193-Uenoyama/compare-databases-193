@@ -2,6 +2,7 @@ version: '3.7'
 
 services:
   node:
+    container_name: sequelize-databases-performance_node 
     build: 
       context: "./container/"
       dockerfile: "Dockerfile.node"
@@ -14,3 +15,5 @@ services:
     restart: always
     tty: true
 
+  db:
+    container_name: sequelize-databases-performance_db 
