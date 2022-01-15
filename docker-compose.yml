@@ -13,6 +13,8 @@ services:
       - ./src:/home/app/
     environment:
       NODE_PATH: "/home/app/perfomance-api/"
+      PATH: "${SDP_PATH}"
+    user: "${UID}:${GID}"
     restart: always
     tty: true
 

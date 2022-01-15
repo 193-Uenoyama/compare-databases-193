@@ -2,8 +2,6 @@ FROM node:16-alpine3.14
 
 WORKDIR /home/app/perfomance-api
 
-ENV PATH $PATH:/home/app/perfomance-api/node_modules/.bin/
-
 RUN apk update && \
     apk add python3=3.9.5-r2   
 

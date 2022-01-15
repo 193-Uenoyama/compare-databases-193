@@ -2,7 +2,9 @@
 init:
 	docker-compose -f docker-compose.mariadb.yml build
 	docker-compose -f docker-compose.sqlite.yml build
-	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node npm ci && ls ./node_modules/.bin
+	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node npm ci 
+	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node ./node_modules/.bin/tsc
+	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node chown -R `id -u`:`id -g` ./
 
 # mariadb のコンテナ操作する
 mariadb-up:
@@ -39,4 +41,7 @@ node-migrate:
 	docker exec sequelize-databases-performance_node sequelize-cli db:migrate
 node-seed:
 	docker exec sequelize-databases-performance_node sequelize-cli db:seed:all
+
+node-path:
+	docker exec sequelize-databases-performance_node printenv
 

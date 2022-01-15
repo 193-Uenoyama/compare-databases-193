@@ -1,5 +1,9 @@
 # compare databases mariadb, postgresql and sqlite!
 
+## start! this application
+source .env
+make init
+
 ## Technology
 |:-|:-:|
 | Lang | TypeScript |
