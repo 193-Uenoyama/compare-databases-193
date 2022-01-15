@@ -2,10 +2,16 @@ version: '3.7'
 
 services:
   node:
+    extends:
+      file: docker-compose.yml
+      service: node
     environment:
       NODE_ENV: mariadb
 
   db:
+    extends:
+      file: docker-compose.yml
+      service: db
     image: mariadb:10.7.1
     ports:
       - "3306:3306"

@@ -2,6 +2,10 @@ version: '3.7'
 
 services:
   node:
+    extends:
+      file: docker-compose.yml
+      service: node
+    image: sequelize-databases-performance_node-sqlite
     build: 
       context: "./container/"
       dockerfile: "Dockerfile.node-sqlite"
@@ -9,9 +13,6 @@ services:
       - db-performance-sqlite:/home/db
     environment:
       NODE_ENV: sqlite
-
-  db:
-    none
 
 volumes:
   db-performance-sqlite:

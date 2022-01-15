@@ -2,10 +2,16 @@ version: '3.7'
 
 services:
   node:
+    extends:
+      file: docker-compose.yml
+      service: node
     environment:
       NODE_ENV: psql
 
   db:
+    extends:
+      file: docker-compose.yml
+      service: db
     image: postgres:14.1
     ports:
       - "5432:5432"

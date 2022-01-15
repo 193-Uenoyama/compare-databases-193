@@ -2,10 +2,11 @@ version: '3.7'
 
 services:
   node:
-    container_name: sequelize-databases-performance_node 
     build: 
       context: "./container/"
       dockerfile: "Dockerfile.node"
+    image: sequelize-databases-performance_node
+    container_name: sequelize-databases-performance_node 
     ports:
       - "3000:3000"
     volumes:
