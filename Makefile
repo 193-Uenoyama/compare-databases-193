@@ -32,7 +32,7 @@ sqlite-login:
 
 # express のコンテナを操作する
 node-install:
-	docker exec sequelize-databases-performance_node npm ci
+	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node npm ci 
 node-tsc:
 	docker exec sequelize-databases-performance_node tsc
 node-typedoc:
