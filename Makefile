@@ -1,4 +1,4 @@
-# pull してからはじめに実行する
+# ---------- pull してからはじめに実行する ----------
 init:
 	docker-compose -f docker-compose.mariadb.yml build
 	docker-compose -f docker-compose.sqlite.yml build
@@ -6,6 +6,7 @@ init:
 	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node ./node_modules/.bin/tsc
 	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node chown -R `id -u`:`id -g` ./
 
+# ---------- コンテナを立ち上げる ----------
 # mariadb のコンテナ操作する
 mariadb-up:
 	docker-compose -f docker-compose.mariadb.yml up -d
@@ -30,7 +31,11 @@ sqlite-down:
 sqlite-login:
 	docker exec -it sequelize-databases-performance_node sqlite3 /home/db/sqlite.db
 
-# express のコンテナを操作する
+# db のデータが入ったvolumeを削除する
+delete-db:
+	docker volume rm databases-performance_db-performance-mariadb databases-performance_db-performance-psql databases-performance_db-performance-sqlite
+
+# ---------- express のコンテナを操作する ----------
 node-install:
 	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node npm ci 
 node-tsc:
