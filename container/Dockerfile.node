@@ -1,8 +1,0 @@
-FROM node:16-alpine3.14
-
-WORKDIR /home/app/perfomance-api
-
-RUN apk update && \
-    apk add python3=3.9.5-r2   
-
-CMD [ "node", "dist/express/app.js" ]

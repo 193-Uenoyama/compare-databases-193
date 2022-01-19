@@ -1,8 +1,8 @@
 # compare databases mariadb, postgresql and sqlite!
 
 ## start! this application
-source .env
-make init
+- make init
+- source .env
 
 ## Technology
 |:-|:-:|

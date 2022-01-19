@@ -7,8 +7,7 @@ services:
       service: node
     image: sequelize-databases-performance_node-sqlite
     build: 
-      context: "./container/"
-      dockerfile: "Dockerfile.node-sqlite"
+      context: "./container/node-sqlite/"
     volumes:
       - db-performance-sqlite:/home/db
     environment:

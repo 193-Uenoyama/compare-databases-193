@@ -42,6 +42,3 @@ node-migrate:
 node-seed:
 	docker exec sequelize-databases-performance_node sequelize-cli db:seed:all
 
-node-path:
-	docker exec sequelize-databases-performance_node printenv
-
