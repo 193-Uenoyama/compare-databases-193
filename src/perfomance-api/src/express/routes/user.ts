@@ -1,9 +1,9 @@
 import express from 'express'
 import db from '../../sequelize/models/index'
 
-export const psqlRouter: express.Router = express.Router();
+export const userRouter: express.Router = express.Router();
 
-psqlRouter.get('/', function(req: express.Request, res: express.Response, next: express.NextFunction) {
+userRouter.get('/', function(req: express.Request, res: express.Response, next: express.NextFunction) {
   create_users(1);
   console.log(find_all_users().then((all_users: any) => {
     return all_users;

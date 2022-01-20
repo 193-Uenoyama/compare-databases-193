@@ -12,6 +12,8 @@ mariadb-up:
 	docker-compose -f docker-compose.mariadb.yml up -d
 mariadb-down:
 	docker-compose -f docker-compose.mariadb.yml down
+mariadb-rs:
+	docker-compose -f docker-compose.mariadb.yml restart
 mariadb-login:
 	docker exec -it sequelize-databases-performance_db mariadb -u root -p database
 
@@ -20,6 +22,8 @@ psql-up:
 	docker-compose -f docker-compose.psql.yml up -d
 psql-down:
 	docker-compose -f docker-compose.psql.yml down
+psql-rs:
+	docker-compose -f docker-compose.psql.yml restart
 psql-login:
 	docker exec -it sequelize-databases-performance_db psql -U root -d database
 
@@ -28,6 +32,8 @@ sqlite-up:
 	docker-compose -f docker-compose.sqlite.yml up -d
 sqlite-down:
 	docker-compose -f docker-compose.sqlite.yml down
+sqlite-rs:
+	docker-compose -f docker-compose.sqlite.yml restart
 sqlite-login:
 	docker exec -it sequelize-databases-performance_node sqlite3 /home/db/sqlite.db
 
@@ -39,6 +45,7 @@ delete-db:
 node-install:
 	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node npm ci 
 node-tsc:
+	git rm -rf ./src/perfomance-api/dist
 	docker exec sequelize-databases-performance_node tsc
 node-typedoc:
 	docker exec sequelize-databases-performance_node typedoc
