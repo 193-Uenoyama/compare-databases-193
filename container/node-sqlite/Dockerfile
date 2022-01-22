@@ -2,5 +2,4 @@ FROM sequelize-databases-performance_node
 
 RUN apk update && \
     apk add sqlite=3.35.5-r0 && \
-    rm -rf /var/cache/apk/*
-
+    rm -rf /var/cache/apk/* 

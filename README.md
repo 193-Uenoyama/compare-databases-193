@@ -1,8 +1,10 @@
 # compare databases mariadb, postgresql and sqlite!
 
 ## start! this application
-- make init
-- source .env
+```
+make init
+source .env
+```
 
 ## Technology
 |        |            |
@@ -18,3 +20,6 @@
 | nodemon   | ts-node |
 | Sequelize | tsc     |
 
+## TODO
+ - connect into sqlite database excepting by root user
+ - databases security

@@ -22,6 +22,12 @@ login-psql:
 login-sqlite:
 	docker exec -it sequelize-databases-performance_node sqlite3 /home/db/sqlite.db
 
+# 応急処置 sqlite の権限与えるのむずいかも
+sqlite-create-db:
+	docker volume create sequelize-databases-performance-sqlite
+	docker run -v sequelize-databases-performance-sqlite:/home/db --rm sequelize-databases-performance_node chown -R `id -u`:`id -g` /home/db/
+
+
 down:
 	docker stop $$(docker ps -a -f name=sequelize-databases-performance -q)
 	docker rm $$(docker ps -a -f name=sequelize-databases-performance -q)
@@ -53,7 +59,6 @@ init-prod:
 	docker-compose -f docker-compose.mariadb.yml build
 	docker-compose -f docker-compose.sqlite.yml build
 	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node npm ci --only=production
-	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node ./node_modules/.bin/tsc
 	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node chown -R `id -u`:`id -g` ./
 up-prod-mariadb:
 	docker-compose -f docker-compose.mariadb.yml -f docker-compose.env_prod.yml up -d

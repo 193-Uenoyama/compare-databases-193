@@ -6,12 +6,14 @@ const env = process.env.NODE_ENV || 'development';
 // config.ts を module.exports で書きたいのでrequire?
 // TODO あとでいろいろ調べる
 const config = require('../config/config')[env];
+if (process.env.DATABASE_SYSTEM == 'sqlite') {
+  config.storage = process.env.DATABASE_HOST;
+}
 
 const basename = path.basename(__filename);
 const DB: any = {};
 
-let sequelize = new Sequelize( config.database, config.username, config.password, config
-);
+let sequelize = new Sequelize( config.database, config.username, config.password, config);
 
 fs
   .readdirSync(__dirname)
