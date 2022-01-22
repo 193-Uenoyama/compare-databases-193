@@ -6,10 +6,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const sequelize_1 = require("sequelize");
-const env = process.env.NODE_ENV || 'psql';
-const project_root = process.env.NODE_PATH || __dirname;
+const env = process.env.NODE_ENV || 'development';
+// config.ts を module.exports で書きたいのでrequire?
+// TODO あとでいろいろ調べる
+const config = require('../config/config')[env];
 const basename = path_1.default.basename(__filename);
-const config = require(project_root + 'src/sequelize/config/config.json')[env];
 const DB = {};
 let sequelize = new sequelize_1.Sequelize(config.database, config.username, config.password, config);
 fs_1.default

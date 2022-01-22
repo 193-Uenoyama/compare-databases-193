@@ -5,25 +5,16 @@
 - source .env
 
 ## Technology
-|:-|:-:|
-| Lang | TypeScript |
-| Server | Express |
-| ORM | Sequelize |
+|        |            |
+| ------ | ---------- |
+| Lang   | TypeScript |
+| Server | Express    |
+| ORM    | Sequelize  |
 
 ##### Transpile
-| Express | Webpack |
-| nodemon | ts-node |
-| Sequelize | tsc |
+|           |         |
+|-----------|---------|
+| Express   | Webpack |
+| nodemon   | ts-node |
+| Sequelize | tsc     |
 
-##### sequelize migration command
-sequelize-cli db:migrate
-sequelize-cli db:seed:all
-
-##### development server start command
-nodemon
-
-##### output documentation command
-typedoc
-
-##### typescript transpile command
-tsc

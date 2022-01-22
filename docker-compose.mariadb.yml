@@ -6,7 +6,8 @@ services:
       file: docker-compose.yml
       service: node
     environment:
-      NODE_ENV: mariadb
+      DATABASE_HOST: db
+      DATABASE_SYSTEM: mariadb
 
   db:
     extends:
@@ -16,7 +17,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - db-performance-mariadb:/var/lib/mysql
+      - sequelize-databases-performance-mariadb:/var/lib/mysql
     environment:
       MARIADB_USER: root
       MARIADB_ROOT_PASSWORD: password
@@ -24,4 +25,5 @@ services:
     restart: always
 
 volumes:
-  db-performance-mariadb:
+  sequelize-databases-performance-mariadb:
+    name: sequelize-databases-performance-mariadb

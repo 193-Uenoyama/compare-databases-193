@@ -2,14 +2,16 @@ import fs from 'fs';
 import path from 'path';
 import { Sequelize } from 'sequelize';
 
-const env = process.env.NODE_ENV || 'psql';
-const project_root = process.env.NODE_PATH || __dirname;
+const env = process.env.NODE_ENV || 'development';
+// config.ts を module.exports で書きたいのでrequire?
+// TODO あとでいろいろ調べる
+const config = require('../config/config')[env];
 
 const basename = path.basename(__filename);
-const config = require(project_root + 'src/sequelize/config/config.json')[env];
 const DB: any = {};
 
-let sequelize = new Sequelize(config.database, config.username, config.password, config);
+let sequelize = new Sequelize( config.database, config.username, config.password, config
+);
 
 fs
   .readdirSync(__dirname)

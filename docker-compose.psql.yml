@@ -6,7 +6,8 @@ services:
       file: docker-compose.yml
       service: node
     environment:
-      NODE_ENV: psql
+      DATABASE_HOST: db
+      DATABASE_SYSTEM: postgres
 
   db:
     extends:
@@ -16,7 +17,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - db-performance-psql:/var/lib/postgresql/data
+      - sequelize-databases-performance-psql:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: password
@@ -26,4 +27,5 @@ services:
     restart: always
 
 volumes:
-  db-performance-psql:
+  sequelize-databases-performance-psql:
+    name: sequelize-databases-performance-psql

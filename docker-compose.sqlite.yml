@@ -9,9 +9,11 @@ services:
     build: 
       context: "./container/node-sqlite/"
     volumes:
-      - db-performance-sqlite:/home/db
+      - sequelize-databases-performance-sqlite:/home/db
     environment:
-      NODE_ENV: sqlite
+      DATABASE_HOST: /home/db/sqlite.db
+      DATABASE_SYSTEM: sqlite
 
 volumes:
-  db-performance-sqlite:
+  sequelize-databases-performance-sqlite:
+    name: sequelize-databases-performance-sqlite

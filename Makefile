@@ -7,46 +7,38 @@ init:
 	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node chown -R `id -u`:`id -g` ./
 
 # ---------- コンテナを立ち上げる ----------
-# mariadb のコンテナ操作する
-mariadb-up:
-	docker-compose -f docker-compose.mariadb.yml up -d
-mariadb-down:
-	docker-compose -f docker-compose.mariadb.yml down
-mariadb-rs:
-	docker-compose -f docker-compose.mariadb.yml restart
-mariadb-login:
+up-mariadb:
+	docker-compose -f docker-compose.mariadb.yml -f docker-compose.env_dev.yml up -d
+up-psql:
+	docker-compose -f docker-compose.psql.yml -f docker-compose.env_dev.yml up -d
+up-sqlite:
+	docker-compose -f docker-compose.sqlite.yml -f docker-compose.env_dev.yml up -d
+
+# ---------- 各種データベースにログインする ----------
+login-mariadb:
 	docker exec -it sequelize-databases-performance_db mariadb -u root -p database
-
-# psql のコンテナ操作する
-psql-up:
-	docker-compose -f docker-compose.psql.yml up -d
-psql-down:
-	docker-compose -f docker-compose.psql.yml down
-psql-rs:
-	docker-compose -f docker-compose.psql.yml restart
-psql-login:
+login-psql:
 	docker exec -it sequelize-databases-performance_db psql -U root -d database
-
-# sqlite の入った express のコンテナ操作する
-sqlite-up:
-	docker-compose -f docker-compose.sqlite.yml up -d
-sqlite-down:
-	docker-compose -f docker-compose.sqlite.yml down
-sqlite-rs:
-	docker-compose -f docker-compose.sqlite.yml restart
-sqlite-login:
+login-sqlite:
 	docker exec -it sequelize-databases-performance_node sqlite3 /home/db/sqlite.db
+
+down:
+	docker stop $$(docker ps -a -f name=sequelize-databases-performance -q)
+	docker rm $$(docker ps -a -f name=sequelize-databases-performance -q)
+restart:
+	docker restart $$(docker ps -a -f name=sequelize-databases-performance -q)
 
 # db のデータが入ったvolumeを削除する
 delete-db:
-	docker volume rm databases-performance_db-performance-mariadb databases-performance_db-performance-psql databases-performance_db-performance-sqlite
+	docker volume rm $$(docker volume ls -f name=sequelize-databases-performance -q)
 
 # ---------- express のコンテナを操作する ----------
 node-install:
 	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node npm ci 
+	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node chown -R `id -u`:`id -g` ./
 node-tsc:
-	git rm -rf ./src/perfomance-api/dist
-	docker exec sequelize-databases-performance_node tsc
+	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node ./node_modules/.bin/tsc
+	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node chown -R `id -u`:`id -g` ./
 node-typedoc:
 	docker exec sequelize-databases-performance_node typedoc
 node-migrate:
@@ -54,3 +46,18 @@ node-migrate:
 node-seed:
 	docker exec sequelize-databases-performance_node sequelize-cli db:seed:all
 
+
+
+# ---------- 本番環境でコンテナを立ち上げる ----------
+init-prod:
+	docker-compose -f docker-compose.mariadb.yml build
+	docker-compose -f docker-compose.sqlite.yml build
+	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node npm ci --only=production
+	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node ./node_modules/.bin/tsc
+	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node chown -R `id -u`:`id -g` ./
+up-prod-mariadb:
+	docker-compose -f docker-compose.mariadb.yml -f docker-compose.env_prod.yml up -d
+up-prod-psql:
+	docker-compose -f docker-compose.psql.yml -f docker-compose.env_prod.yml up -d
+up-prod-sqlite:
+	docker-compose -f docker-compose.sqlite.yml -f docker-compose.env_prod.yml up -d

@@ -5,5 +5,3 @@ WORKDIR /home/app/perfomance-api
 RUN apk update && \
     apk add python3=3.9.5-r2 && \
     rm -rf /var/cache/apk/*
-
-CMD [ "node", "dist/express/app.js" ]
