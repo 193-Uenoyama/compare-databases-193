@@ -6,42 +6,27 @@ export default class WriteProcessingTimeLog {
   readonly WRITTEN_FILE_NAME: string = process.env.DATABASE_SYSTEM + ".log";
   readonly WRITTEN_FILE_PATH: string = this.WRITTEN_FILE_DIRECTORY + this.WRITTEN_FILE_NAME;
 
-  constructor() {
-  }
+  constructor() {}
 
   WriteLog(timer_db_end: hrTime, timer_node_end: hrTime, created_time: Date) {
     fs.appendFileSync( 
       this.WRITTEN_FILE_PATH, 
-      created_time.toDateString() + "," + 
+      this.Get_FullDateString( created_time ) + "," + 
       timer_db_end[1] + "," + 
       timer_node_end[1] + "\n",
     );
   }
 
-  // FormattingToJson_hrTime(timer_db_end: hrTime, timer_node_end: hrTime): string { let log_data = {
-  //     processing_db_ns: timer_db_end[1],
-  //     processing_db_ms: ConvertToMsFromNs(timer_db_end[1]),
-  //     processing_node_ns: timer_node_end[1],
-  //     processing_node_ms: ConvertToMsFromNs(timer_node_end[1]),
-  //   }
-  //   return JSON.stringify(log_data, null, '  ');
-  // }
-
-  // // 定数の INDENT を全ての行のはじめに挿入する(インデントを入れる)
-  // AddIndent(target_str: string): string {
-  //   let reg: RegExp = new RegExp("\n", 'g');
-  //   // 改行コードの後にインデントを挿入
-  //   target_str = target_str.replace(reg, '\n' + this.INDENT);
-  //   // 一番最初の位置にインデントを挿入
-  //   target_str = this.INDENT + target_str
-  //   return target_str;
-  // }
-
-  // DeleteLastBracket() {
-  //   let file_contents: string | Buffer = fs.readFileSync(this.WRITTEN_FILE_PATH, 'utf-8');
-  //   let line = file_contents.split('\n').pop();
-  // }
-  // AddLastBracket() {
-  //   // fs.writeFileSync(this.WRITTEN_FILE_PATH, "]", {flag: "a"});
-  // }
+  Get_FullDateString(target: Date): string {
+    let year:string = this.AdjustDigits(target.getFullYear(), 4);
+    let month:string = this.AdjustDigits(( target.getMonth() + 1 ), 2);
+    let date:string = this.AdjustDigits(target.getDate(), 2);
+    let hours:string = this.AdjustDigits(target.getHours(), 2);
+    let minutes:string = this.AdjustDigits(target.getMinutes(), 2);
+    let seconds:string = this.AdjustDigits(target.getSeconds(), 2);
+    return year+month+date+hours+minutes+seconds;
+  }
+  AdjustDigits(target: number, digits: number): string {
+    return ( Array(digits + 1).join('0') + target.toString() ).slice(-digits);
+  }
 }

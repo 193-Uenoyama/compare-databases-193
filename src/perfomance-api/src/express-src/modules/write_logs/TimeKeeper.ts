@@ -3,27 +3,17 @@ import WriteProcessingTimeLog from '@/express-src/modules/write_logs/WriteProces
 
 
 export default class TimeKeeper {
-  timer_start: hrTime;
-  timer_db_end: hrTime;
-  timer_node_end: hrTime;
+  timer_start: hrTime = process.hrtime();
+  timer_db_end: hrTime = DEFAULT_HRTIME;;
+  timer_node_end: hrTime = DEFAULT_HRTIME;;
 
-  is_store_timer_db_end: boolean;
-  is_store_timer_node_end: boolean;
+  is_store_timer_db_end: boolean = false;
+  is_store_timer_node_end: boolean = false;
 
-  start_time: Date;
-  write_logs: WriteProcessingTimeLog;
+  start_time: Date = new Date();
+  write_logs: WriteProcessingTimeLog = new WriteProcessingTimeLog();
 
-  constructor() {
-    this.timer_start = process.hrtime();
-    this.timer_db_end = DEFAULT_HRTIME;
-    this.timer_node_end = DEFAULT_HRTIME;
-
-    this.is_store_timer_db_end = false;
-    this.is_store_timer_node_end = false;
-
-    this.start_time = new Date();
-    this.write_logs = new WriteProcessingTimeLog();
-  }
+  constructor() {}
 
   StoreDbEnd_IfPossibleOutLog() {
     this.timer_db_end = process.hrtime(this.timer_start);
@@ -38,10 +28,6 @@ export default class TimeKeeper {
 
   IfPossibleOutLog() {
     // 処理時間を2つとも(node, db)取得できていなければ return
-    console.log(
-      this.is_store_timer_db_end,
-      this.is_store_timer_node_end
-    )
     let is_not_stored_yet: boolean = !(this.is_store_timer_node_end && this.is_store_timer_db_end);
     if (is_not_stored_yet) {
       return;

@@ -2,7 +2,7 @@
   "restartable": "rs",
   "watch": ["src"],
   "ext": "ts",
-  "exec": "ts-node ./src/express/app.ts",
+  "exec": "ts-node -r tsconfig-paths/register ./src/express-src/app.ts",
   "ignore": [
     "sequelize/*"
   ]

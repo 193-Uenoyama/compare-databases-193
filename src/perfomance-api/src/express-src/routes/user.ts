@@ -4,19 +4,18 @@ import TimeKeeper from '@/express-src/modules/write_logs/TimeKeeper';
 
 export const userRouter: express.Router = express.Router();
 
-let time_keeper = new TimeKeeper();
-
 userRouter.get('/', function(req: express.Request, res: express.Response, next: express.NextFunction) {
   let return_data: any = {};
+  let time_keeper = new TimeKeeper();
 
   create_users(1);
-  find_all_users()
+  find_all_users(time_keeper)
     .then((all_users: any) => {
       res.status(200).json(all_users);
       time_keeper.StoreNodeEnd_IfPossibleOutLog();
     })
     .catch((err) => {
-      res.status(500).json({msg: err});
+      res.status(500).json({msg: err, mymsg: 'えらーだよ'});
     });
 });
 
@@ -43,7 +42,7 @@ function create_users(size: number) {
  *
  */
 // TODO why return promise?
-async function find_all_users() {
+async function find_all_users(time_keeper: TimeKeeper) {
   let all_users: any;
   await db.Users.findAll({})
     .then((instances: any) => {
