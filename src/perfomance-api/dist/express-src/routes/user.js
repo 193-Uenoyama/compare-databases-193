@@ -14,16 +14,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userRouter = void 0;
 const express_1 = __importDefault(require("express"));
-const index_1 = __importDefault(require("../../sequelize/models/index"));
+const index_1 = __importDefault(require("../../sequelize-src/models/index"));
+const TimeKeeper_1 = __importDefault(require("../../express-src/modules/write_logs/TimeKeeper"));
 exports.userRouter = express_1.default.Router();
+let time_keeper = new TimeKeeper_1.default();
 exports.userRouter.get('/', function (req, res, next) {
+    let return_data = {};
     create_users(1);
-    console.log(find_all_users().then((all_users) => {
-        return all_users;
-    }));
-    res.status(200).json(find_all_users().then((all_users) => {
-        return all_users;
-    }));
+    find_all_users()
+        .then((all_users) => {
+        res.status(200).json(all_users);
+        time_keeper.StoreNodeEnd_IfPossibleOutLog();
+    })
+        .catch((err) => {
+        res.status(500).json({ msg: err });
+    });
 });
 /**
  * insert a randomly named user into the user table in amount of "size" param
@@ -50,8 +55,15 @@ function create_users(size) {
 function find_all_users() {
     return __awaiter(this, void 0, void 0, function* () {
         let all_users;
-        all_users = yield index_1.default.Users.findAll({}).then((instances) => {
-            return instances;
+        yield index_1.default.Users.findAll({})
+            .then((instances) => {
+            all_users = instances;
+            time_keeper.StoreDbEnd_IfPossibleOutLog();
+        })
+            // TODO err の型調べる
+            .catch((err) => {
+            console.log(err);
+            throw new Error("エラーだよ。");
         });
         return all_users;
     });

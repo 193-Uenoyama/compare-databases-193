@@ -2,8 +2,9 @@
 init:
 	docker-compose -f docker-compose.mariadb.yml build
 	docker-compose -f docker-compose.sqlite.yml build
-	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node npm ci 
+	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node npm ci
 	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node ./node_modules/.bin/tsc
+	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node ./node_modules/.bin/tsc-alias -p tsconfig.json
 	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node chown -R `id -u`:`id -g` ./
 
 # ---------- コンテナを立ち上げる ----------
@@ -44,6 +45,7 @@ node-install:
 	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node chown -R `id -u`:`id -g` ./
 node-tsc:
 	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node ./node_modules/.bin/tsc
+	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node ./node_modules/.bin/tsc-alias
 	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node chown -R `id -u`:`id -g` ./
 node-typedoc:
 	docker exec sequelize-databases-performance_node typedoc

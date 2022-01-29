@@ -10,8 +10,10 @@ services:
       - "3000:3000"
     volumes:
       - ./src:/home/app/
+      - ./logs:/home/logs/
     environment:
       NODE_PATH: "/home/app/perfomance-api/"
+      LOG_PATH: "/home/logs/"
       PATH: "${SDP_PATH}"
     user: "${UID}:${GID}"
     restart: always

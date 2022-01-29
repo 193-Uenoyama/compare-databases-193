@@ -2,24 +2,44 @@
 
 ## start! this application
 ```
-make init
 source .env
+make init-prod
 ```
 
 ## Technology
-|        |            |
-| ------ | ---------- |
-| Lang   | TypeScript |
-| Server | Express    |
-| ORM    | Sequelize  |
-
-##### Transpile
-|           |         |
-|-----------|---------|
-| Express   | Webpack |
-| nodemon   | ts-node |
-| Sequelize | tsc     |
+|         |     |            |
+| ------  | --- | ---------- |
+| Langage | ... | TypeScript |
+| api     | ... | Express    |
+| ORM     | ... | Sequelize  |
 
 ## TODO
  - connect into sqlite database excepting by root user
  - databases security
+
+## Logs format
+```
+[
+  select: {
+    processing_db: <db access (ns)>,
+    processing_db: <db access (ms)>,
+    processing_node: <node processing time (ns)>
+    processing_node: <node processing time (ms)>
+  },
+  update: {
+    processing_db: <db access (ns)>,
+    processing_db: <db access (ms)>,
+    processing_node: <node processing time (ns)>
+    processing_node: <node processing time (ms)>
+  },
+  delete: {
+    processing_db: <db access (ns)>,
+    processing_db: <db access (ms)>,
+    processing_node: <node processing time (ns)>
+    processing_node: <node processing time (ms)>
+  },
+
+  ... etc ... 
+
+]
+```
