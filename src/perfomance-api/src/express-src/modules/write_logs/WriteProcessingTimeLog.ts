@@ -18,13 +18,14 @@ export default class WriteProcessingTimeLog {
   }
 
   Get_FullDateString(target: Date): string {
+    target.setTime(target.getTime() + 1000 * 60 * 60 * 9);
     let year:string = this.AdjustDigits(target.getFullYear(), 4);
     let month:string = this.AdjustDigits(( target.getMonth() + 1 ), 2);
     let date:string = this.AdjustDigits(target.getDate(), 2);
     let hours:string = this.AdjustDigits(target.getHours(), 2);
     let minutes:string = this.AdjustDigits(target.getMinutes(), 2);
     let seconds:string = this.AdjustDigits(target.getSeconds(), 2);
-    return year+month+date+hours+minutes+seconds;
+    return year+"-"+month+"-"+date+"T"+hours+":"+minutes+":"+seconds;
   }
   AdjustDigits(target: number, digits: number): string {
     return ( Array(digits + 1).join('0') + target.toString() ).slice(-digits);

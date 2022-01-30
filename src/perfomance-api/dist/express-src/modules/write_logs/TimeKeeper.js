@@ -15,6 +15,8 @@ class TimeKeeper {
         this.start_time = new Date();
         this.write_logs = new WriteProcessingTimeLog_1.default();
     }
+    ;
+    ;
     StoreDbEnd_IfPossibleOutLog() {
         this.timer_db_end = process.hrtime(this.timer_start);
         this.is_store_timer_db_end = true;
@@ -27,7 +29,6 @@ class TimeKeeper {
     }
     IfPossibleOutLog() {
         // 処理時間を2つとも(node, db)取得できていなければ return
-        console.log(this.is_store_timer_db_end, this.is_store_timer_node_end);
         let is_not_stored_yet = !(this.is_store_timer_node_end && this.is_store_timer_db_end);
         if (is_not_stored_yet) {
             return;

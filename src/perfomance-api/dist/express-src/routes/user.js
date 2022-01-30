@@ -17,17 +17,17 @@ const express_1 = __importDefault(require("express"));
 const index_1 = __importDefault(require("../../sequelize-src/models/index"));
 const TimeKeeper_1 = __importDefault(require("../../express-src/modules/write_logs/TimeKeeper"));
 exports.userRouter = express_1.default.Router();
-let time_keeper = new TimeKeeper_1.default();
 exports.userRouter.get('/', function (req, res, next) {
     let return_data = {};
+    let time_keeper = new TimeKeeper_1.default();
     create_users(1);
-    find_all_users()
+    find_all_users(time_keeper)
         .then((all_users) => {
         res.status(200).json(all_users);
         time_keeper.StoreNodeEnd_IfPossibleOutLog();
     })
         .catch((err) => {
-        res.status(500).json({ msg: err });
+        res.status(500).json({ msg: err, mymsg: 'えらーだよ' });
     });
 });
 /**
@@ -52,7 +52,7 @@ function create_users(size) {
  *
  */
 // TODO why return promise?
-function find_all_users() {
+function find_all_users(time_keeper) {
     return __awaiter(this, void 0, void 0, function* () {
         let all_users;
         yield index_1.default.Users.findAll({})
