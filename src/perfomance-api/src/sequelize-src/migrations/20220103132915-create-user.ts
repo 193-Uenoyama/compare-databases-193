@@ -25,7 +25,7 @@ module.exports = {
         allowNull: false,
       },
       introduction: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: true,
       },
       createdAt: {

@@ -44,10 +44,10 @@ module.exports = (sequelize: Sequelize) => {
       type: DataTypes.STRING 
     },
     introduction: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: true,
     }
-    }, {
+  }, {
     sequelize,
     modelName: 'Users',
   });

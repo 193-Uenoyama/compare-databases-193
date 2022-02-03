@@ -12,39 +12,28 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 module.exports = {
     up: (queryInterface, Sequelize) => __awaiter(void 0, void 0, void 0, function* () {
-        yield queryInterface.createTable('Users', {
-            id: {
+        yield queryInterface.createTable('Groups', {
+            groupId: {
                 type: sequelize_1.DataTypes.INTEGER,
-                autoIncrement: true,
-                primaryKey: true,
+                primaryKey: true
             },
-            firstName: {
-                type: sequelize_1.DataTypes.STRING,
-                allowNull: false,
+            groupName: {
+                type: sequelize_1.DataTypes.INTEGER
             },
-            lastName: {
-                type: sequelize_1.DataTypes.STRING,
-                allowNull: false,
-            },
-            email: {
-                type: sequelize_1.DataTypes.STRING,
-                allowNull: false,
-            },
-            introduction: {
-                type: sequelize_1.DataTypes.TEXT,
-                allowNull: true,
+            groupIntroduction: {
+                type: sequelize_1.DataTypes.TEXT
             },
             createdAt: {
-                type: sequelize_1.DataTypes.DATE,
                 allowNull: false,
+                type: sequelize_1.DataTypes.DATE
             },
             updatedAt: {
-                type: sequelize_1.DataTypes.DATE,
                 allowNull: false,
+                type: sequelize_1.DataTypes.DATE
             }
         });
     }),
     down: (queryInterface, Sequelize) => __awaiter(void 0, void 0, void 0, function* () {
-        yield queryInterface.dropTable('Users');
+        yield queryInterface.dropTable('Groups');
     })
 };
