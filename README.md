@@ -17,6 +17,7 @@ make init-prod
  - fix timezone to Asia/Tokyo createdAt, updatedAt
  - connect into sqlite database excepting by root user
  - databases security
+ - npm audit fix
 
 ## Logs format
 ```
