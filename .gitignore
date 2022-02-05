@@ -1,3 +1,7 @@
-src/perfomance-api/node_modules/
-src/perfomance-api/docs/
+src/request-page/node_modules/
+src/request-page/docs/
+
+src/response-api/node_modules/
+src/response-api/docs/
+
 logs/*

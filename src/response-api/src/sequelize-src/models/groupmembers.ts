@@ -40,10 +40,10 @@ module.exports = (sequelize: Sequelize) => {
     modelName: 'GroupMembers',
   });
 
-  let Groups = require('@/sequelize-src/models/groups')(sequelize);
-  let User = require('@/sequelize-src/models/user')(sequelize);
-  GroupMembers.belongsTo(Groups);
-  GroupMembers.hasMany(User);
+  // let Groups = require('@/sequelize-src/models/groups')(sequelize);
+  // let User = require('@/sequelize-src/models/user')(sequelize);
+  // GroupMembers.belongsTo(Groups);
+  // GroupMembers.hasMany(User);
 
   return GroupMembers;
 };

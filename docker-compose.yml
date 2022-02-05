@@ -1,20 +1,35 @@
 version: '3.7'
 
 services:
-  node:
+  node-server:
     build: 
       context: "./container/node/"
     image: sequelize-databases-performance_node
-    container_name: sequelize-databases-performance_node 
+    container_name: sequelize-databases-performance_node-server
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./src/response-api:/home/response-api
+      - ./logs:/home/logs/
+    environment:
+      NODE_PATH: "/home/response-api/"
+      LOG_PATH: "/home/logs/"
+      PATH: "${SDP_PATH}"
+    user: "${SDP_UID}:${SDP_GID}"
+    tty: true
+
+  node-client:
+    build: 
+      context: "./container/node/"
+    image: sequelize-databases-performance_node
+    container_name: sequelize-databases-performance_node-client
     ports:
       - "3000:3000"
     volumes:
-      - ./src:/home/app/
+      - ./src/request-page:/home/request-page
       - ./logs:/home/logs/
     environment:
-      NODE_PATH: "/home/app/perfomance-api/"
       LOG_PATH: "/home/logs/"
-      PATH: "${SDP_PATH}"
     user: "${SDP_UID}:${SDP_GID}"
     restart: always
     tty: true

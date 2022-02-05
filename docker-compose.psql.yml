@@ -1,13 +1,18 @@
 version: '3.7'
 
 services:
-  node:
+  node-server:
     extends:
       file: docker-compose.yml
-      service: node
+      service: node-server
     environment:
       DATABASE_HOST: db
       DATABASE_SYSTEM: postgres
+
+  node-client:
+    extends:
+      file: docker-compose.yml
+      service: node-client
 
   db:
     extends:

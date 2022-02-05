@@ -12,4 +12,4 @@ app.get('/', (req, res, next) => {
     res.status(200).json({ msg: "hello world" });
 });
 app.use('/user', user_1.userRouter);
-app.listen(3000, () => console.log('listening on port 3000!'));
+app.listen(8000, () => console.log('listening on port 8000!'));
