@@ -26,7 +26,7 @@ module.exports = (sequelize) => {
         sequelize,
         modelName: 'Relations',
     });
-    let User = require('../../sequelize-src/models/user')(sequelize);
-    Relations.hasMany(User);
+    // let User = require('@/sequelize-src/models/user')(sequelize);
+    // Relations.hasMany(User);
     return Relations;
 };

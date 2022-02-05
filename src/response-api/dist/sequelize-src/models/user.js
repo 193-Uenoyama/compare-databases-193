@@ -29,9 +29,9 @@ module.exports = (sequelize) => {
         sequelize,
         modelName: 'Users',
     });
-    let GroupMembers = require('../../sequelize-src/models/groupmembers')(sequelize);
-    let Relations = require('../../sequelize-src/models/relations')(sequelize);
-    User.belongsToMany(GroupMembers, { through: "GroupMembers" });
-    User.belongsToMany(Relations, { through: "Relations" });
+    // let GroupMembers = require('@/sequelize-src/models/groupmembers')(sequelize);
+    // let Relations = require('@/sequelize-src/models/relations')(sequelize);
+    // User.belongsToMany(GroupMembers, {through: "GroupMembers"});
+    // User.belongsToMany(Relations, {through: "Relations"});
     return User;
 };
