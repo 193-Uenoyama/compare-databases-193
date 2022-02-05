@@ -19,6 +19,22 @@ userRouter.get('/', function(req: express.Request, res: express.Response, next: 
     });
 });
 
+userRouter.post('/create', function(req: express.Request, res: express.Response, next: express.NextFunction) {
+  res.status(200).json({msg: req.body.name});
+});
+userRouter.post('/read', function(req: express.Request, res: express.Response, next: express.NextFunction) {
+  res.status(200).json({msg: "read"});
+});
+userRouter.post('/update', function(req: express.Request, res: express.Response, next: express.NextFunction) {
+  res.status(200).json({msg: "update"});
+});
+userRouter.post('/delete', function(req: express.Request, res: express.Response, next: express.NextFunction) {
+  res.status(200).json({msg: "delete"});
+});
+
+
+
+
 /**
  * insert a randomly named user into the user table in amount of "size" param
  * @param size number of inserts into users table
@@ -32,8 +48,6 @@ function create_users(size: number) {
       firstName: firstName,
       lastName: lastName,
       email: email,
-      createdAt: new Date(),
-      updatedAt: new Date()
     }, {});
   }
 }

@@ -6,19 +6,19 @@ import {
 } from 'sequelize';
 
 interface UserAttributes {
-  id: number;
+  userId: number;
   firstName: string;
   lastName: string;
   email: string;
   introduction: string | null;
 }
 
-interface UserCreationAttributes extends Optional<UserAttributes, "id"> {}
+interface UserCreationAttributes extends Optional<UserAttributes, "userId"> {}
 
 module.exports = (sequelize: Sequelize) => {
 
   class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
-    declare id: number;
+    declare userId: number;
     declare firstName: string;
     declare lastName: string;
     declare email: string;
@@ -29,24 +29,26 @@ module.exports = (sequelize: Sequelize) => {
   };
 
   User.init({
-    id: {
+    userId: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
     firstName: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
     lastName: {
       type: DataTypes.STRING,
+      allowNull: false,
     }, 
     email: { 
       type: DataTypes.STRING,
+      allowNull: false,
       unique: true,
     },
     introduction: {
-      type: DataTypes.TEXT,
-      allowNull: true,
+      type: DataTypes.STRING,
     }
   }, {
     sequelize,

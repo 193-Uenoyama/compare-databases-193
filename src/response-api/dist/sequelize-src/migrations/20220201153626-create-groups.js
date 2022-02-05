@@ -19,18 +19,19 @@ module.exports = {
                 autoIncrement: true,
             },
             groupName: {
-                type: sequelize_1.DataTypes.INTEGER,
+                type: sequelize_1.DataTypes.STRING,
+                allowNull: false,
             },
             groupIntroduction: {
                 type: sequelize_1.DataTypes.TEXT,
             },
             createdAt: {
-                allowNull: false,
                 type: sequelize_1.DataTypes.DATE,
+                allowNull: false,
             },
             updatedAt: {
-                allowNull: false,
                 type: sequelize_1.DataTypes.DATE,
+                allowNull: false,
             }
         });
     }),

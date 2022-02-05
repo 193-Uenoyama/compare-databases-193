@@ -30,6 +30,18 @@ exports.userRouter.get('/', function (req, res, next) {
         res.status(500).json({ msg: err, mymsg: 'えらーだよ' });
     });
 });
+exports.userRouter.post('/create', function (req, res, next) {
+    res.status(200).json({ msg: req.body.name });
+});
+exports.userRouter.post('/read', function (req, res, next) {
+    res.status(200).json({ msg: "read" });
+});
+exports.userRouter.post('/update', function (req, res, next) {
+    res.status(200).json({ msg: "update" });
+});
+exports.userRouter.post('/delete', function (req, res, next) {
+    res.status(200).json({ msg: "delete" });
+});
 /**
  * insert a randomly named user into the user table in amount of "size" param
  * @param size number of inserts into users table
@@ -43,8 +55,6 @@ function create_users(size) {
             firstName: firstName,
             lastName: lastName,
             email: email,
-            createdAt: new Date(),
-            updatedAt: new Date()
         }, {});
     }
 }

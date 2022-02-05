@@ -27,7 +27,6 @@ module.exports = {
       },
       introduction: {
         type: DataTypes.STRING,
-        allowNull: true,
       },
       createdAt: {
         type: DataTypes.DATE,

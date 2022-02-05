@@ -1,7 +1,6 @@
 import { DEFAULT_HRTIME, hrTime, ConvertToMsFromNs } from '@/express-src/modules/write_logs/_modules';
 import WriteProcessingTimeLog from '@/express-src/modules/write_logs/WriteProcessingTimeLog'
 
-
 export default class TimeKeeper {
   timer_start: hrTime = process.hrtime();
   timer_db_end: hrTime = DEFAULT_HRTIME;;

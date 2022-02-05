@@ -49,10 +49,17 @@ node-tsc:
 	docker run -v `pwd`/src/response-api:/home/response-api/ --rm sequelize-databases-performance_node chown -R `id -u`:`id -g` ./dist
 node-typedoc:
 	docker exec sequelize-databases-performance_node-server typedoc
+node-logs:
+	docker logs sequelize-databases-performance_node-server -f
+
 node-migrate:
 	docker exec sequelize-databases-performance_node-server sequelize-cli db:migrate
+node-migrate-undo-all:
+	docker exec sequelize-databases-performance_node-server sequelize-cli db:migrate:undo:all
 node-seed:
 	docker exec sequelize-databases-performance_node-server sequelize-cli db:seed:all
+node-seed-undo-all:
+	docker exec sequelize-databases-performance_node-server sequelize-cli db:seed:undo:all
 
 
 
