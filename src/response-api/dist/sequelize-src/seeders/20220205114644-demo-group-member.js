@@ -18,10 +18,10 @@ module.exports = {
         return __awaiter(this, void 0, void 0, function* () {
             let user_data;
             let group_data;
-            index_1.default.Users.findAll({}).then((rows) => {
+            yield index_1.default.Users.findAll({}).then((rows) => {
                 user_data = rows;
             });
-            index_1.default.Groups.findAll({}).then((rows) => {
+            yield index_1.default.Groups.findAll({}).then((rows) => {
                 group_data = rows;
             });
             let now = new Date();

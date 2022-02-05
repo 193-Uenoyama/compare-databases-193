@@ -16,6 +16,7 @@ services:
       LOG_PATH: "/home/logs/"
       PATH: "${SDP_PATH}"
     user: "${SDP_UID}:${SDP_GID}"
+    #restart: always
     tty: true
 
   node-client:

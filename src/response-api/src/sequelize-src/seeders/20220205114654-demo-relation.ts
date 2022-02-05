@@ -7,7 +7,7 @@ import db from '@/sequelize-src/models/index'
 module.exports = {
   async up (queryInterface: QueryInterface, Sequelize: Sequelize) {
     let data: any;
-    db.Users.findAll({}).then((rows: any) => {
+    await db.Users.findAll({}).then((rows: any) => {
       data = rows;
     });
     let now: Date = new Date();

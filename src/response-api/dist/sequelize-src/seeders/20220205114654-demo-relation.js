@@ -17,7 +17,7 @@ module.exports = {
     up(queryInterface, Sequelize) {
         return __awaiter(this, void 0, void 0, function* () {
             let data;
-            index_1.default.Users.findAll({}).then((rows) => {
+            yield index_1.default.Users.findAll({}).then((rows) => {
                 data = rows;
             });
             let now = new Date();

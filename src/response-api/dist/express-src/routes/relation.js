@@ -10,7 +10,7 @@ exports.relationRouter = express_1.default.Router();
 exports.relationRouter.get('/', function (req, res, next) {
     // let return_data: any = {};
     // let time_keeper = new TimeKeeper();
-    index_1.default.GroupMembers.create({
+    index_1.default.Relations.create({
         followedUserId: 1,
         followingUserId: 1,
     }, {});

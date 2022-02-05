@@ -8,10 +8,10 @@ module.exports = {
   async up (queryInterface: QueryInterface, Sequelize: Sequelize) {
     let user_data: any;
     let group_data: any;
-    db.Users.findAll({}).then((rows: any) => {
+    await db.Users.findAll({}).then((rows: any) => {
       user_data = rows;
     });
-    db.Groups.findAll({}).then((rows: any) => {
+    await db.Groups.findAll({}).then((rows: any) => {
       group_data = rows;
     });
     let now: Date = new Date();
