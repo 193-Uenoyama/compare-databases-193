@@ -15,7 +15,7 @@ services:
       NODE_PATH: "/home/app/perfomance-api/"
       LOG_PATH: "/home/logs/"
       PATH: "${SDP_PATH}"
-    user: "${UID}:${GID}"
+    user: "${SDP_UID}:${SDP_GID}"
     restart: always
     tty: true
 
