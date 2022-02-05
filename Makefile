@@ -42,11 +42,11 @@ delete-db:
 # ---------- express のコンテナを操作する ----------
 node-install:
 	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node npm ci 
-	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node chown -R `id -u`:`id -g` ./
+	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node chown -R `id -u`:`id -g` ./node_modules
 node-tsc:
 	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node ./node_modules/.bin/tsc
 	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node ./node_modules/.bin/tsc-alias
-	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node chown -R `id -u`:`id -g` ./
+	docker run -v `pwd`/src:/home/app/ --rm sequelize-databases-performance_node chown -R `id -u`:`id -g` ./dist
 node-typedoc:
 	docker exec sequelize-databases-performance_node typedoc
 node-migrate:

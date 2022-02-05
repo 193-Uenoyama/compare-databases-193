@@ -7,7 +7,7 @@ import {
 module.exports = {
   up: async (queryInterface: QueryInterface, Sequelize: Sequelize) => {
     await queryInterface.createTable('Users', {
-      id: {
+      userId: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
@@ -23,6 +23,7 @@ module.exports = {
       email: { 
         type: DataTypes.STRING,
         allowNull: false,
+        unique: true,
       },
       introduction: {
         type: DataTypes.STRING,
