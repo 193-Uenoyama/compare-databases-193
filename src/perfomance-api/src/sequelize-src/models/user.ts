@@ -41,7 +41,8 @@ module.exports = (sequelize: Sequelize) => {
       type: DataTypes.STRING,
     }, 
     email: { 
-      type: DataTypes.STRING 
+      type: DataTypes.STRING,
+      unique: true,
     },
     introduction: {
       type: DataTypes.TEXT,
@@ -51,6 +52,11 @@ module.exports = (sequelize: Sequelize) => {
     sequelize,
     modelName: 'Users',
   });
+
+  let GroupMembers = require('@/sequelize-src/models/groupmembers')(sequelize);
+  let Relations = require('@/sequelize-src/models/relations')(sequelize);
+  User.belongsToMany(GroupMembers, {through: "GroupMembers"});
+  User.belongsToMany(Relations, {through: "Relations"});
 
   return User;
 }

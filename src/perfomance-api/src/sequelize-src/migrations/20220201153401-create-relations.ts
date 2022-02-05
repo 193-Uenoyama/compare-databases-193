@@ -11,23 +11,23 @@ module.exports = {
         type: DataTypes.INTEGER,
         references: {
           model: "Users",
-          key: "id"
+          key: "userId",
         }
       },
       followingUserId: { 
         type: DataTypes.INTEGER ,
         references: {
           model: "Users",
-          key: "id"
+          key: "userId",
         }
       },
       createdAt: {
         type: DataTypes.DATE,
-        allowNull: false
+        allowNull: false,
       },
       updatedAt: {
         type: DataTypes.DATE,
-        allowNull: false
+        allowNull: false,
       }
     });
   },

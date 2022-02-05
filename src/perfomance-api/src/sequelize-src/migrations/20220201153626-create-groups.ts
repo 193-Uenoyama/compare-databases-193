@@ -9,21 +9,22 @@ module.exports = {
     await queryInterface.createTable('Groups', {
       groupId: {
         type: DataTypes.INTEGER,
-        primaryKey: true
+        primaryKey: true,
+        autoIncrement: true,
       },
       groupName: { 
-        type: DataTypes.INTEGER 
+        type: DataTypes.INTEGER,
       },
       groupIntroduction: { 
-        type: DataTypes.TEXT 
+        type: DataTypes.TEXT,
       },
       createdAt: {
         allowNull: false,
-        type: DataTypes.DATE
+        type: DataTypes.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: DataTypes.DATE
+        type: DataTypes.DATE,
       }
     });
   },

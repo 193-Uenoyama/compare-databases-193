@@ -22,6 +22,7 @@ module.exports = (sequelize: Sequelize) => {
   Relations.init({
     followedUserId: {
       type: DataTypes.INTEGER,
+      primaryKey: true,
       references: {
         model: "Users",
         key: "id"
@@ -29,6 +30,7 @@ module.exports = (sequelize: Sequelize) => {
     },
     followingUserId: { 
       type: DataTypes.INTEGER ,
+      primaryKey: true,
       references: {
         model: "Users",
         key: "id"
@@ -38,6 +40,9 @@ module.exports = (sequelize: Sequelize) => {
     sequelize,
     modelName: 'Relations',
   });
+
+  let User = require('@/sequelize-src/models/user')(sequelize);
+  Relations.hasMany(User);
 
   return Relations;
 };

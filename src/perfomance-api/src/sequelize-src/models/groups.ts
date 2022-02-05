@@ -36,5 +36,8 @@ module.exports = (sequelize: Sequelize) => {
     modelName: 'Groups',
   });
 
+  let GroupMembers = require('@/sequelize-src/models/groupmembers')(sequelize);
+  Groups.hasMany(GroupMembers);
+
   return Groups;
 };

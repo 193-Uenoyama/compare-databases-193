@@ -17,24 +17,20 @@ module.exports = {
                 type: sequelize_1.DataTypes.INTEGER,
                 references: {
                     model: "Groups",
-                    key: "groupId"
+                    key: "groupId",
                 }
             },
             memberId: {
-                type: sequelize_1.DataTypes.STRING,
+                type: sequelize_1.DataTypes.INTEGER,
                 references: {
                     model: "Users",
-                    key: "id"
+                    key: "userId",
                 }
             },
             createdAt: {
                 allowNull: false,
-                type: sequelize_1.DataTypes.DATE
+                type: sequelize_1.DataTypes.DATE,
             },
-            updatedAt: {
-                allowNull: false,
-                type: sequelize_1.DataTypes.DATE
-            }
         });
     }),
     down: (queryInterface, Sequelize) => __awaiter(void 0, void 0, void 0, function* () {

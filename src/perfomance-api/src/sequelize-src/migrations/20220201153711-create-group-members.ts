@@ -11,24 +11,20 @@ module.exports = {
         type: DataTypes.INTEGER,
         references: {
           model: "Groups",
-          key: "groupId"
+          key: "groupId",
         }
       },
       memberId: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         references: {
           model: "Users",
-          key: "id"
+          key: "userId",
         }
       },
       createdAt: {
         allowNull: false,
-        type: DataTypes.DATE
+        type: DataTypes.DATE,
       },
-      updatedAt: {
-        allowNull: false,
-        type: DataTypes.DATE
-      }
     });
   },
   down: async (queryInterface: QueryInterface , Sequelize: Sequelize) => {

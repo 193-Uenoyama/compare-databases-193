@@ -13,7 +13,7 @@ const sequelize_1 = require("sequelize");
 module.exports = {
     up: (queryInterface, Sequelize) => __awaiter(void 0, void 0, void 0, function* () {
         yield queryInterface.createTable('Users', {
-            id: {
+            userId: {
                 type: sequelize_1.DataTypes.INTEGER,
                 autoIncrement: true,
                 primaryKey: true,
@@ -29,9 +29,10 @@ module.exports = {
             email: {
                 type: sequelize_1.DataTypes.STRING,
                 allowNull: false,
+                unique: true,
             },
             introduction: {
-                type: sequelize_1.DataTypes.TEXT,
+                type: sequelize_1.DataTypes.STRING,
                 allowNull: true,
             },
             createdAt: {

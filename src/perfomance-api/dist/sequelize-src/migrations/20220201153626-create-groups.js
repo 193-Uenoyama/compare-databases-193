@@ -15,21 +15,22 @@ module.exports = {
         yield queryInterface.createTable('Groups', {
             groupId: {
                 type: sequelize_1.DataTypes.INTEGER,
-                primaryKey: true
+                primaryKey: true,
+                autoIncrement: true,
             },
             groupName: {
-                type: sequelize_1.DataTypes.INTEGER
+                type: sequelize_1.DataTypes.INTEGER,
             },
             groupIntroduction: {
-                type: sequelize_1.DataTypes.TEXT
+                type: sequelize_1.DataTypes.TEXT,
             },
             createdAt: {
                 allowNull: false,
-                type: sequelize_1.DataTypes.DATE
+                type: sequelize_1.DataTypes.DATE,
             },
             updatedAt: {
                 allowNull: false,
-                type: sequelize_1.DataTypes.DATE
+                type: sequelize_1.DataTypes.DATE,
             }
         });
     }),

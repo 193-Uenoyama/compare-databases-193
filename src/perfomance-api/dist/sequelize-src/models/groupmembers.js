@@ -8,6 +8,7 @@ module.exports = (sequelize) => {
     GroupMembers.init({
         groupId: {
             type: sequelize_1.DataTypes.INTEGER,
+            primaryKey: true,
             references: {
                 model: "Groups",
                 key: "groupId"
@@ -15,6 +16,7 @@ module.exports = (sequelize) => {
         },
         memberId: {
             type: sequelize_1.DataTypes.STRING,
+            primaryKey: true,
             references: {
                 model: "Users",
                 key: "id"
@@ -24,5 +26,9 @@ module.exports = (sequelize) => {
         sequelize,
         modelName: 'GroupMembers',
     });
+    let Groups = require('../../sequelize-src/models/groups')(sequelize);
+    let User = require('../../sequelize-src/models/user')(sequelize);
+    GroupMembers.belongsTo(Groups);
+    GroupMembers.hasMany(User);
     return GroupMembers;
 };
