@@ -14,18 +14,18 @@ interface RelationCreationAttributes extends Optional<RelationAttributes, "follo
 
 module.exports = (sequelize: Sequelize) => {
 
-  class Relations extends Model<RelationAttributes, RelationCreationAttributes> implements RelationAttributes {
+  class Relation extends Model<RelationAttributes, RelationCreationAttributes> implements RelationAttributes {
     declare followedUserId: number;
     declare followingUserId: number;
   };
 
-  Relations.init({
+  Relation.init({
     followedUserId: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       references: {
         model: "Users",
-        key: "id"
+        key: "userId",
       }
     },
     followingUserId: { 
@@ -33,16 +33,17 @@ module.exports = (sequelize: Sequelize) => {
       primaryKey: true,
       references: {
         model: "Users",
-        key: "id"
+        key: "userId",
       }
-    }
+    },
   }, {
     sequelize,
     modelName: 'Relations',
+    updatedAt: false,
   });
 
   // let User = require('@/sequelize-src/models/user')(sequelize);
   // Relations.hasMany(User);
 
-  return Relations;
+  return Relation;
 };

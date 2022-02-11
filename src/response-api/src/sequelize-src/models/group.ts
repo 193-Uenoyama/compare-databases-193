@@ -14,22 +14,24 @@ interface GroupAttributes {
 interface GroupCreationAttributes extends Optional<GroupAttributes, "groupId"> {}
 
 module.exports = (sequelize: Sequelize) => {
-  class Groups extends Model<GroupAttributes, GroupCreationAttributes> implements GroupAttributes {
+  class Group extends Model<GroupAttributes, GroupCreationAttributes> implements GroupAttributes {
     declare groupId: number;
     declare groupName: string;
     declare groupIntroduction: string;
   };
 
-  Groups.init({
+  Group.init({
     groupId: {
       type: DataTypes.INTEGER,
-      primaryKey: true
+      primaryKey: true,
+      autoIncrement: true,
     },
     groupName: { 
-      type: DataTypes.INTEGER 
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     groupIntroduction: { 
-      type: DataTypes.TEXT 
+      type: DataTypes.TEXT,
     }
   }, {
     sequelize,
@@ -39,5 +41,5 @@ module.exports = (sequelize: Sequelize) => {
   // let GroupMembers = require('@/sequelize-src/models/groupmembers')(sequelize);
   // Groups.hasMany(GroupMembers);
 
-  return Groups;
+  return Group;
 };

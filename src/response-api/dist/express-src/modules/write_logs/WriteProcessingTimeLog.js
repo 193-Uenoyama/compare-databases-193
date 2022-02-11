@@ -15,16 +15,18 @@ class WriteProcessingTimeLog {
             timer_db_end[1] + "," +
             timer_node_end[1] + "\n");
     }
-    Get_FullDateString(target) {
-        target.setTime(target.getTime() + 1000 * 60 * 60 * 9);
-        let year = this.AdjustDigits(target.getFullYear(), 4);
-        let month = this.AdjustDigits((target.getMonth() + 1), 2);
-        let date = this.AdjustDigits(target.getDate(), 2);
-        let hours = this.AdjustDigits(target.getHours(), 2);
-        let minutes = this.AdjustDigits(target.getMinutes(), 2);
-        let seconds = this.AdjustDigits(target.getSeconds(), 2);
+    // 日付データ(now)を文字列に変換する
+    Get_FullDateString(now) {
+        now.setTime(now.getTime() + 1000 * 60 * 60 * 9);
+        let year = this.AdjustDigits(now.getFullYear(), 4);
+        let month = this.AdjustDigits((now.getMonth() + 1), 2);
+        let date = this.AdjustDigits(now.getDate(), 2);
+        let hours = this.AdjustDigits(now.getHours(), 2);
+        let minutes = this.AdjustDigits(now.getMinutes(), 2);
+        let seconds = this.AdjustDigits(now.getSeconds(), 2);
         return year + "-" + month + "-" + date + "T" + hours + ":" + minutes + ":" + seconds;
     }
+    // target の 桁数が digits より小さかったらその分だけ0を入れる
     AdjustDigits(target, digits) {
         return (Array(digits + 1).join('0') + target.toString()).slice(-digits);
     }

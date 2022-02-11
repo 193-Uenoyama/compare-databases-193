@@ -3,9 +3,9 @@ version: '3.7'
 services:
   node-server:
     build: 
-      context: "./container/node/"
-    image: sequelize-databases-performance_node
-    container_name: sequelize-databases-performance_node-server
+      context: "./container/node-server/"
+    image: compare-databases-193_node-server
+    container_name: compare-databases-193_node-server
     ports:
       - "8000:8000"
     volumes:
@@ -20,9 +20,9 @@ services:
 
   node-client:
     build: 
-      context: "./container/node/"
-    image: sequelize-databases-performance_node
-    container_name: sequelize-databases-performance_node-client
+      context: "./container/node-client/"
+    image: compare-databases-193_node-client
+    container_name: compare-databases-193_node-client
     ports:
       - "3000:3000"
     volumes:
@@ -31,8 +31,7 @@ services:
     environment:
       LOG_PATH: "/home/logs/"
     user: "${SDP_UID}:${SDP_GID}"
-    restart: always
     tty: true
 
   db:
-    container_name: sequelize-databases-performance_db 
+    container_name: compare-databases-193_db 

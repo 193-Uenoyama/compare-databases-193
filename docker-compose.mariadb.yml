@@ -8,6 +8,8 @@ services:
     environment:
       DATABASE_HOST: db
       DATABASE_SYSTEM: mariadb
+    depends_on: 
+      - db
 
   node-client:
     extends:
@@ -22,7 +24,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - sequelize-databases-performance-mariadb:/var/lib/mysql
+      - compare-databases-193_mariadb:/var/lib/mysql
     environment:
       MARIADB_USER: root
       MARIADB_ROOT_PASSWORD: password
@@ -30,5 +32,5 @@ services:
     restart: always
 
 volumes:
-  sequelize-databases-performance-mariadb:
-    name: sequelize-databases-performance-mariadb
+   compare-databases-193_mariadb:
+    name: compare-databases-193_mariadb

@@ -11,12 +11,27 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 module.exports = {
     up: (queryInterface, Sequelize) => __awaiter(void 0, void 0, void 0, function* () {
+        let now = new Date();
         return queryInterface.bulkInsert('Users', [{
                 firstName: 'John',
                 lastName: 'Doe',
                 email: 'example@example.com',
-                createdAt: new Date(),
-                updatedAt: new Date()
+                createdAt: now,
+                updatedAt: now,
+            },
+            {
+                firstName: 'Kitamura',
+                lastName: '193',
+                email: 'example@kitamura.com.jp',
+                createdAt: now,
+                updatedAt: now,
+            },
+            {
+                firstName: 'aaa',
+                lastName: 'bbb',
+                email: 'aaa@abb.jp',
+                createdAt: now,
+                updatedAt: now,
             }]);
     }),
     down: (queryInterface, Sequelize) => __awaiter(void 0, void 0, void 0, function* () {

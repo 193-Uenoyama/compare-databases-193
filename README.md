@@ -2,8 +2,8 @@
 
 ## start! this application
 ```
-source .env
 make init-prod
+source .env
 ```
 
 ## Technology
@@ -14,8 +14,10 @@ make init-prod
 | ORM     | ... | Sequelize  |
 
 ## TODO
+ - fix timezone to Asia/Tokyo createdAt, updatedAt
  - connect into sqlite database excepting by root user
  - databases security
+ - npm audit fix
 
 ## Logs format
 ```

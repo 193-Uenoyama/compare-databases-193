@@ -13,31 +13,32 @@ interface GroupMemberAttributes {
 interface GroupMemberCreationAttributes extends Optional<GroupMemberAttributes, "groupId"> {}
 
 module.exports = (sequelize: Sequelize) => {
-  class GroupMembers extends Model<GroupMemberAttributes, GroupMemberCreationAttributes> implements GroupMemberAttributes {
+  class GroupMember extends Model<GroupMemberAttributes, GroupMemberCreationAttributes> implements GroupMemberAttributes {
     declare groupId: number;
     declare memberId: number;
   };
 
-  GroupMembers.init({
+  GroupMember.init({
     groupId: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       references: {
         model: "Groups",
-        key: "groupId"
+        key: "groupId",
       }
     },
     memberId: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       primaryKey: true,
       references: {
         model: "Users",
-        key: "id"
+        key: "userId",
       }
     }
   }, {
     sequelize,
     modelName: 'GroupMembers',
+    updatedAt: false,
   });
 
   // let Groups = require('@/sequelize-src/models/groups')(sequelize);
@@ -45,5 +46,5 @@ module.exports = (sequelize: Sequelize) => {
   // GroupMembers.belongsTo(Groups);
   // GroupMembers.hasMany(User);
 
-  return GroupMembers;
+  return GroupMember;
 };

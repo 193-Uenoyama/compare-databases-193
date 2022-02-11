@@ -5,11 +5,11 @@ services:
     extends:
       file: docker-compose.yml
       service: node-server
-    image: sequelize-databases-performance_node-sqlite
+    image: compare-databases-193_node-server-sqlite
     build: 
-      context: "./container/node-sqlite/"
+      context: "./container/node-server-sqlite/"
     volumes:
-      - sequelize-databases-performance-sqlite:/home/db
+      - compare-databases-193_sqlite:/home/db
     environment:
       DATABASE_HOST: /home/db/sqlite.db
       DATABASE_SYSTEM: sqlite
@@ -20,5 +20,5 @@ services:
       service: node-client
 
 volumes:
-  sequelize-databases-performance-sqlite:
-    name: sequelize-databases-performance-sqlite
+   compare-databases-193_sqlite:
+    name: compare-databases-193_sqlite

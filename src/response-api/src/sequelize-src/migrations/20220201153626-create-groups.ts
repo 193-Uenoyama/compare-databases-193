@@ -13,18 +13,19 @@ module.exports = {
         autoIncrement: true,
       },
       groupName: { 
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
+        allowNull: false,
       },
       groupIntroduction: { 
         type: DataTypes.TEXT,
       },
       createdAt: {
-        allowNull: false,
         type: DataTypes.DATE,
+        allowNull: false,
       },
       updatedAt: {
-        allowNull: false,
         type: DataTypes.DATE,
+        allowNull: false,
       }
     });
   },
