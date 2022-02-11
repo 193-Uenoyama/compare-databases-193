@@ -54,7 +54,7 @@ db-delete:
 # 応急処置 sqlite の権限与えるのむずいかも
 db-create-sqlite:
 	docker volume create compare-databases-193_sqlite
-	docker run -v sequelize-databases-performance-sqlite:/home/db --rm compare-databases-193_node-server chown -R `id -u`:`id -g` /home/db/
+	docker run -v compare-databases-193_sqlite:/home/db --rm compare-databases-193_node-server chown -R `id -u`:`id -g` /home/db/
 db-logs:
 	docker logs compare-databases-193_db -f
 

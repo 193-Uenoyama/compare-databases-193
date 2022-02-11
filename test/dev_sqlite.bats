@@ -1,8 +1,8 @@
-#!test/bats/bin/bats
+#!test/modules/bats/bin/bats
 
 setup() {
-  load ./test/test_helper/bats-assert/load.bash
-  load ./test/test_helper/bats-support/load.bash
+  load ./test/modules/bats-assert/load.bash
+  load ./test/modules/bats-support/load.bash
 }
 
 @test "start up sqlite" {
