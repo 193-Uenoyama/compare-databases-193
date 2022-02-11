@@ -15,6 +15,7 @@ userRouter.get('/', function(req: express.Request, res: express.Response, next: 
       time_keeper.StoreNodeEnd_IfPossibleOutLog();
     })
     .catch((err) => {
+      // TODO ログがかけなかった問のエラーも拾って、2重にレスポンスを返そうとしてしまう
       res.status(500).json({msg: err, mymsg: 'えらーだよ'});
     });
 });

@@ -3,6 +3,7 @@
 readonly SLEEP=30
 make db-create-sqlite
 ./test/modules/installChromedriver.sh
+chromedriver &
 
 
 # ----- mariadb -----
@@ -24,4 +25,6 @@ sleep $SLEEP
 make down
 
 
+driverJob=`echo jobs | grep chromedriver | sed -E 's/\[([0-9]*)\].*/\1/g'`
+kill %$driverJob
 make db-delete

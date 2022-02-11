@@ -3,6 +3,7 @@
 setup() {
   load ./test/modules/bats-assert/load.bash
   load ./test/modules/bats-support/load.bash
+  . ./test/modules/shellnium-scenario/getUser.sh
 }
 
 @test "start up psql" {
@@ -14,3 +15,8 @@ setup() {
   make serv-migrate
   make serv-seed
 }
+
+@test "get user" {
+  main 
+}
+
