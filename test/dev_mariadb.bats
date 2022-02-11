@@ -14,3 +14,4 @@ setup() {
   make serv-migrate
   make serv-seed
 }
+

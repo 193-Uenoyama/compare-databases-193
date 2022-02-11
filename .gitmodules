@@ -7,3 +7,6 @@
 [submodule "test/modules/bats-assert"]
 	path = test/modules/bats-assert
 	url = https://github.com/bats-core/bats-assert.git
+[submodule "test/modules/shellnium"]
+	path = test/modules/shellnium
+	url = https://github.com/Rasukarusan/shellnium.git

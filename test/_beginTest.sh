@@ -1,7 +1,8 @@
 #!/bin/bash
 
-readonly SLEEP=25
+readonly SLEEP=30
 make db-create-sqlite
+./test/modules/installChromedriver.sh
 
 
 # ----- mariadb -----
