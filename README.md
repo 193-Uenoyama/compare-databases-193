@@ -2,8 +2,8 @@
 
 ## start! this application
 ```
-source .env
 make init-prod
+source .env
 ```
 
 ## Technology
