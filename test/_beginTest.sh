@@ -1,6 +1,7 @@
 #!/bin/bash
 
 readonly SLEEP=30
+
 make db-create-sqlite
 ./test/modules/installChromedriver.sh
 chromedriver &
@@ -25,6 +26,5 @@ sleep $SLEEP
 make down
 
 
-driverJob=`echo jobs | grep chromedriver | sed -E 's/\[([0-9]*)\].*/\1/g'`
-kill %$driverJob
+rm -rf ./logs/*.log
 make db-delete

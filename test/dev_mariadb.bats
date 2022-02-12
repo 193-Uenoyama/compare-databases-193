@@ -3,7 +3,6 @@
 setup() {
   load ./test/modules/bats-assert/load.bash
   load ./test/modules/bats-support/load.bash
-  . ./test/modules/shellnium-scenario/getUser.sh
 }
 
 @test "start up mariadb" {
@@ -17,6 +16,7 @@ setup() {
 }
 
 @test "get user" {
+  . ./test/shellnium-scenario/getUser.sh
   main 
 }
 

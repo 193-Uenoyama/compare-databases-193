@@ -62,3 +62,4 @@ function waitStartUpForServer() {
   done
   echo $isDbStart $isServStart $isClientStart
 }
+
