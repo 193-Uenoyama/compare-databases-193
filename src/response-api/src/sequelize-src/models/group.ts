@@ -2,8 +2,8 @@ import {
   DataTypes,
   Model,
   Optional,
-  Sequelize,
 } from 'sequelize';
+import { sequelize } from '@/sequelize-src/defineSequelize'
 
 interface GroupAttributes {
   groupId: number;
@@ -13,33 +13,28 @@ interface GroupAttributes {
 
 interface GroupCreationAttributes extends Optional<GroupAttributes, "groupId"> {}
 
-module.exports = (sequelize: Sequelize) => {
-  class Group extends Model<GroupAttributes, GroupCreationAttributes> implements GroupAttributes {
-    declare groupId: number;
-    declare groupName: string;
-    declare groupIntroduction: string;
-  };
-
-  Group.init({
-    groupId: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    groupName: { 
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    groupIntroduction: { 
-      type: DataTypes.TEXT,
-    }
-  }, {
-    sequelize,
-    modelName: 'Groups',
-  });
-
-  // let GroupMembers = require('@/sequelize-src/models/groupmembers')(sequelize);
-  // Groups.hasMany(GroupMembers);
-
-  return Group;
+class Group extends Model<GroupAttributes, GroupCreationAttributes> implements GroupAttributes {
+  declare groupId: number;
+  declare groupName: string;
+  declare groupIntroduction: string;
 };
+
+Group.init({
+  groupId: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  groupName: { 
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  groupIntroduction: { 
+    type: DataTypes.TEXT,
+  }
+}, {
+  sequelize,
+  modelName: 'Groups',
+});
+
+export default Group;

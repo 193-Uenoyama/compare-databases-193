@@ -1,73 +1,95 @@
 import express from 'express'
-import db from '@/sequelize-src/models/index'
 import TimeKeeper from '@/express-src/modules/write_logs/TimeKeeper';
+import db from '@/sequelize-src/models/index'
+import { UserCommonAttributes, User } from '@/sequelize-src/models/user'
 
 export const userRouter: express.Router = express.Router();
 
-userRouter.get('/', function(req: express.Request, res: express.Response, next: express.NextFunction) {
+userRouter.get('/', async function(req: express.Request, res: express.Response, next: express.NextFunction) {
   let return_data: any = {};
   let time_keeper = new TimeKeeper();
 
-  create_users(1);
-  find_all_users(time_keeper)
-    .then((all_users: any) => {
-      res.status(200).json(all_users);
-      time_keeper.StoreNodeEnd_IfPossibleOutLog();
+  let firstName: string = Math.random().toString(32).substring(2);
+  let lastName: string = Math.random().toString(32).substring(2);
+  let email: string = Math.random().toString(32).substring(2);
+  db.Users.create({
+    firstName: firstName,
+    lastName: lastName,
+    email: email,
+  }, {});
+
+  await db.Users.findAll({})
+    .then((instances: any) => {
+      return_data = instances;
+      time_keeper.StoreDbEnd_IfPossibleOutLog();
     })
-    .catch((err) => {
-      // TODO ログがかけなかった問のエラーも拾って、2重にレスポンスを返そうとしてしまう
-      res.status(500).json({msg: err, mymsg: 'えらーだよ'});
-    });
-});
 
-userRouter.post('/create', function(req: express.Request, res: express.Response, next: express.NextFunction) {
-  res.status(200).json({msg: req.body.name});
-});
-userRouter.post('/read', function(req: express.Request, res: express.Response, next: express.NextFunction) {
-  res.status(200).json({msg: "read"});
-});
-userRouter.post('/update', function(req: express.Request, res: express.Response, next: express.NextFunction) {
-  res.status(200).json({msg: "update"});
-});
-userRouter.post('/delete', function(req: express.Request, res: express.Response, next: express.NextFunction) {
-  res.status(200).json({msg: "delete"});
+  res.status(200).json(return_data);
 });
 
 
 
-
-/**
- * insert a randomly named user into the user table in amount of "size" param
- * @param size number of inserts into users table
- */
-function create_users(size: number) {
-  for (let i = 0; i < size; i++) {
-    let firstName: string = Math.random().toString(32).substring(2);
-    let lastName: string = Math.random().toString(32).substring(2);
-    let email: string = Math.random().toString(32).substring(2);
-    db.Users.create({
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-    }, {});
-  }
-}
-
-/**
- *
- */
-// TODO why return promise?
-async function find_all_users(time_keeper: TimeKeeper) {
+// read Users table
+userRouter.get('/read', async function(req: express.Request, res: express.Response, next: express.NextFunction) {
   let all_users: any;
   await db.Users.findAll({})
     .then((instances: any) => {
       all_users = instances;
-      time_keeper.StoreDbEnd_IfPossibleOutLog();
     })
-    // TODO err の型調べる
-    .catch((err: any) => {
-      console.log(err);
-      throw new Error("エラーだよ。");
-    })
-  return all_users;
+  
+  res.status(200).json(all_users);
+});
+
+
+// create a User
+userRouter.post('/create', async function(req: express.Request, res: express.Response, next: express.NextFunction) {
+  db.Users.create({
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    email: req.body.email,
+    introduction: req.body.introduction,
+  }, {}).catch((err: Error) => {
+    return new Error("fail create user" + req.body.firstName);
+  })
+  res.status(200).json({msg: "create!"});
+});
+
+
+// update User
+userRouter.post('/update', function(req: express.Request, res: express.Response, next: express.NextFunction) {
+  let user_common_request_data: UserCommonAttributes = {
+    firstName: req.body.firstName || undefined,
+    lastName: req.body.lastName || undefined,
+    email: req.body.email || undefined,
+    introduction: req.body.introduction || undefined,
+  }
+  let update_data: UserCommonAttributes = cutUndefinedOutOfAnArgument(user_common_request_data);
+
+  db.Users.update({
+    update_data
+  },{
+    where: {
+      userId: req.body.userId,
+    }
+  }).then(() => {
+    res.status(200).json({msg: "update"});
+  }).catch((err: Error) => {
+    new Error("fail update")
+  })
+});
+
+
+// delete user
+userRouter.post('/delete', function(req: express.Request, res: express.Response, next: express.NextFunction) {
+  res.status(200).json({msg: "delete"});
+});
+
+function cutUndefinedOutOfAnArgument<T>(argument: T): T {
+  for(const key in argument) {
+    if(argument[key] === undefined) {
+      delete argument[key];
+    }
+  }
+  return argument;
 }
+

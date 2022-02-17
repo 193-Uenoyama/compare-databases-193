@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { app } from '@/express-src/app'
+import app from '@/express-src/app'
 
 describe("Test the root path", () => {
   test("It should response the GET method", done => {
@@ -8,7 +8,7 @@ describe("Test the root path", () => {
       .then(response => {
         expect(response.statusCode).toBe(200);
         done();
-      })
+      });
   });
 });
 

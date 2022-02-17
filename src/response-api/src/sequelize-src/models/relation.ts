@@ -2,8 +2,8 @@ import {
   DataTypes,
   Model,
   Optional,
-  Sequelize,
 } from 'sequelize';
+import { sequelize } from '@/sequelize-src/defineSequelize'
 
 interface RelationAttributes {
   followedUserId: number;
@@ -12,38 +12,32 @@ interface RelationAttributes {
 
 interface RelationCreationAttributes extends Optional<RelationAttributes, "followingUserId"> {}
 
-module.exports = (sequelize: Sequelize) => {
-
-  class Relation extends Model<RelationAttributes, RelationCreationAttributes> implements RelationAttributes {
-    declare followedUserId: number;
-    declare followingUserId: number;
-  };
-
-  Relation.init({
-    followedUserId: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      references: {
-        model: "Users",
-        key: "userId",
-      }
-    },
-    followingUserId: { 
-      type: DataTypes.INTEGER ,
-      primaryKey: true,
-      references: {
-        model: "Users",
-        key: "userId",
-      }
-    },
-  }, {
-    sequelize,
-    modelName: 'Relations',
-    updatedAt: false,
-  });
-
-  // let User = require('@/sequelize-src/models/user')(sequelize);
-  // Relations.hasMany(User);
-
-  return Relation;
+class Relation extends Model<RelationAttributes, RelationCreationAttributes> implements RelationAttributes {
+  declare followedUserId: number;
+  declare followingUserId: number;
 };
+
+Relation.init({
+  followedUserId: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    references: {
+      model: "Users",
+      key: "userId",
+    }
+  },
+  followingUserId: { 
+    type: DataTypes.INTEGER ,
+    primaryKey: true,
+    references: {
+      model: "Users",
+      key: "userId",
+    }
+  },
+}, {
+  sequelize,
+  modelName: 'Relations',
+  updatedAt: false,
+});
+
+export default Relation;

@@ -2,10 +2,18 @@ import {
   DataTypes,
   Model,
   Optional,
-  Sequelize,
 } from 'sequelize';
+import { sequelize } from '@/sequelize-src/defineSequelize'
 
-interface UserAttributes {
+export interface UserCommonAttributes {
+  userId?: number | undefined;
+  firstName?: string | undefined;
+  lastName?: string | undefined;
+  email?: string | undefined;
+  introduction?: string | null | undefined;
+}
+
+export interface UserAttributes extends UserCommonAttributes {
   userId: number;
   firstName: string;
   lastName: string;
@@ -15,51 +23,42 @@ interface UserAttributes {
 
 interface UserCreationAttributes extends Optional<UserAttributes, "userId"> {}
 
-module.exports = (sequelize: Sequelize) => {
 
-  class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
-    declare userId: number;
-    declare firstName: string;
-    declare lastName: string;
-    declare email: string;
-    declare introduction: string | null;
+export class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
+  declare userId: number;
+  declare firstName: string;
+  declare lastName: string;
+  declare email: string;
+  declare introduction: string | null;
 
-    declare readonly createdAt: Date;
-    declare readonly updatedAt: Date;
-  };
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
+};
 
-  User.init({
-    userId: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    firstName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    lastName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    }, 
-    email: { 
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    introduction: {
-      type: DataTypes.STRING,
-    }
-  }, {
-    sequelize,
-    modelName: 'Users',
-  });
-
-  // let GroupMembers = require('@/sequelize-src/models/groupmembers')(sequelize);
-  // let Relations = require('@/sequelize-src/models/relations')(sequelize);
-  // User.belongsToMany(GroupMembers, {through: "GroupMembers"});
-  // User.belongsToMany(Relations, {through: "Relations"});
-
-  return User;
-}
+User.init({
+  userId: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
+  firstName: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  lastName: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  }, 
+  email: { 
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  introduction: {
+    type: DataTypes.STRING,
+  }
+}, {
+  sequelize,
+  modelName: 'Users',
+});
 

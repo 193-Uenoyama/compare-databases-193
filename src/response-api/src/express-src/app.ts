@@ -5,7 +5,7 @@ import { groupRouter } from '@/express-src/routes/group';
 import { groupMemberRouter } from '@/express-src/routes/group-member';
 import { relationRouter } from '@/express-src/routes/relation';
 
-export const app: express.Express = express();
+const app: express.Express = express();
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -38,3 +38,4 @@ app.use((err: express.ErrorRequestHandler, req: express.Request, res: express.Re
   res.json({msg: message});
 });
 
+export default app
