@@ -27,6 +27,20 @@ module.exports = {
       email: 'aaa@abb.jp',
       createdAt: now,
       updatedAt: now,
+    },
+    {
+      firstName: 'ccc',
+      lastName: 'ddd',
+      email: 'ccc@cdd.jp',
+      createdAt: now,
+      updatedAt: now,
+    },
+    {
+      firstName: 'yamada',
+      lastName: 'keizou',
+      email: 'k.yamada@www.co.jp',
+      createdAt: now,
+      updatedAt: now,
     }]);
   },
 

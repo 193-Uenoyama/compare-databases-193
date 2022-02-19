@@ -5,7 +5,12 @@ import {
 } from 'sequelize';
 import { sequelize } from '@/sequelize-src/defineSequelize'
 
-interface GroupAttributes {
+export interface GroupCommonAttributes {
+  groupName?: string;
+  groupIntroduction?: string;
+}
+
+export interface GroupAttributes {
   groupId: number;
   groupName: string;
   groupIntroduction: string;
@@ -13,7 +18,7 @@ interface GroupAttributes {
 
 interface GroupCreationAttributes extends Optional<GroupAttributes, "groupId"> {}
 
-class Group extends Model<GroupAttributes, GroupCreationAttributes> implements GroupAttributes {
+export class Group extends Model<GroupAttributes, GroupCreationAttributes> implements GroupAttributes {
   declare groupId: number;
   declare groupName: string;
   declare groupIntroduction: string;
@@ -37,4 +42,3 @@ Group.init({
   modelName: 'Groups',
 });
 
-export default Group;

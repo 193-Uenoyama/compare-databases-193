@@ -40,9 +40,11 @@ module.exports = {
             ]);
         });
     },
-    down(queryInterface, Sequelize) {
+    down() {
         return __awaiter(this, void 0, void 0, function* () {
-            return queryInterface.bulkDelete('GroupMembers', {}, {});
+            yield index_1.default.GroupMembers.destroy({
+                truncate: true
+            });
         });
     }
 };

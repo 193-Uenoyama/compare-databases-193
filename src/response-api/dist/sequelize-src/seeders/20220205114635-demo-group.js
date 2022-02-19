@@ -8,7 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const index_1 = __importDefault(require("../../sequelize-src/models/index"));
 module.exports = {
     up(queryInterface, Sequelize) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -21,9 +25,11 @@ module.exports = {
                 }]);
         });
     },
-    down(queryInterface, Sequelize) {
+    down() {
         return __awaiter(this, void 0, void 0, function* () {
-            return queryInterface.bulkDelete('Groups', {}, {});
+            yield index_1.default.Groups.destroy({
+                truncate: { cascade: true }
+            });
         });
     }
 };

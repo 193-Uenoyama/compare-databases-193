@@ -8,7 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const index_1 = __importDefault(require("../../sequelize-src/models/index"));
 module.exports = {
     up: (queryInterface, Sequelize) => __awaiter(void 0, void 0, void 0, function* () {
         let now = new Date();
@@ -32,9 +36,27 @@ module.exports = {
                 email: 'aaa@abb.jp',
                 createdAt: now,
                 updatedAt: now,
+            },
+            {
+                firstName: 'ccc',
+                lastName: 'ddd',
+                email: 'ccc@cdd.jp',
+                createdAt: now,
+                updatedAt: now,
+            },
+            {
+                firstName: 'yamada',
+                lastName: 'keizou',
+                email: 'k.yamada@www.co.jp',
+                createdAt: now,
+                updatedAt: now,
             }]);
     }),
-    down: (queryInterface, Sequelize) => __awaiter(void 0, void 0, void 0, function* () {
-        return queryInterface.bulkDelete('Users', {}, {});
-    })
+    down() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield index_1.default.Users.destroy({
+                truncate: { cascade: true }
+            });
+        });
+    }
 };

@@ -6,12 +6,9 @@ import {
 import TimeKeeper from '@/express-src/modules/write_logs/TimeKeeper';
 import db from '@/sequelize-src/models/index'
 import { excludedPersonalInfomationUserAttributes, UserCommonAttributes, User } from '@/sequelize-src/models/user'
+import { reqMsg, cutUndefinedOutOfAnArgument } from '@/express-src/routes/_modules'
 
 export const userRouter: Router = Router();
-interface reqMsg {
-  message: string,
-  isConnectDatabase: boolean,
-}
 
 userRouter.get('/', async function(req: Request, res: Response, next: NextFunction) {
   let return_data: any = {};
@@ -47,7 +44,7 @@ interface reqUserRead extends reqMsg {
 }
 userRouter.get('/read', async function(req: Request, res: Response< reqUserRead | reqMsg >, next: NextFunction) {
   let time_keeper = new TimeKeeper();
-  let all_users: User[] = await db.Users.findAll({})
+  let readed_users: User[] = await db.Users.findAll({})
     .catch((err: Error) => {
       console.log(err);
       res.status(500).json({
@@ -57,7 +54,7 @@ userRouter.get('/read', async function(req: Request, res: Response< reqUserRead 
     });
 
   res.status(200).json({ 
-    users: all_users,
+    users: readed_users,
     message: "success connect database",
     isConnectDatabase: true 
   })
@@ -108,7 +105,7 @@ userRouter.post('/update', async function(req: Request, res: Response< reqUserUp
 
   console.log(update_data);
   // 更新
-  let aa = await db.Users.update( update_data ,{
+  await db.Users.update( update_data ,{
     where: {
       userId: req.body.userId,
     }
@@ -119,7 +116,6 @@ userRouter.post('/update', async function(req: Request, res: Response< reqUserUp
       isConnectDatabase: false,
     });
   })
-  console.log(aa);
 
 
   // 更新されたユーザを取得
@@ -182,12 +178,4 @@ userRouter.post('/delete', async function(req: Request, res: Response< reqUserDe
   });
 });
 
-function cutUndefinedOutOfAnArgument<T>(argument: T): T {
-  for(const key in argument) {
-    if(argument[key] === undefined) {
-      delete argument[key];
-    }
-  }
-  return argument;
-}
 

@@ -1,6 +1,7 @@
 import request from 'supertest';
 import app from '@/express-src/app';
 import { UserCommonAttributes, User } from '@/sequelize-src/models/user';
+import { Group } from '@/sequelize-src/models/group';
 import db from '@/sequelize-src/models/index';
 
 const userSeed = require('@/sequelize-src/seeders/20220103140603-demo-user');
@@ -28,72 +29,70 @@ const relationSeed = require('@/sequelize-src/seeders/20220205114654-demo-relati
 //   }
 // });
 
-describe("Usersテーブルを操作するテスト", () =>{
+describe("Groupsテーブルを操作するテスト", () =>{
 
-  it("Userを読み込むテスト", async function() {
+  it("Groupを読み込むテスト", async function() {
     request(app)
-      .get("/user/read")
+      .get("/group/read")
       .then(response => {
         expect(response.statusCode).toBe(200);
-        let test_target_user: User = response.body.users.find(( item: User ) => {
-          return item.firstName == 'John';
+        let test_target_group: Group = response.body.groups.find(( item: Group ) => {
+          return item.groupName == 'kitamura\'s';
         });
-        expect(test_target_user.lastName).toBe('Doe');
+        expect(test_target_group.groupIntroduction).toBe('we love oyatsu');
       });
   });
 
-  it("Userに新しいデータを挿入するテスト", async function() {
+  it("Groupに新しいデータを挿入するテスト", async function() {
     await request(app)
-      .post("/user/create")
+      .post("/group/create")
       .send({
-        firstName: "happy",
-        lastName: "boy",
-        email: "happy@ha.ppy",
-        introduction: "Hello! I am happy!" })
-      .set('Accept', 'application/json')
-      .then(response => {
-        expect(response.statusCode).toBe(200);
-        expect(response.body.message).toMatch(/.*success!.*/)
-        expect(response.body.createdUser.lastName).toBe("boy");
-      });
-  });
-
-  it("Userを更新するテスト", async function() {
-    let delection_user: User = await db.Users.findOne({
-      where: {
-        firstName: "happy"
-      }
-    });
-    await request(app)
-      .post("/user/update")
-      .send({
-        userId: delection_user.userId,
-        lastName: 'girl'
+        groupName: 'new! team',
       })
       .set('Accept', 'application/json')
       .then(response => {
         expect(response.statusCode).toBe(200);
         expect(response.body.message).toMatch(/.*success!.*/)
-        expect(response.body.updatedUser.lastName).toBe('girl');
+        expect(response.body.createdGroup.groupName).toBe("new! team");
+      });
+  });
+
+  it("Groupを更新するテスト", async function() {
+    let test_target_group: Group = await db.Groups.findOne({
+      where: {
+        groupName: 'new! team',
+      }
+    });
+    await request(app)
+      .post("/group/update")
+      .send({
+        groupId: test_target_group.groupId,
+        groupIntroduction: 'We are team!'
+      })
+      .set('Accept', 'application/json')
+      .then(response => {
+        expect(response.statusCode).toBe(200);
+        expect(response.body.message).toMatch(/.*success!.*/)
+        expect(response.body.updatedGroup.groupIntroduction).toBe('We are team!');
       });
   })
 
-  it("Userを削除するテスト", async function() {
-    let delection_user: User = await db.Users.findOne({
+  it("Groupを削除するテスト", async function() {
+    let test_target_group: Group = await db.Groups.findOne({
       where: {
-        firstName: "happy",
+        groupName: 'new! team',
       }
     });
     await request(app)
-      .post("/user/delete")
+      .post("/group/delete")
       .send({
-        userId: delection_user.userId
+        groupId: test_target_group.groupId
       })
       .set('Accept', 'application/json')
       .then(response => {
         expect(response.statusCode).toBe(200);
         expect(response.body.message).toMatch(/.*success!.*/)
-        expect(response.body.deletedUser.userId).toBe(delection_user.userId);
+        expect(response.body.deletedGroup.groupId).toBe(test_target_group.groupId);
       });
   })
 })

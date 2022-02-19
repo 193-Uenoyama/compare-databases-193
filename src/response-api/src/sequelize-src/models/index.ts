@@ -3,7 +3,7 @@ import path from 'path';
 import { Sequelize } from 'sequelize';
 
 import { User } from '@/sequelize-src/models/user'
-import Group from '@/sequelize-src/models/group'
+import { Group } from '@/sequelize-src/models/group'
 import GroupMember from '@/sequelize-src/models/groupmember'
 import Relation from '@/sequelize-src/models/relation'
 import { sequelize } from '@/sequelize-src/defineSequelize'
