@@ -2,6 +2,7 @@ import {
   QueryInterface,
   Sequelize,
 } from 'sequelize'
+import db from '@/sequelize-src/models/index'
 
 module.exports = {
   up: async (queryInterface: QueryInterface, Sequelize: Sequelize) => {
@@ -29,7 +30,9 @@ module.exports = {
     }]);
   },
 
-  down: async (queryInterface: QueryInterface, Sequelize: Sequelize) => {
-    return queryInterface.bulkDelete('Users', {}, {});
+  async down () {
+    await db.Users.destroy({
+      truncate: { cascade: true }
+    });
   }
 };

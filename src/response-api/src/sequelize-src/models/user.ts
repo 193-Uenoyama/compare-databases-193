@@ -5,12 +5,19 @@ import {
 } from 'sequelize';
 import { sequelize } from '@/sequelize-src/defineSequelize'
 
+export interface excludedPersonalInfomationUserAttributes {
+  userId: number;
+  firstName: string;
+  lastName: string;
+  introduction: string | null;
+}
+
 export interface UserCommonAttributes {
-  userId?: number | undefined;
-  firstName?: string | undefined;
-  lastName?: string | undefined;
-  email?: string | undefined;
-  introduction?: string | null | undefined;
+  userId?: number;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  introduction?: string | null;
 }
 
 export interface UserAttributes extends UserCommonAttributes {

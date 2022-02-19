@@ -30,7 +30,9 @@ module.exports = {
     ]);
   },
 
-  async down (queryInterface: QueryInterface, Sequelize: Sequelize) {
-    return queryInterface.bulkDelete('GroupMembers', {}, {});
+  async down () {
+    await db.GroupMembers.destroy({
+      truncate: true
+    })
   }
 };

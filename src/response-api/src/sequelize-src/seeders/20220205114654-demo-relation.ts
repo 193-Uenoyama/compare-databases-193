@@ -22,7 +22,9 @@ module.exports = {
       }]);
   },
 
-  async down (queryInterface: QueryInterface, Sequelize: Sequelize) {
-    return queryInterface.bulkDelete('Relations', {}, {});
+  async down () {
+    await db.Relations.destroy({
+      truncate: true
+    })
   }
 };

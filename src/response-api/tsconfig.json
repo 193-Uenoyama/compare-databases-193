@@ -104,6 +104,7 @@
   },
   "include": [
     "src/express-src",
-    "src/sequelize-src"
+    "src/sequelize-src",
+    "src/jest-src"
   ]
 }

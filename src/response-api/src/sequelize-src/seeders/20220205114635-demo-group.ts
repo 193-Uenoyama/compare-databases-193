@@ -2,6 +2,7 @@ import {
   QueryInterface,
   Sequelize,
 } from 'sequelize'
+import db from '@/sequelize-src/models/index'
 
 module.exports = {
   async up (queryInterface: QueryInterface, Sequelize: Sequelize) {
@@ -14,7 +15,9 @@ module.exports = {
       }]);
   },
 
-  async down (queryInterface: QueryInterface, Sequelize: Sequelize) {
-    return queryInterface.bulkDelete('Groups', {}, {});
+  async down () {
+    await db.Groups.destroy({
+      truncate: { cascade: true }
+    })
   }
 };

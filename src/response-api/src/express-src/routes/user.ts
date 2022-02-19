@@ -1,87 +1,185 @@
-import express from 'express'
+import { 
+  Request, 
+  Response, 
+  NextFunction, 
+  Router } from 'express'
 import TimeKeeper from '@/express-src/modules/write_logs/TimeKeeper';
 import db from '@/sequelize-src/models/index'
-import { UserCommonAttributes, User } from '@/sequelize-src/models/user'
+import { excludedPersonalInfomationUserAttributes, UserCommonAttributes, User } from '@/sequelize-src/models/user'
 
-export const userRouter: express.Router = express.Router();
+export const userRouter: Router = Router();
+interface reqMsg {
+  message: string,
+  isConnectDatabase: boolean,
+}
 
-userRouter.get('/', async function(req: express.Request, res: express.Response, next: express.NextFunction) {
+userRouter.get('/', async function(req: Request, res: Response, next: NextFunction) {
   let return_data: any = {};
   let time_keeper = new TimeKeeper();
 
   let firstName: string = Math.random().toString(32).substring(2);
   let lastName: string = Math.random().toString(32).substring(2);
   let email: string = Math.random().toString(32).substring(2);
-  db.Users.create({
+  await db.Users.create({
     firstName: firstName,
     lastName: lastName,
     email: email,
-  }, {});
+  }, {}).catch((err: Error) => {
+      res.status(500).json({msg: err});
+  });
 
-  await db.Users.findAll({})
-    .then((instances: any) => {
-      return_data = instances;
-      time_keeper.StoreDbEnd_IfPossibleOutLog();
-    })
+  return_data = await db.Users.findAll({
+    where: {
+      userId: 82, 
+    }
+  })  
+  .catch((err: Error) => {
+    res.status(500).json({msg: err});
+  })
 
   res.status(200).json(return_data);
 });
 
 
-
 // read Users table
-userRouter.get('/read', async function(req: express.Request, res: express.Response, next: express.NextFunction) {
-  let all_users: any;
-  await db.Users.findAll({})
-    .then((instances: any) => {
-      all_users = instances;
-    })
+interface reqUserRead extends reqMsg {
+  users: Array< excludedPersonalInfomationUserAttributes >
+}
+userRouter.get('/read', async function(req: Request, res: Response< reqUserRead | reqMsg >, next: NextFunction) {
+  let time_keeper = new TimeKeeper();
+  let all_users: User[] = await db.Users.findAll({})
+    .catch((err: Error) => {
+      console.log(err);
+      res.status(500).json({
+        message: "sorry... fail connect to database.",
+        isConnectDatabase: false
+      });
+    });
+
+  res.status(200).json({ 
+    users: all_users,
+    message: "success connect database",
+    isConnectDatabase: true 
+  })
   
-  res.status(200).json(all_users);
 });
 
 
 // create a User
-userRouter.post('/create', async function(req: express.Request, res: express.Response, next: express.NextFunction) {
-  db.Users.create({
+interface reqUserRead extends reqMsg {
+  createdUser: excludedPersonalInfomationUserAttributes
+}
+userRouter.post('/create', async function(req: Request, res: Response< reqUserRead | reqMsg >, next: NextFunction) {
+  let created_user = await db.Users.create({
     firstName: req.body.firstName,
     lastName: req.body.lastName,
     email: req.body.email,
     introduction: req.body.introduction,
   }, {}).catch((err: Error) => {
-    return new Error("fail create user" + req.body.firstName);
+    console.log(err);
+    res.status(500).json({
+      message: "sorry... fail connect to database.",
+      isConnectDatabase: false
+    });
   })
-  res.status(200).json({msg: "create!"});
+
+  res.status(200).json({
+    createdUser: created_user,
+    message: "success! create " + created_user.firstName + " " + created_user.lastName,
+    isConnectDatabase: true,
+  });
 });
 
 
-// update User
-userRouter.post('/update', function(req: express.Request, res: express.Response, next: express.NextFunction) {
-  let user_common_request_data: UserCommonAttributes = {
+// update a User
+interface reqUserUpdate extends reqMsg {
+  updatedUser: excludedPersonalInfomationUserAttributes
+}
+userRouter.post('/update', async function(req: Request, res: Response< reqUserUpdate | reqMsg >, next: NextFunction) {
+  // 送られてきたデータを格納。
+  let user_request_data: UserCommonAttributes = {
     firstName: req.body.firstName || undefined,
     lastName: req.body.lastName || undefined,
     email: req.body.email || undefined,
     introduction: req.body.introduction || undefined,
   }
-  let update_data: UserCommonAttributes = cutUndefinedOutOfAnArgument(user_common_request_data);
+  // undefinedのデータを削除
+  let update_data: UserCommonAttributes = cutUndefinedOutOfAnArgument(user_request_data);
 
-  db.Users.update({
-    update_data
-  },{
+  console.log(update_data);
+  // 更新
+  let aa = await db.Users.update( update_data ,{
     where: {
       userId: req.body.userId,
     }
-  }).then(() => {
-    res.status(200).json({msg: "update"});
   }).catch((err: Error) => {
-    new Error("fail update")
+    console.log(err);
+    res.status(500).json({
+      message: "sorry... fail connect to database.",
+      isConnectDatabase: false,
+    });
   })
+  console.log(aa);
+
+
+  // 更新されたユーザを取得
+  let updated_user: User = await db.Users.findOne({
+    where: {
+      UserId: req.body.userId
+    }
+  }).catch((err: Error) => {
+    console.log(err);
+    res.status(500).json({
+      message: "sorry... fail connect to database.",
+      isConnectDatabase: false,
+    });
+  })
+
+  res.status(200).json({
+    updatedUser: updated_user,
+    message: "success! update " + updated_user.firstName + " " + updated_user.lastName,
+    isConnectDatabase: true,
+  })
+
 });
 
 
 // delete user
-userRouter.post('/delete', function(req: express.Request, res: express.Response, next: express.NextFunction) {
-  res.status(200).json({msg: "delete"});
+interface reqUserDelete extends reqMsg {
+  deletedUser: excludedPersonalInfomationUserAttributes
+}
+userRouter.post('/delete', async function(req: Request, res: Response< reqUserDelete | reqMsg >, next: NextFunction) {
+  let deletion_user: User = await db.Users.findOne({
+    where: {
+      UserId: req.body.userId
+    }
+  }).catch((err: Error) => {
+    console.log(err);
+    res.status(500).json({
+      message: "sorry... fail connect to database.",
+      isConnectDatabase: false,
+    });
+    return;
+  })
+
+  await db.Users.destroy({
+    where: {
+      UserId: req.body.userId
+    }
+  }).catch((err: Error) => {
+    console.log(err);
+    res.status(500).json({
+      message: "sorry... fail connect to database.",
+      isConnectDatabase: false,
+    });
+    return;
+  })
+  
+  res.status(200).json({
+    deletedUser: deletion_user,
+    message: "success! deleted " + deletion_user.firstName + " " + deletion_user.lastName,
+    isConnectDatabase: true,
+  });
 });
 
 function cutUndefinedOutOfAnArgument<T>(argument: T): T {
