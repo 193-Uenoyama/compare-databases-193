@@ -8,7 +8,6 @@ make init-prod
 source .env
 ```
 
----
 ## Logs format
 
 ### Log file name
@@ -16,21 +15,27 @@ source .env
 
 ### Log file format
 ```
-yyyy-mm-ddThh:mm:dd,database_processing_time(ns),nodejs_processing_time(ns)
-yyyy-mm-ddThh:mm:dd,database_processing_time(ns),nodejs_processing_time(ns)
-yyyy-mm-ddThh:mm:dd,database_processing_time(ns),nodejs_processing_time(ns)
+{ RequestID },{ Node | DB },{ CRUD },{ Table },{ Time },{ database_processing_time(ns) } <-DB
+{ RequestID },{ Node | DB },{ CRUD },{ Table },{ Time },{ database_processing_time(ns) }
+{ RequestID },{ Node | DB },{ CRUD },{ Table },{ Time },{ database_processing_time(ns) }
+{ RequestID },{ Node | DB },{ Time },{ nodejs_processing_time(ns) }  <-Node
+{ RequestID },{ Node | DB },{ CRUD },{ Table },{ Time },{ database_processing_time(ns) } <-DB
+{ RequestID },{ Node | DB },{ CRUD },{ Table },{ Time },{ database_processing_time(ns) }
+{ RequestID },{ Node | DB },{ Time },{ nodejs_processing_time(ns) }  <-Node
 ...
 ```
 example
 ```
-2022-01-03T08:31:32,340978890,499928023
-2022-02-11T23:25:47,96349186,101443756
-2022-02-11T23:25:47,113210153,117685721
+2h5tav91mo1,DB,Update,Users,Node,2022-01-03T08:31:33,96349186   <-request start
+2h5tav91mo1,DB,Read,Users,Node,2022-01-03T08:31:33,100879878
+2h5tav91mo1,Node,2022-01-03T08:31:32,101443756                  <-request end
+2h8m6oo66ulg,DB,Read,Users,Node,2022-01-03T08:32:22,100879878   <-request start
+2h8m6oo66ulg,DB,Delete,Users,Node,2022-01-03T08:31:22,95989782
+2h8m6oo66ulg,Node,2022-01-03T08:32:21,98736907                  <-request end
 ...
 ```
 
 
----
 ## Used technology
 
 Language
@@ -54,7 +59,6 @@ Infrastructure
   - Docker-Compose
 
 
----
 
 ## TODO
   - fix timezone to Asia/Tokyo createdAt, updatedAt

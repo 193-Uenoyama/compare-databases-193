@@ -2,7 +2,7 @@ import fs from 'fs';
 import { hrTime, ConvertToMsFromNs } from '@/express-src/modules/write_logs/_modules';
 
 export default class WriteProcessingTimeLog {
-  readonly WRITTEN_FILE_DIRECTORY: string = process.env.LOG_PATH || "/home/logs/";
+  readonly WRITTEN_FILE_DIRECTORY: string = process.env.LOG_PATH || "/home/logs/new/";
   readonly WRITTEN_FILE_NAME: string = process.env.DATABASE_SYSTEM + ".log";
   readonly WRITTEN_FILE_PATH: string = this.WRITTEN_FILE_DIRECTORY + this.WRITTEN_FILE_NAME;
 
