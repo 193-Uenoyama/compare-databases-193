@@ -12,6 +12,10 @@ module.exports = {
         groupIntroduction: 'we love oyatsu',
         createdAt: now,
         updatedAt: now,
+      },{
+        groupName: 'A project team',
+        createdAt: now,
+        updatedAt: now,
       }]);
   },
 

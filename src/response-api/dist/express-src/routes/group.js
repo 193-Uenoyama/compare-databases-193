@@ -17,35 +17,6 @@ const express_1 = require("express");
 const index_1 = __importDefault(require("../../sequelize-src/models/index"));
 const _modules_1 = require("../../express-src/routes/_modules");
 exports.groupRouter = (0, express_1.Router)();
-exports.groupRouter.get('/', function (req, res, next) {
-    // let return_data: any = {};
-    // let time_keeper = new TimeKeeper();
-    let groupName = Math.random().toString(32).substring(2);
-    let groupIntroduction = Math.random().toString(32).substring(2);
-    index_1.default.Groups.create({
-        groupName: groupName,
-        groupIntroduction: groupIntroduction,
-    }, {});
-    res.status(200).json({ msg: "foo" });
-});
-exports.groupRouter.get('/read', function (req, res, next) {
-    return __awaiter(this, void 0, void 0, function* () {
-        let readed_groups = yield index_1.default.Groups.findAll({})
-            .catch((err) => {
-            console.log(err);
-            res.status(500).json({
-                message: "sorry... fail connect to database.",
-                isConnectDatabase: false
-            });
-            return;
-        });
-        res.status(200).json({
-            groups: readed_groups,
-            message: "success connect database",
-            isConnectDatabase: true
-        });
-    });
-});
 exports.groupRouter.post('/create', function (req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         let group_request_data = {
@@ -60,12 +31,28 @@ exports.groupRouter.post('/create', function (req, res, next) {
                 message: "sorry... fail connect to database.",
                 isConnectDatabase: false
             });
-            return;
         });
         res.status(200).json({
             createdGroup: created_group,
             message: "success! create " + created_group.groupName,
             isConnectDatabase: true,
+        });
+    });
+});
+exports.groupRouter.get('/read', function (req, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let readed_groups = yield index_1.default.Groups.findAll({})
+            .catch((err) => {
+            console.log(err);
+            res.status(500).json({
+                message: "sorry... fail connect to database.",
+                isConnectDatabase: false
+            });
+        });
+        res.status(200).json({
+            groups: readed_groups,
+            message: "success connect database",
+            isConnectDatabase: true
         });
     });
 });
@@ -89,7 +76,6 @@ exports.groupRouter.post('/update', function (req, res, next) {
                 message: "sorry... fail connect to database.",
                 isConnectDatabase: false,
             });
-            return;
         });
         // 更新されたユーザを取得
         let updated_group = yield index_1.default.Groups.findOne({
@@ -102,7 +88,6 @@ exports.groupRouter.post('/update', function (req, res, next) {
                 message: "sorry... fail connect to database.",
                 isConnectDatabase: false,
             });
-            return;
         });
         res.status(200).json({
             updatedGroup: updated_group,
@@ -119,26 +104,24 @@ exports.groupRouter.post('/delete', function (req, res, next) {
             }
         }).catch((err) => {
             console.log(err);
-            res.status(500).json({
+            res.status(501).json({
                 message: "sorry... fail connect to database.",
                 isConnectDatabase: false,
             });
-            return;
         });
-        yield index_1.default.Group.destroy({
+        yield index_1.default.Groups.destroy({
             where: {
                 groupId: req.body.groupId
             }
         }).catch((err) => {
             console.log(err);
-            res.status(500).json({
+            res.status(502).json({
                 message: "sorry... fail connect to database.",
                 isConnectDatabase: false,
             });
-            return;
         });
         res.status(200).json({
-            deletedUser: deletion_group,
+            deletedGroup: deletion_group,
             message: "success! deleted " + deletion_group.groupName,
             isConnectDatabase: true,
         });

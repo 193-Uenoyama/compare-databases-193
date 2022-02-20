@@ -82,7 +82,7 @@ serv-seed-undo-all:
 	docker exec compare-databases-193_node-server sequelize-cli db:seed:undo:all
 
 serv-test:
-	docker exec compare-databases-193_node-server jest
+	docker exec compare-databases-193_node-server jest index.test
 
 
 client-install:

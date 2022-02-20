@@ -4,44 +4,7 @@ import { UserCommonAttributes, User } from '@/sequelize-src/models/user';
 import { Group } from '@/sequelize-src/models/group';
 import db from '@/sequelize-src/models/index';
 
-const userSeed = require('@/sequelize-src/seeders/20220103140603-demo-user');
-const groupSeed = require('@/sequelize-src/seeders/20220205114635-demo-group');
-const groupMemberSeed = require('@/sequelize-src/seeders/20220205114644-demo-group-member');
-const relationSeed = require('@/sequelize-src/seeders/20220205114654-demo-relation');
-
-// // seeding
-// beforeAll(() => {
-//   return async function() {
-//     await userSeed.up(db.sequelize.getQueryInterface(), db.sequelize);
-//     await groupSeed.up(db.sequelize.getQueryInterface(), db.sequelize);
-//     await groupMemberSeed.up(db.sequelize.getQueryInterface(), db.sequelize);
-//     await relationSeed.up(db.sequelize.getQueryInterface(), db.sequelize);
-//   }
-// });
-
-// // delete data
-// afterAll(() => {
-//   return async function() {
-//     await relationSeed.down();
-//     await groupMemberSeed.down();
-//     await groupSeed.down();
-//     await userSeed.down();
-//   }
-// });
-
-describe("Groupsテーブルを操作するテスト", () =>{
-
-  it("Groupを読み込むテスト", async function() {
-    request(app)
-      .get("/group/read")
-      .then(response => {
-        expect(response.statusCode).toBe(200);
-        let test_target_group: Group = response.body.groups.find(( item: Group ) => {
-          return item.groupName == 'kitamura\'s';
-        });
-        expect(test_target_group.groupIntroduction).toBe('we love oyatsu');
-      });
-  });
+export default describe("Groupsテーブルを操作するテスト", () =>{
 
   it("Groupに新しいデータを挿入するテスト", async function() {
     await request(app)
@@ -54,6 +17,18 @@ describe("Groupsテーブルを操作するテスト", () =>{
         expect(response.statusCode).toBe(200);
         expect(response.body.message).toMatch(/.*success!.*/)
         expect(response.body.createdGroup.groupName).toBe("new! team");
+      });
+  });
+
+  it("Groupを読み込むテスト", async function() {
+    await request(app)
+      .get("/group/read")
+      .then(response => {
+        expect(response.statusCode).toBe(200);
+        let test_target_group: Group = response.body.groups.find(( item: Group ) => {
+          return item.groupName == 'new! team';
+        });
+        expect(test_target_group.groupIntroduction).toBe(null);
       });
   });
 

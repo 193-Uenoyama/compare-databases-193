@@ -3,44 +3,7 @@ import app from '@/express-src/app';
 import { UserCommonAttributes, User } from '@/sequelize-src/models/user';
 import db from '@/sequelize-src/models/index';
 
-const userSeed = require('@/sequelize-src/seeders/20220103140603-demo-user');
-const groupSeed = require('@/sequelize-src/seeders/20220205114635-demo-group');
-const groupMemberSeed = require('@/sequelize-src/seeders/20220205114644-demo-group-member');
-const relationSeed = require('@/sequelize-src/seeders/20220205114654-demo-relation');
-
-// // seeding
-// beforeAll(() => {
-//   return async function() {
-//     await userSeed.up(db.sequelize.getQueryInterface(), db.sequelize);
-//     await groupSeed.up(db.sequelize.getQueryInterface(), db.sequelize);
-//     await groupMemberSeed.up(db.sequelize.getQueryInterface(), db.sequelize);
-//     await relationSeed.up(db.sequelize.getQueryInterface(), db.sequelize);
-//   }
-// });
-
-// // delete data
-// afterAll(() => {
-//   return async function() {
-//     await relationSeed.down();
-//     await groupMemberSeed.down();
-//     await groupSeed.down();
-//     await userSeed.down();
-//   }
-// });
-
-describe("Usersテーブルを操作するテスト", () =>{
-
-  it("Userを読み込むテスト", async function() {
-    request(app)
-      .get("/user/read")
-      .then(response => {
-        expect(response.statusCode).toBe(200);
-        let test_target_user: User = response.body.users.find(( item: User ) => {
-          return item.firstName == 'John';
-        });
-        expect(test_target_user.lastName).toBe('Doe');
-      });
-  });
+export default describe("Usersテーブルを操作するテスト", () =>{
 
   it("Userに新しいデータを挿入するテスト", async function() {
     await request(app)
@@ -55,6 +18,18 @@ describe("Usersテーブルを操作するテスト", () =>{
         expect(response.statusCode).toBe(200);
         expect(response.body.message).toMatch(/.*success!.*/)
         expect(response.body.createdUser.lastName).toBe("boy");
+      });
+  });
+
+  it("Userを読み込むテスト", async function() {
+    await request(app)
+      .get("/user/read")
+      .then(response => {
+        expect(response.statusCode).toBe(200);
+        let test_target_user: User = response.body.users.find(( item: User ) => {
+          return item.firstName == 'happy';
+        });
+        expect(test_target_user.lastName).toBe('boy');
       });
   });
 

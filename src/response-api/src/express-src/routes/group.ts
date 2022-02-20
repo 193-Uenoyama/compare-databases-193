@@ -10,40 +10,22 @@ import { GroupCommonAttributes, GroupAttributes, Group } from '@/sequelize-src/m
 
 export const groupRouter: Router = Router();
 
-groupRouter.get('/', function(req: Request, res: Response, next: NextFunction) {
-  // let return_data: any = {};
-  // let time_keeper = new TimeKeeper();
+// groupRouter.get('/', function(req: Request, res: Response, next: NextFunction) {
+//   // let return_data: any = {};
+//   // let time_keeper = new TimeKeeper();
 
-  let groupName: string = Math.random().toString(32).substring(2);
-  let groupIntroduction: string = Math.random().toString(32).substring(2);
-  db.Groups.create({
-    groupName: groupName,
-    groupIntroduction: groupIntroduction,
-  }, {});
+//   let groupName: string = Math.random().toString(32).substring(2);
+//   let groupIntroduction: string = Math.random().toString(32).substring(2);
+//   db.Groups.create({
+//     groupName: groupName,
+//     groupIntroduction: groupIntroduction,
+//   }, {});
 
-  res.status(200).json({msg: "foo"});
-});
+//   res.status(200).json({msg: "foo"});
+// });
 
-interface reqGroupRead extends reqMsg {
-  groups: Array< GroupAttributes >
-}
-groupRouter.get('/read', async function(req: Request, res: Response<reqGroupRead | reqMsg>, next: NextFunction) {
-  let readed_groups: Group[] = await db.Groups.findAll({})
-    .catch((err: Error) => {
-      console.log(err);
-      res.status(500).json({
-        message: "sorry... fail connect to database.",
-        isConnectDatabase: false
-      });
-    });
 
-  res.status(200).json({ 
-    groups: readed_groups,
-    message: "success connect database",
-    isConnectDatabase: true 
-  })
-})
-
+// --------------- create a group ---------------
 interface reqGroupCreate extends reqMsg {
   createdGroup: GroupAttributes
 }
@@ -70,6 +52,30 @@ groupRouter.post('/create', async function(req: Request, res: Response<reqGroupC
   });
 })
 
+
+// --------------- read groups ---------------
+interface reqGroupRead extends reqMsg {
+  groups: Array< GroupAttributes >
+}
+groupRouter.get('/read', async function(req: Request, res: Response<reqGroupRead | reqMsg>, next: NextFunction) {
+  let readed_groups: Group[] = await db.Groups.findAll({})
+    .catch((err: Error) => {
+      console.log(err);
+      res.status(500).json({
+        message: "sorry... fail connect to database.",
+        isConnectDatabase: false
+      });
+    });
+
+  res.status(200).json({ 
+    groups: readed_groups,
+    message: "success connect database",
+    isConnectDatabase: true 
+  })
+})
+
+
+// --------------- update a group ---------------
 interface reqGroupUpdate extends reqMsg {
   updatedGroup: GroupAttributes
 }
@@ -95,7 +101,6 @@ groupRouter.post('/update', async function(req: Request, res: Response, next: Ne
     });
   })
 
-
   // 更新されたユーザを取得
   let updated_group: Group = await db.Groups.findOne({
     where: {
@@ -116,6 +121,8 @@ groupRouter.post('/update', async function(req: Request, res: Response, next: Ne
   })
 })
 
+
+// --------------- delete a group ---------------
 interface reqGroupDelete extends reqMsg {
   deletedGroup: GroupAttributes
 }

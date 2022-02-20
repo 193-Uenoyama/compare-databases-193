@@ -38,11 +38,42 @@ userRouter.get('/', async function(req: Request, res: Response, next: NextFuncti
 });
 
 
-// read Users table
+// --------------- create a User ---------------
+interface reqUserRead extends reqMsg {
+  createdUser: excludedPersonalInfomationUserAttributes
+}
+userRouter.post('/create', async function(req: Request, res: Response<reqUserRead | reqMsg>, next: NextFunction) {
+  // 送られてきたデータを格納。
+  let user_request_data: UserCommonAttributes = {
+    firstName: req.body.firstName || undefined,
+    lastName: req.body.lastName || undefined,
+    email: req.body.email || undefined,
+    introduction: req.body.introduction || undefined,
+  }
+  // undefinedのデータを削除
+  let create_data: UserCommonAttributes = cutUndefinedOutOfAnArgument(user_request_data);
+
+  let created_user = await db.Users.create(create_data, {}).catch((err: Error) => {
+    console.log(err);
+    res.status(500).json({
+      message: "sorry... fail connect to database.",
+      isConnectDatabase: false
+    });
+  })
+
+  res.status(200).json({
+    createdUser: created_user,
+    message: "success! create " + created_user.firstName + " " + created_user.lastName,
+    isConnectDatabase: true,
+  });
+});
+
+
+// --------------- read Users table ---------------
 interface reqUserRead extends reqMsg {
   users: Array< excludedPersonalInfomationUserAttributes >
 }
-userRouter.get('/read', async function(req: Request, res: Response< reqUserRead | reqMsg >, next: NextFunction) {
+userRouter.get('/read', async function(req: Request, res: Response<reqUserRead | reqMsg>, next: NextFunction) {
   let time_keeper = new TimeKeeper();
   let readed_users: User[] = await db.Users.findAll({})
     .catch((err: Error) => {
@@ -62,37 +93,11 @@ userRouter.get('/read', async function(req: Request, res: Response< reqUserRead 
 });
 
 
-// create a User
-interface reqUserRead extends reqMsg {
-  createdUser: excludedPersonalInfomationUserAttributes
-}
-userRouter.post('/create', async function(req: Request, res: Response< reqUserRead | reqMsg >, next: NextFunction) {
-  let created_user = await db.Users.create({
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    email: req.body.email,
-    introduction: req.body.introduction,
-  }, {}).catch((err: Error) => {
-    console.log(err);
-    res.status(500).json({
-      message: "sorry... fail connect to database.",
-      isConnectDatabase: false
-    });
-  })
-
-  res.status(200).json({
-    createdUser: created_user,
-    message: "success! create " + created_user.firstName + " " + created_user.lastName,
-    isConnectDatabase: true,
-  });
-});
-
-
-// update a User
+// --------------- update a User ---------------
 interface reqUserUpdate extends reqMsg {
   updatedUser: excludedPersonalInfomationUserAttributes
 }
-userRouter.post('/update', async function(req: Request, res: Response< reqUserUpdate | reqMsg >, next: NextFunction) {
+userRouter.post('/update', async function(req: Request, res: Response<reqUserUpdate | reqMsg>, next: NextFunction) {
   // 送られてきたデータを格納。
   let user_request_data: UserCommonAttributes = {
     firstName: req.body.firstName || undefined,
@@ -103,7 +108,6 @@ userRouter.post('/update', async function(req: Request, res: Response< reqUserUp
   // undefinedのデータを削除
   let update_data: UserCommonAttributes = cutUndefinedOutOfAnArgument(user_request_data);
 
-  console.log(update_data);
   // 更新
   await db.Users.update( update_data ,{
     where: {
@@ -116,7 +120,6 @@ userRouter.post('/update', async function(req: Request, res: Response< reqUserUp
       isConnectDatabase: false,
     });
   })
-
 
   // 更新されたユーザを取得
   let updated_user: User = await db.Users.findOne({
@@ -136,11 +139,10 @@ userRouter.post('/update', async function(req: Request, res: Response< reqUserUp
     message: "success! update " + updated_user.firstName + " " + updated_user.lastName,
     isConnectDatabase: true,
   })
-
 });
 
 
-// delete user
+// --------------- delete user ---------------
 interface reqUserDelete extends reqMsg {
   deletedUser: excludedPersonalInfomationUserAttributes
 }

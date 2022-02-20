@@ -43,6 +43,31 @@ exports.userRouter.get('/', function (req, res, next) {
         res.status(200).json(return_data);
     });
 });
+exports.userRouter.post('/create', function (req, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        // 送られてきたデータを格納。
+        let user_request_data = {
+            firstName: req.body.firstName || undefined,
+            lastName: req.body.lastName || undefined,
+            email: req.body.email || undefined,
+            introduction: req.body.introduction || undefined,
+        };
+        // undefinedのデータを削除
+        let create_data = (0, _modules_1.cutUndefinedOutOfAnArgument)(user_request_data);
+        let created_user = yield index_1.default.Users.create(create_data, {}).catch((err) => {
+            console.log(err);
+            res.status(500).json({
+                message: "sorry... fail connect to database.",
+                isConnectDatabase: false
+            });
+        });
+        res.status(200).json({
+            createdUser: created_user,
+            message: "success! create " + created_user.firstName + " " + created_user.lastName,
+            isConnectDatabase: true,
+        });
+    });
+});
 exports.userRouter.get('/read', function (req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         let time_keeper = new TimeKeeper_1.default();
@@ -61,27 +86,6 @@ exports.userRouter.get('/read', function (req, res, next) {
         });
     });
 });
-exports.userRouter.post('/create', function (req, res, next) {
-    return __awaiter(this, void 0, void 0, function* () {
-        let created_user = yield index_1.default.Users.create({
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
-            email: req.body.email,
-            introduction: req.body.introduction,
-        }, {}).catch((err) => {
-            console.log(err);
-            res.status(500).json({
-                message: "sorry... fail connect to database.",
-                isConnectDatabase: false
-            });
-        });
-        res.status(200).json({
-            createdUser: created_user,
-            message: "success! create " + created_user.firstName + " " + created_user.lastName,
-            isConnectDatabase: true,
-        });
-    });
-});
 exports.userRouter.post('/update', function (req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         // 送られてきたデータを格納。
@@ -93,7 +97,6 @@ exports.userRouter.post('/update', function (req, res, next) {
         };
         // undefinedのデータを削除
         let update_data = (0, _modules_1.cutUndefinedOutOfAnArgument)(user_request_data);
-        console.log(update_data);
         // 更新
         yield index_1.default.Users.update(update_data, {
             where: {
