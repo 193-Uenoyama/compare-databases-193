@@ -4,11 +4,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
-const user_1 = require("../../sequelize-src/models/user");
-const group_1 = require("../../sequelize-src/models/group");
-const groupmember_1 = __importDefault(require("../../sequelize-src/models/groupmember"));
-const relation_1 = __importDefault(require("../../sequelize-src/models/relation"));
-const defineSequelize_1 = require("../../sequelize-src/defineSequelize");
+const user_1 = require("@/sequelize-src/models/user");
+const group_1 = require("@/sequelize-src/models/group");
+const groupmember_1 = __importDefault(require("@/sequelize-src/models/groupmember"));
+const relation_1 = __importDefault(require("@/sequelize-src/models/relation"));
+const defineSequelize_1 = require("@/sequelize-src/defineSequelize");
 // const basename = path.basename(__filename);
 const DB = {};
 // fs

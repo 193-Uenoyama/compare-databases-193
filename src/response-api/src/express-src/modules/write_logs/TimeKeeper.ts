@@ -1,47 +1,55 @@
-import { DEFAULT_HRTIME, hrTime, ConvertToMsFromNs } from '@/express-src/modules/write_logs/_modules';
+import { 
+  hrTime, 
+  ProcessDetail,
+} from '@/express-src/modules/write_logs/_modules';
 import WriteProcessingTimeLog from '@/express-src/modules/write_logs/WriteProcessingTimeLog'
 
 export default class TimeKeeper {
   timer_start: hrTime = process.hrtime();
-  timer_db_end: hrTime = DEFAULT_HRTIME;;
-  timer_node_end: hrTime = DEFAULT_HRTIME;;
+  timer_split_or_end: hrTime = [-1, -1];
 
-  is_store_timer_db_end: boolean = false;
-  is_store_timer_node_end: boolean = false;
+  request_id: string = Math.random().toString(32).substring(2);
+  start_time: string = this.Get_FullDateString(new Date());
 
-  start_time: Date = new Date();
-  write_logs: WriteProcessingTimeLog = new WriteProcessingTimeLog();
+  writer: WriteProcessingTimeLog;
 
-  constructor() {}
-
-  StoreDbEnd_IfPossibleOutLog() {
-    this.timer_db_end = process.hrtime(this.timer_start);
-    this.is_store_timer_db_end = true;
-    this.IfPossibleOutLog();
-  }
-  StoreNodeEnd_IfPossibleOutLog() {
-    this.timer_node_end = process.hrtime(this.timer_start);
-    this.is_store_timer_node_end = true;
-    this.IfPossibleOutLog();
+  constructor() {
+    this.writer = new WriteProcessingTimeLog(this.request_id, this.start_time);
   }
 
-  IfPossibleOutLog() {
-    // 処理時間を2つとも(node, db)取得できていなければ return
-    let is_not_stored_yet: boolean = !(this.is_store_timer_node_end && this.is_store_timer_db_end);
-    if (is_not_stored_yet) {
-      return;
+  invokeWriter(process_detail: ProcessDetail) {
+    this.timer_split_or_end = process.hrtime(this.timer_start);
+    if( process_detail.name == "Node" ) {
+      this.writer.WriteNodeLog(
+        process_detail.state,
+        process_detail.name,
+        this.timer_split_or_end
+      );
     }
+    else {
+      this.writer.WriteDbLog(
+        process_detail.state,
+        process_detail.name, 
+        process_detail.target_table, 
+        this.timer_split_or_end
+      );
+    }
+  }
 
-    // 処理時間をログとして出力
-    console.log(
-      "database access ... " + this.timer_db_end[1] + "ナノ秒 " + 
-        ConvertToMsFromNs(this.timer_db_end[1]) + "ミリ秒\n" +
-      "nodejs process  ... " + this.timer_node_end[1] + "ナノ秒 " +
-        ConvertToMsFromNs(this.timer_node_end[1]) + "ミリ秒"
-    );
-
-    // 処理時間をログファイルに書き込み
-    this.write_logs.WriteLog(this.timer_db_end, this.timer_node_end, this.start_time);
+  // 日付データ(now)を文字列に変換する
+  Get_FullDateString(now: Date): string {
+    now.setTime(now.getTime() + 1000 * 60 * 60 * 9);
+    let year:string = this.AdjustDigits(now.getFullYear(), 4);
+    let month:string = this.AdjustDigits(( now.getMonth() + 1 ), 2);
+    let date:string = this.AdjustDigits(now.getDate(), 2);
+    let hours:string = this.AdjustDigits(now.getHours(), 2);
+    let minutes:string = this.AdjustDigits(now.getMinutes(), 2);
+    let seconds:string = this.AdjustDigits(now.getSeconds(), 2);
+    return year+"-"+month+"-"+date+"T"+hours+":"+minutes+":"+seconds;
+  }
+  // target の 桁数が digits より小さかったらその分だけ0を入れる
+  AdjustDigits(target: number, digits: number): string {
+    return ( Array(digits + 1).join('0') + target.toString() ).slice(-digits);
   }
 
 }

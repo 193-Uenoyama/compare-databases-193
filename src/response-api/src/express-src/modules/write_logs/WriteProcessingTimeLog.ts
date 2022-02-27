@@ -1,36 +1,57 @@
 import fs from 'fs';
-import { hrTime, ConvertToMsFromNs } from '@/express-src/modules/write_logs/_modules';
+import { 
+  hrTime,
+  Process_Server,
+  Process_CRUD,
+  Process_State,
+} from '@/express-src/modules/write_logs/_modules';
 
 export default class WriteProcessingTimeLog {
   readonly WRITTEN_FILE_DIRECTORY: string = process.env.LOG_PATH || "/home/logs/new/";
-  readonly WRITTEN_FILE_NAME: string = process.env.DATABASE_SYSTEM + ".log";
+  readonly WRITTEN_FILE_NAME: string = 
+    process.env.DATABASE_SYSTEM + "_" +
+    process.env.NODE_ENV + ".log";
   readonly WRITTEN_FILE_PATH: string = this.WRITTEN_FILE_DIRECTORY + this.WRITTEN_FILE_NAME;
 
-  constructor() {}
+  request_id: string;
+  request_time: string;
 
-  WriteLog(timer_db_end: hrTime, timer_node_end: hrTime, created_time: Date) {
-    fs.appendFileSync( 
+  constructor(request_id: string, request_time: string) {
+    this.request_id = request_id;
+    this.request_time = request_time;
+  }
+
+  WriteNodeLog(
+    process_state: Process_State, 
+    request_name: Process_Server, 
+    processing_time: hrTime) {
+
+    fs.appendFileSync(
       this.WRITTEN_FILE_PATH, 
-      this.Get_FullDateString( created_time ) + "," + 
-      timer_db_end[1] + "," + 
-      timer_node_end[1] + "\n",
+      process_state + "," +
+      this.request_time + "," + 
+      this.request_id + ","  +
+      request_name + "," +
+      processing_time[1] + "\n"
     );
   }
 
-  // 日付データ(now)を文字列に変換する
-  Get_FullDateString(now: Date): string {
-    now.setTime(now.getTime() + 1000 * 60 * 60 * 9);
-    let year:string = this.AdjustDigits(now.getFullYear(), 4);
-    let month:string = this.AdjustDigits(( now.getMonth() + 1 ), 2);
-    let date:string = this.AdjustDigits(now.getDate(), 2);
-    let hours:string = this.AdjustDigits(now.getHours(), 2);
-    let minutes:string = this.AdjustDigits(now.getMinutes(), 2);
-    let seconds:string = this.AdjustDigits(now.getSeconds(), 2);
-    return year+"-"+month+"-"+date+"T"+hours+":"+minutes+":"+seconds;
+  WriteDbLog(
+    process_state: Process_State, 
+    request_name: Process_CRUD, 
+    target_table: string, 
+    processing_time: hrTime) {
+
+    fs.appendFileSync(
+      this.WRITTEN_FILE_PATH, 
+      process_state + "," +
+      this.request_time + "," + 
+      this.request_id + "," +
+      "DB" + "," +
+      request_name + "," +
+      target_table + "," +
+      processing_time[1] + "\n"
+    );
   }
 
-  // target の 桁数が digits より小さかったらその分だけ0を入れる
-  AdjustDigits(target: number, digits: number): string {
-    return ( Array(digits + 1).join('0') + target.toString() ).slice(-digits);
-  }
 }

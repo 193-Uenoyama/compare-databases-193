@@ -2,17 +2,17 @@ import {
   Request, 
   Response, 
   NextFunction, 
-  Router } from 'express'
+  Router 
+} from 'express'
 import TimeKeeper from '@/express-src/modules/write_logs/TimeKeeper';
 import db from '@/sequelize-src/models/index'
 import { excludedPersonalInfomationUserAttributes, UserCommonAttributes, User } from '@/sequelize-src/models/user'
-import { reqMsg, cutUndefinedOutOfAnArgument } from '@/express-src/routes/_modules'
+import { reqMsg, cutUndefinedOutOfAnArgument } from '@/express-src/controller/_modules'
 
 export const userRouter: Router = Router();
 
 userRouter.get('/', async function(req: Request, res: Response, next: NextFunction) {
   let return_data: any = {};
-  let time_keeper = new TimeKeeper();
 
   let firstName: string = Math.random().toString(32).substring(2);
   let lastName: string = Math.random().toString(32).substring(2);
@@ -25,11 +25,7 @@ userRouter.get('/', async function(req: Request, res: Response, next: NextFuncti
       res.status(500).json({msg: err});
   });
 
-  return_data = await db.Users.findAll({
-    where: {
-      userId: 82, 
-    }
-  })  
+  return_data = await db.Users.findAll({})  
   .catch((err: Error) => {
     res.status(500).json({msg: err});
   })
