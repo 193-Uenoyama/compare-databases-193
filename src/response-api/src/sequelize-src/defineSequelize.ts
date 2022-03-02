@@ -8,10 +8,10 @@ const config = require('@/sequelize-src/config/config')[env];
 if (process.env.DATABASE_SYSTEM == 'sqlite') {
   config.storage = process.env.DATABASE_HOST;
 }
-config.benchmark = true;
-config.logging = (logStr: string, execTime: number) => {
-  console.log(logStr);
-  console.log(execTime);
-}
+// config.benchmark = true;
+// config.logging = (logStr: string, execTime: number) => {
+//   console.log(logStr);
+//   console.log(execTime);
+// }
 
 export const sequelize = new Sequelize( config.database, config.username, config.password, config);

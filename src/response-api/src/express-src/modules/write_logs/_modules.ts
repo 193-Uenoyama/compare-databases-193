@@ -1,6 +1,4 @@
 // hrtime 関数で出力されるデータを 型宣言
-export type hrTime = [ number, number ]
-
 export type Process_Server = "Node";
 export type Process_CRUD = "Create" | "Read" | "Update" | "Delete";
 export type Process_State = "Success" | "Error"

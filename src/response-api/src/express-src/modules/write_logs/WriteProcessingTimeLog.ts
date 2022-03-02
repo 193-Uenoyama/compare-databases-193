@@ -1,12 +1,11 @@
 import fs from 'fs';
 import { 
-  hrTime,
   Process_Server,
   Process_CRUD,
   Process_State,
 } from '@/express-src/modules/write_logs/_modules';
 
-export default class WriteProcessingTimeLog {
+export default class ProcessingTimeLogWriter {
   readonly WRITTEN_FILE_DIRECTORY: string = process.env.LOG_PATH || "/home/logs/new/";
   readonly WRITTEN_FILE_NAME: string = 
     process.env.DATABASE_SYSTEM + "_" +
@@ -24,7 +23,7 @@ export default class WriteProcessingTimeLog {
   WriteNodeLog(
     process_state: Process_State, 
     request_name: Process_Server, 
-    processing_time: hrTime) {
+    processing_time: bigint) {
 
     fs.appendFileSync(
       this.WRITTEN_FILE_PATH, 
@@ -32,7 +31,7 @@ export default class WriteProcessingTimeLog {
       this.request_time + "," + 
       this.request_id + ","  +
       request_name + "," +
-      processing_time[1] + "\n"
+      processing_time + "\n"
     );
   }
 
@@ -40,7 +39,7 @@ export default class WriteProcessingTimeLog {
     process_state: Process_State, 
     request_name: Process_CRUD, 
     target_table: string, 
-    processing_time: hrTime) {
+    processing_time: bigint) {
 
     fs.appendFileSync(
       this.WRITTEN_FILE_PATH, 
@@ -50,7 +49,7 @@ export default class WriteProcessingTimeLog {
       "DB" + "," +
       request_name + "," +
       target_table + "," +
-      processing_time[1] + "\n"
+      processing_time + "\n"
     );
   }
 

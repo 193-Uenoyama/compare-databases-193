@@ -1,29 +1,40 @@
-import { 
-  hrTime, 
-  ProcessDetail,
-} from '@/express-src/modules/write_logs/_modules';
-import WriteProcessingTimeLog from '@/express-src/modules/write_logs/WriteProcessingTimeLog'
+import { ProcessDetail } from '@/express-src/modules/write_logs/_modules';
+import ProcessingTimeLogWriter from '@/express-src/modules/write_logs/WriteProcessingTimeLog'
 
 export default class TimeKeeper {
-  timer_start: hrTime = process.hrtime();
-  timer_split_or_end: hrTime = [-1, -1];
+  timer_start_time: bigint = process.hrtime.bigint();
+  timer_split_start_time: bigint = -1n;
+  timer_time_now: bigint = -1n
 
   request_id: string = Math.random().toString(32).substring(2);
   start_time: string = this.Get_FullDateString(new Date());
 
-  writer: WriteProcessingTimeLog;
+  writer: ProcessingTimeLogWriter;
 
   constructor() {
-    this.writer = new WriteProcessingTimeLog(this.request_id, this.start_time);
+    this.writer = new ProcessingTimeLogWriter(this.request_id, this.start_time);
   }
 
+  async calculateProcessingTime<T>(func: Function, process_detail: ProcessDetail): Promise<T> {
+    this.timerSplit();
+    let value: T = await func();
+    this.invokeWriter(process_detail);
+
+    return value;
+  }
+
+  timerSplit() {
+    this.timer_split_start_time = process.hrtime.bigint();
+  }
+
+  // witerにログを書かせる
   invokeWriter(process_detail: ProcessDetail) {
-    this.timer_split_or_end = process.hrtime(this.timer_start);
+    this.timer_time_now = process.hrtime.bigint();
     if( process_detail.name == "Node" ) {
       this.writer.WriteNodeLog(
         process_detail.state,
         process_detail.name,
-        this.timer_split_or_end
+        this.timer_time_now - this.timer_start_time
       );
     }
     else {
@@ -31,7 +42,7 @@ export default class TimeKeeper {
         process_detail.state,
         process_detail.name, 
         process_detail.target_table, 
-        this.timer_split_or_end
+        this.timer_time_now - this.timer_split_start_time
       );
     }
   }
