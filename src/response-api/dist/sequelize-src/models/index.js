@@ -7,7 +7,7 @@ const sequelize_1 = require("sequelize");
 const user_1 = require("../../sequelize-src/models/user");
 const group_1 = require("../../sequelize-src/models/group");
 const groupmember_1 = __importDefault(require("../../sequelize-src/models/groupmember"));
-const relation_1 = __importDefault(require("../../sequelize-src/models/relation"));
+const follow_1 = __importDefault(require("../../sequelize-src/models/follow"));
 const defineSequelize_1 = require("../../sequelize-src/defineSequelize");
 // const basename = path.basename(__filename);
 const DB = {};
@@ -25,7 +25,7 @@ const DB = {};
 DB[user_1.User.name] = user_1.User;
 DB[group_1.Group.name] = group_1.Group;
 DB[groupmember_1.default.name] = groupmember_1.default;
-DB[relation_1.default.name] = relation_1.default;
+DB[follow_1.default.name] = follow_1.default;
 Object.keys(DB).forEach(modelName => {
     if (DB[modelName].associate) {
         DB[modelName].associate(DB);

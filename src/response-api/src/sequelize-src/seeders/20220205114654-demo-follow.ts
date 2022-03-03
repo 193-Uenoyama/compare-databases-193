@@ -11,7 +11,7 @@ module.exports = {
       data = rows;
     });
     let now: Date = new Date();
-    return queryInterface.bulkInsert('Relations', [{
+    return queryInterface.bulkInsert('Follows', [{
         followedUserId: data[0].userId,
         followingUserId: data[2].userId,
         createdAt: now,
@@ -23,7 +23,7 @@ module.exports = {
   },
 
   async down () {
-    await db.Relations.destroy({
+    await db.Follows.destroy({
       truncate: true
     })
   }

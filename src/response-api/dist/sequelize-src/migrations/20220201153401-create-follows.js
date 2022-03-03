@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 module.exports = {
     up: async (queryInterface, Sequelize) => {
-        await queryInterface.createTable('Relations', {
+        await queryInterface.createTable('Follows', {
             followedUserId: {
                 type: sequelize_1.DataTypes.INTEGER,
                 references: {
@@ -25,6 +25,6 @@ module.exports = {
         });
     },
     down: async (queryInterface, Sequelize) => {
-        await queryInterface.dropTable('Relations');
+        await queryInterface.dropTable('Follows');
     }
 };

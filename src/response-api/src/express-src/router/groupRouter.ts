@@ -4,8 +4,7 @@ import {
   NextFunction, 
   Router } from 'express'
 import db from '@/sequelize-src/models/index'
-import TimeKeeper from '@/express-src/modules/write_logs/TimeKeeper';
-import { reqMsg, cutUndefinedOutOfAnArgument } from '@/express-src/controller/_modules';
+import { reqMsg, cutUndefinedOutOfAnArgument } from '@/express-src/router/_modules';
 import { GroupCommonAttributes, GroupAttributes, Group } from '@/sequelize-src/models/group';
 
 export const groupRouter: Router = Router();

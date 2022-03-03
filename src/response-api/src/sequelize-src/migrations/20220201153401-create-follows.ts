@@ -6,7 +6,7 @@ import {
 
 module.exports = {
   up: async (queryInterface: QueryInterface, Sequelize: Sequelize) => {
-    await queryInterface.createTable('Relations', {
+    await queryInterface.createTable('Follows', {
       followedUserId: {
         type: DataTypes.INTEGER,
         references: {
@@ -28,6 +28,6 @@ module.exports = {
     });
   },
   down: async (queryInterface: QueryInterface, Sequelize: Sequelize) => {
-    await queryInterface.dropTable('Relations');
+    await queryInterface.dropTable('Follows');
   }
 };

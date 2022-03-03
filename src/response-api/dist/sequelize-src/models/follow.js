@@ -2,10 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const defineSequelize_1 = require("../../sequelize-src/defineSequelize");
-class Relation extends sequelize_1.Model {
+class Follow extends sequelize_1.Model {
 }
 ;
-Relation.init({
+Follow.init({
     followedUserId: {
         type: sequelize_1.DataTypes.INTEGER,
         primaryKey: true,
@@ -24,7 +24,7 @@ Relation.init({
     },
 }, {
     sequelize: defineSequelize_1.sequelize,
-    modelName: 'Relations',
+    modelName: 'Follows',
     updatedAt: false,
 });
-exports.default = Relation;
+exports.default = Follow;

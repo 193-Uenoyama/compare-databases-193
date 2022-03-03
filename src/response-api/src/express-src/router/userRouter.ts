@@ -4,10 +4,9 @@ import {
   NextFunction, 
   Router 
 } from 'express'
-import TimeKeeper from '@/express-src/modules/write_logs/TimeKeeper';
 import db from '@/sequelize-src/models/index'
 import { excludedPersonalInfomationUserAttributes, UserCommonAttributes, User } from '@/sequelize-src/models/user'
-import { reqMsg, cutUndefinedOutOfAnArgument } from '@/express-src/controller/_modules'
+import { reqMsg, cutUndefinedOutOfAnArgument } from '@/express-src/router/_modules'
 
 export const userRouter: Router = Router();
 
@@ -54,11 +53,9 @@ userRouter.post('/create', async function(req: Request, res: Response<reqUserRea
   let create_data: UserCommonAttributes = cutUndefinedOutOfAnArgument(user_request_data);
 
   let created_user = await db.Users.calculateTimeOfCreate(req.time_keeper, create_data, {}).catch((err: Error) => {
-    console.log(err);
-    res.status(500).json({
-      message: "sorry... fail connect to database.",
-      isConnectDatabase: false
-    });
+    console.log(err.stack);
+    next(err);
+    return;
   })
 
   res.status(200).json({
@@ -76,11 +73,9 @@ interface reqUserRead extends reqMsg {
 userRouter.get('/read', async function(req: Request, res: Response<reqUserRead | reqMsg>, next: NextFunction) {
   let readed_users: User[] = await db.Users.calculateTimeOfFindAll(req.time_keeper, {})
     .catch((err: Error) => {
-      console.log(err);
-      res.status(500).json({
-        message: "sorry... fail connect to database.",
-        isConnectDatabase: false
-      });
+      console.log(err.stack);
+      next(err);
+      return;
     });
 
   res.status(200).json({ 
@@ -88,7 +83,6 @@ userRouter.get('/read', async function(req: Request, res: Response<reqUserRead |
     message: "success connect database",
     isConnectDatabase: true 
   })
-  
 });
 
 
@@ -97,7 +91,6 @@ interface reqUserUpdate extends reqMsg {
   updatedUser: excludedPersonalInfomationUserAttributes
 }
 userRouter.post('/update', async function(req: Request, res: Response<reqUserUpdate | reqMsg>, next: NextFunction) {
-  console.log("BB");
   // 送られてきたデータを格納。
   let user_request_data: UserCommonAttributes = {
     firstName: req.body.firstName || undefined,
@@ -115,24 +108,20 @@ userRouter.post('/update', async function(req: Request, res: Response<reqUserUpd
     }
   }).catch((err: Error) => {
     console.log(err.stack);
-    res.status(501).json({
-      message: "sorry... fail connect to database.",
-      isConnectDatabase: false,
-    });
+    next(err);
+    return;
   })
 
   // 更新されたユーザを取得
   let updated_user: User = await db.Users.findOne({
     where: {
-      UserId: req.body.userId
+      userId: req.body.userId
     }
   }).catch((err: Error) => {
     console.log(err.stack);
-    res.status(502).json({
-      message: "sorry... fail connect to database.",
-      isConnectDatabase: false,
-    });
-  })
+    next(err);
+    return;
+  });
 
   res.status(200).json({
     updatedUser: updated_user,
@@ -149,14 +138,11 @@ interface reqUserDelete extends reqMsg {
 userRouter.post('/delete', async function(req: Request, res: Response< reqUserDelete | reqMsg >, next: NextFunction) {
   let deletion_user: User = await db.Users.findOne({
     where: {
-      UserId: req.body.userId
+      userId: req.body.userId
     }
   }).catch((err: Error) => {
     console.log(err.stack);
-    res.status(501).json({
-      message: "sorry... fail connect to database.",
-      isConnectDatabase: false,
-    });
+    next(err);
     return;
   })
 
@@ -166,10 +152,7 @@ userRouter.post('/delete', async function(req: Request, res: Response< reqUserDe
     }
   }).catch((err: Error) => {
     console.log(err.stack);
-    res.status(502).json({
-      message: "sorry... fail connect to database.",
-      isConnectDatabase: false,
-    });
+    next(err);
     return;
   })
   

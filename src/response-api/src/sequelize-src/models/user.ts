@@ -3,6 +3,7 @@ import {
   Model,
   Optional,
 } from 'sequelize';
+import { Group } from '@/sequelize-src/models/group'
 import CalculateProcessingTimeModel from '@/sequelize-src/CalculateProcessingTimeModel'
 import { sequelize } from '@/sequelize-src/defineSequelize'
 
@@ -31,7 +32,6 @@ export interface UserAttributes extends UserCommonAttributes {
 
 interface UserCreationAttributes extends Optional<UserAttributes, "userId"> {}
 
-
 export class User extends CalculateProcessingTimeModel<UserAttributes, UserCreationAttributes> implements UserAttributes {
   declare userId: number;
   declare firstName: string;
@@ -41,6 +41,19 @@ export class User extends CalculateProcessingTimeModel<UserAttributes, UserCreat
 
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
+
+  associate() {
+    User.belongsToMany(User, {
+      through: 'Follows',
+      foreignKey: 'followedUserId',
+      targetKey: 'followingUserId'
+    });
+    User.belongsToMany(Group, { 
+      through: 'GroupMembers',
+      foreignKey: 'memberId',
+      targetKey: 'groupId'
+    });
+  }
 };
 
 User.init({

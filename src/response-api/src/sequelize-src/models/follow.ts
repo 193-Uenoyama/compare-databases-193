@@ -5,19 +5,19 @@ import {
 } from 'sequelize';
 import { sequelize } from '@/sequelize-src/defineSequelize'
 
-interface RelationAttributes {
+interface FollowAttributes {
   followedUserId: number;
   followingUserId: number;
 }
 
-interface RelationCreationAttributes extends Optional<RelationAttributes, "followingUserId"> {}
+interface FollowCreationAttributes extends Optional<FollowAttributes, "followingUserId"> {}
 
-class Relation extends Model<RelationAttributes, RelationCreationAttributes> implements RelationAttributes {
+class Follow extends Model<FollowAttributes, FollowCreationAttributes> implements FollowAttributes {
   declare followedUserId: number;
   declare followingUserId: number;
 };
 
-Relation.init({
+Follow.init({
   followedUserId: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -36,8 +36,8 @@ Relation.init({
   },
 }, {
   sequelize,
-  modelName: 'Relations',
+  modelName: 'Follows',
   updatedAt: false,
 });
 
-export default Relation;
+export default Follow;

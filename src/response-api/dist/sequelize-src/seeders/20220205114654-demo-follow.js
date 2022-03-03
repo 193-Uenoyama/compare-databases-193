@@ -11,7 +11,7 @@ module.exports = {
             data = rows;
         });
         let now = new Date();
-        return queryInterface.bulkInsert('Relations', [{
+        return queryInterface.bulkInsert('Follows', [{
                 followedUserId: data[0].userId,
                 followingUserId: data[2].userId,
                 createdAt: now,
@@ -22,7 +22,7 @@ module.exports = {
             }]);
     },
     async down() {
-        await index_1.default.Relations.destroy({
+        await index_1.default.Follows.destroy({
             truncate: true
         });
     }

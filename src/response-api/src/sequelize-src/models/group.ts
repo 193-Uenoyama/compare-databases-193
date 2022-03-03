@@ -4,6 +4,7 @@ import {
   Optional,
 } from 'sequelize';
 import { sequelize } from '@/sequelize-src/defineSequelize'
+import { User } from '@/sequelize-src/models/user'
 
 export interface GroupCommonAttributes {
   groupName?: string;
@@ -22,6 +23,14 @@ export class Group extends Model<GroupAttributes, GroupCreationAttributes> imple
   declare groupId: number;
   declare groupName: string;
   declare groupIntroduction: string;
+
+  associate() {
+    Group.belongsToMany(User, { 
+      through: 'GroupMembers',
+      foreignKey: 'groupId',
+      targetKey: 'memberId'
+    });
+  }
 };
 
 Group.init({
