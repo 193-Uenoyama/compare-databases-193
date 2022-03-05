@@ -4,7 +4,7 @@ import {
   NextFunction, 
   Router,
 } from 'express'
-import TimeKeeper from '@/express-src/modules/write_logs/TimeKeeper'
+import TimeKeeper from '@/express-src/modules/writeLogs/TimeKeeper'
 
 export const pretreatmentRouter: Router = Router();
 

@@ -8,7 +8,7 @@ import {
   UpdateOptions,
   DestroyOptions,
 } from 'sequelize';
-import TimeKeeper from '@/express-src/modules/write_logs/TimeKeeper';
+import TimeKeeper from '@/express-src/modules/writeLogs/TimeKeeper';
 
 export default abstract class CalculateProcessingTimeModel<
   TModelAttributes extends {} = any, 

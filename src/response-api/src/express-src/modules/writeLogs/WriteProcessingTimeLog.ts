@@ -3,7 +3,7 @@ import {
   Process_Server,
   Process_CRUD,
   Process_State,
-} from '@/express-src/modules/write_logs/_modules';
+} from '@/express-src/modules/writeLogs/_modules';
 
 export default class ProcessingTimeLogWriter {
   readonly WRITTEN_FILE_DIRECTORY: string = process.env.LOG_PATH || "/home/logs/new/";

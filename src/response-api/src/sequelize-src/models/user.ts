@@ -46,12 +46,12 @@ export class User extends CalculateProcessingTimeModel<UserAttributes, UserCreat
     User.belongsToMany(User, {
       through: 'Follows',
       foreignKey: 'followedUserId',
-      targetKey: 'followingUserId'
+      targetKey: 'followingUserId',
     });
     User.belongsToMany(Group, { 
       through: 'GroupMembers',
       foreignKey: 'memberId',
-      targetKey: 'groupId'
+      targetKey: 'groupId',
     });
   }
 };

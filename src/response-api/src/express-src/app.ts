@@ -23,8 +23,8 @@ app.use('/user/follow', followRouter);
 app.use('/group', groupRouter);
 app.use('/group/member', belongsToGroupRouter);
 
-app.use('/', postprocessingRouter);
 app.use('/', errorHandleRouter);
+app.use('/', postprocessingRouter);
 
 
 export default app

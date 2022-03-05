@@ -8,9 +8,12 @@ import {
 export const postprocessingRouter: Router = Router();
 
 postprocessingRouter.use( '/', function(req: Request, res: Response, next: NextFunction) {
-  if (req.is_return_res) {
+  if (res.statusCode == 200) {
     req.time_keeper.invokeWriter({state: "Success", name: "Node"});
     return;
   }
-  next();
+  else {
+    req.time_keeper.invokeWriter({state: "Error", name: "Node"});
+    return;
+  }
 })

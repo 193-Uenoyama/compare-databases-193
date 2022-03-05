@@ -13,5 +13,6 @@ if (process.env.DATABASE_SYSTEM == 'sqlite') {
 //   console.log(logStr);
 //   console.log(execTime);
 // }
+config.logging = false
 
 export const sequelize = new Sequelize( config.database, config.username, config.password, config);

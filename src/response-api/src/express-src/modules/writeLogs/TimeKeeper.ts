@@ -1,5 +1,5 @@
-import { ProcessDetail } from '@/express-src/modules/write_logs/_modules';
-import ProcessingTimeLogWriter from '@/express-src/modules/write_logs/WriteProcessingTimeLog'
+import { ProcessDetail } from '@/express-src/modules/writeLogs/_modules';
+import ProcessingTimeLogWriter from '@/express-src/modules/writeLogs/WriteProcessingTimeLog'
 
 export default class TimeKeeper {
   timer_start_time: bigint = process.hrtime.bigint();

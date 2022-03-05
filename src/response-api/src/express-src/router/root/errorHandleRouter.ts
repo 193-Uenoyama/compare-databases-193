@@ -14,6 +14,8 @@ errorHandleRouter.use((err: ErrorRequestHandler, req: Request, res: Response, ne
   console.log(message);
 
   res.status(500).json({message: message});
+
+  next();
   return
 });
 
@@ -22,5 +24,7 @@ errorHandleRouter.use((req: Request, res: Response, next: NextFunction) => {
   console.log(message);
 
   res.status(404).json({message: message});
+
+  next();
   return
 })
