@@ -1,40 +1,86 @@
-import express from 'express'
+import { 
+  Request, 
+  Response, 
+  NextFunction, 
+  Router } from 'express'
+import { body, validationResult } from 'express-validator';
+
 import db from '@/sequelize-src/models/index'
+import { APPMSG } from '@/express-src/modules/validation/validationMessages';
 
-export const belongsToGroupRouter: express.Router = express.Router();
+export const belongsToGroupRouter: Router = Router();
 
-belongsToGroupRouter.get('/', function(req: express.Request, res: express.Response, next: express.NextFunction) {
-  let groupName: string = Math.random().toString(32).substring(2);
-  let groupIntroduction: string = Math.random().toString(32).substring(2);
-  db.GroupMembers.create({
-    groupId: 1,
-    memberId: 1,
-  }, {});
+/** create belongsToGroup **********************************
+ *
+ * 送られてきたデータでグループを作成
+ *
+ * @param req.body.userId: number
+ * @param req.body.groupId: number
+ *
+ **********************************************************/
+belongsToGroupRouter.post(
+  '/create', 
 
-  res.status(200).json({msg: "foo"});
-});
+  body('userId')
+    .notEmpty()
+    .withMessage(APPMSG.User.require.userId)
+    .bail()
+    .isInt()
+    .withMessage(APPMSG.User.regular.userId),
 
-/* =============== create belongsToGroup ===============
- * type request = {
- *   userId: number,
- *   groupId: number,
- * }
- */
-belongsToGroupRouter.post('/create', function(req: express.Request, res: express.Response, next: express.NextFunction) {
-  next();
-});
+  body('groupId')
+    .notEmpty()
+    .withMessage(APPMSG.Group.require.groupId)
+    .bail()
+    .isInt()
+    .withMessage(APPMSG.Group.regular.groupId),
+
+  function(req: Request, res: Response, next: NextFunction) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array()});
+      return;
+    }
+    next();
+  }
+);
 
 
 
-/* =============== delete belongsToGroup ===============
- * type request = {
- *   userId: number,
- *   groupId: number,
- * }
- */
-belongsToGroupRouter.post('/delete', function(req: express.Request, res: express.Response, next: express.NextFunction) {
-  next();
-});
+/** delete belongsToGroup **********************************
+ *
+ * 送られてきたデータでグループを作成
+ *
+ * @param req.body.userId: number
+ * @param req.body.groupId: number
+ *
+ **********************************************************/
+belongsToGroupRouter.post(
+  '/delete', 
+
+  body('userId')
+    .notEmpty()
+    .withMessage(APPMSG.User.require.userId)
+    .bail()
+    .isInt()
+    .withMessage(APPMSG.User.regular.userId),
+
+  body('groupId')
+    .notEmpty()
+    .withMessage(APPMSG.Group.require.groupId)
+    .bail()
+    .isInt()
+    .withMessage(APPMSG.Group.regular.groupId),
+
+  function(req: Request, res: Response, next: NextFunction) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array()});
+      return;
+    }
+    next();
+  }
+);
 
 
 
