@@ -11,13 +11,13 @@ export default describe("Test the root path", () => {
   //       done();
   //     });
   // });
+  //
 
-  it("404 not found", done => {
-    request(app)
+  it("404 not found", async function() {
+    await request(app)
       .get("/notfound")
       .then(response => {
         expect(response.statusCode).toBe(404);
-        done();
       });
   });
 });

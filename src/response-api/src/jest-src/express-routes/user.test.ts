@@ -71,4 +71,17 @@ export default describe("Usersテーブルを操作するテスト", () =>{
         expect(response.body.deletedUser.userId).toBe(delection_user.userId);
       });
   })
+
+  it("Userの削除に失敗する", async function() {
+    await request(app)
+      .post("/user/delete")
+      .send({
+        userId: "aaa"
+      })
+      .set('Accept', 'application/json')
+      .then(response => {
+        expect(response.statusCode).toBe(500);
+      });
+  })
+
 })

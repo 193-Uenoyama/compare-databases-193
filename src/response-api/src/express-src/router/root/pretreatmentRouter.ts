@@ -6,9 +6,9 @@ import {
 } from 'express'
 import TimeKeeper from '@/express-src/modules/write_logs/TimeKeeper'
 
-export const rootRouter: Router = Router();
+export const pretreatmentRouter: Router = Router();
 
-rootRouter.use( '/',
+pretreatmentRouter.use( '/',
 
   // TimeKeeperを設定
   function(req: Request, res: Response, next: NextFunction) {
