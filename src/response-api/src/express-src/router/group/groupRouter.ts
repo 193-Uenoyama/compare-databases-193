@@ -3,156 +3,243 @@ import {
   Response, 
   NextFunction, 
   Router } from 'express'
+import { body, validationResult } from 'express-validator';
+
 import db from '@/sequelize-src/models/index'
 import { reqMsg, cutUndefinedOutOfAnArgument } from '@/express-src/router/_modules';
 import { GroupCommonAttributes, GroupAttributes, Group } from '@/sequelize-src/models/group';
+import { APPMSG } from '@/express-src/modules/validation/validationMessages';
 
 export const groupRouter: Router = Router();
 
-// groupRouter.get('/', function(req: Request, res: Response, next: NextFunction) {
-//   // let return_data: any = {};
-//   // let time_keeper = new TimeKeeper();
 
-//   let groupName: string = Math.random().toString(32).substring(2);
-//   let groupIntroduction: string = Math.random().toString(32).substring(2);
-//   db.Groups.create({
-//     groupName: groupName,
-//     groupIntroduction: groupIntroduction,
-//   }, {});
-
-//   res.status(200).json({msg: "foo"});
-// });
-
-
-// --------------- create a group ---------------
+/** create a Group *****************************************
+ *
+ * 送られてきたデータでグループを作成
+ *
+ * @param req.body.groupName: string
+ * @param req.body.groupIntroduction?: string
+ *
+ **********************************************************/
 interface reqGroupCreate extends reqMsg {
   createdGroup: GroupAttributes
 }
-groupRouter.post('/create', async function(req: Request, res: Response<reqGroupCreate | reqMsg>, next: NextFunction) {
-  let group_request_data: GroupCommonAttributes = {
-    groupName: req.body.groupName || undefined,
-    groupIntroduction: req.body.groupIntroduction || undefined,
-  }
-  // undefinedのデータを削除
-  let create_data: GroupCommonAttributes = cutUndefinedOutOfAnArgument(group_request_data);
+groupRouter.post(
+  '/create', 
 
-  let created_group: Group = await db.Groups.create(create_data, {}).catch((err: Error) => {
-    console.log(err);
-    res.status(500).json({
-      message: "sorry... fail connect to database.",
-      isConnectDatabase: false
+  body('groupName').notEmpty().withMessage(APPMSG.Group.require.groupName),
+
+  async function(req: Request, res: Response, next: NextFunction) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array()});
+      return;
+    }
+
+    //TODO groupName を || undefined やめる
+    let group_request_data: GroupCommonAttributes = {
+      groupName: req.body.groupName || undefined,
+      groupIntroduction: req.body.groupIntroduction || undefined,
+    }
+    // undefinedのデータを削除
+    let create_data: GroupCommonAttributes = cutUndefinedOutOfAnArgument(group_request_data);
+
+    let created_group: Group
+    try{
+      created_group = await db.Groups.create(create_data, {})
+    }
+    catch(err) {
+      next(err);
+      return
+    }
+
+    res.status(200).json({
+      createdGroup: created_group,
+      message: "success! create " + created_group.groupName,
+      isConnectDatabase: true,
     });
-  })
-
-  res.status(200).json({
-    createdGroup: created_group,
-    message: "success! create " + created_group.groupName,
-    isConnectDatabase: true,
-  });
-})
+  }
+)
 
 
-// --------------- read groups ---------------
+/** read Groups table **************************************
+ *
+ * 全てのグループを検索して返す
+ * 大きなデータの取り出しをしたいのでページングはしない
+ *
+ * @param req.body: {}
+ *
+ ***********************************************************/
 interface reqGroupRead extends reqMsg {
   groups: Array< GroupAttributes >
 }
-groupRouter.get('/read', async function(req: Request, res: Response<reqGroupRead | reqMsg>, next: NextFunction) {
-  let readed_groups: Group[] = await db.Groups.findAll({})
-    .catch((err: Error) => {
-      console.log(err);
-      res.status(500).json({
-        message: "sorry... fail connect to database.",
-        isConnectDatabase: false
-      });
-    });
+groupRouter.get(
+  '/read', 
 
-  res.status(200).json({ 
-    groups: readed_groups,
-    message: "success connect database",
-    isConnectDatabase: true 
-  })
-})
+  async function(req: Request, res: Response, next: NextFunction) {
+    let readed_groups: Group[];
+    try{
+      readed_groups = await db.Groups.findAll({})
+    }
+    catch(err){
+      next(err);
+      return;
+    }
+
+    res.status(200).json({ 
+      groups: readed_groups,
+      message: "success connect database",
+      isConnectDatabase: true 
+    })
+  }
+)
 
 
-// --------------- update a group ---------------
+/** update a Group *****************************************
+ *
+ * リクエストを受けたgroupIdを持つグループを更新する。
+ *
+ * @param req.body.groupId: number
+ * @param req.body.groupName: string | undefined
+ * @param req.body.groupIntroduction: string | undefined
+ *
+ ***********************************************************/
 interface reqGroupUpdate extends reqMsg {
   updatedGroup: GroupAttributes
 }
-groupRouter.post('/update', async function(req: Request, res: Response, next: NextFunction) {
-  // 送られてきたデータを格納。
-  let group_request_data: GroupCommonAttributes = {
-    groupName: req.body.groupName || undefined,
-    groupIntroduction: req.body.groupIntroduction || undefined,
+groupRouter.post(
+  '/update', 
+
+  // = Validation ================================
+  // 空か判定した後、型を判定
+  body('groupId')
+    .notEmpty()
+    .withMessage(APPMSG.Group.require.groupId)
+    .bail()
+    .isInt()
+    .withMessage(APPMSG.Group.regular.groupId),
+
+  // groupId以外のパラメータはどれか一つでも存在すること
+  body('entire').custom(( value, {req} ) => {
+    if (
+      typeof req.body.groupName == 'undefined' &&
+      typeof req.body.groupIntroduction == 'undefined'
+    ) {
+      throw new Error();
+    }
+    return true;
+  }).withMessage(APPMSG.General.notEvenTheMinimum),
+
+  // = Processing ================================
+  async function(req: Request, res: Response, next: NextFunction) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array()});
+      return;
+    }
+
+    // 送られてきたデータを格納。
+    let group_request_data: GroupCommonAttributes = {
+      groupName: req.body.groupName || undefined,
+      groupIntroduction: req.body.groupIntroduction || undefined,
+    }
+    // undefinedのデータを削除
+    let update_data: GroupCommonAttributes = cutUndefinedOutOfAnArgument(group_request_data);
+
+    // 更新
+    try{
+      await db.Groups.update( update_data ,{
+        where: {
+          groupId: req.body.groupId,
+        }
+      })
+    }
+    catch(err) {
+      next(err);
+      return;
+    }
+
+    // 更新されたグループを取得
+    let updated_group: Group 
+    try{
+      updated_group = await db.Groups.findOne({
+        where: {
+          groupId: req.body.groupId,
+        }
+      })
+    }
+    catch(err){
+      next(err);
+      return;
+    }
+
+    res.status(200).json({
+      updatedGroup: updated_group,
+      message: "success! update " + updated_group.groupName,
+      isConnectDatabase: true,
+    })
   }
-  // undefinedのデータを削除
-  let update_data: GroupCommonAttributes = cutUndefinedOutOfAnArgument(group_request_data);
-
-  // 更新
-  await db.Groups.update( update_data ,{
-    where: {
-      groupId: req.body.groupId,
-    }
-  }).catch((err: Error) => {
-    console.log(err);
-    res.status(500).json({
-      message: "sorry... fail connect to database.",
-      isConnectDatabase: false,
-    });
-  })
-
-  // 更新されたユーザを取得
-  let updated_group: Group = await db.Groups.findOne({
-    where: {
-      groupId: req.body.groupId,
-    }
-  }).catch((err: Error) => {
-    console.log(err);
-    res.status(500).json({
-      message: "sorry... fail connect to database.",
-      isConnectDatabase: false,
-    });
-  })
-
-  res.status(200).json({
-    updatedGroup: updated_group,
-    message: "success! update " + updated_group.groupName,
-    isConnectDatabase: true,
-  })
-})
+)
 
 
-// --------------- delete a group ---------------
+/** delete a group *****************************************
+ *
+ * リクエストを受けたuserIdを持つユーザを削除する
+ * 
+ * @param req.body.groupId: number
+ *
+ ***********************************************************/
 interface reqGroupDelete extends reqMsg {
   deletedGroup: GroupAttributes
 }
-groupRouter.post('/delete', async function(req: Request, res: Response, next: NextFunction) {
-  let deletion_group: Group = await db.Groups.findOne({
-    where: {
-      groupId: req.body.groupId
-    }
-  }).catch((err: Error) => {
-    console.log(err);
-    res.status(501).json({
-      message: "sorry... fail connect to database.",
-      isConnectDatabase: false,
-    });
-  })
+groupRouter.post(
+  '/delete', 
 
-  await db.Groups.destroy({
-    where: {
-      groupId: req.body.groupId
+  body('groupId')
+    .notEmpty()
+    .withMessage(APPMSG.Group.require.groupId)
+    .bail()
+    .isInt()
+    .withMessage(APPMSG.Group.regular.groupId),
+
+  async function(req: Request, res: Response, next: NextFunction) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array()});
+      return;
     }
-  }).catch((err: Error) => {
-    console.log(err);
-    res.status(502).json({
-      message: "sorry... fail connect to database.",
-      isConnectDatabase: false,
+
+    // 削除対象のグループを取り出す。
+    let deletion_group: Group
+    try{
+      deletion_group = await db.Groups.findOne({
+        where: {
+          groupId: req.body.groupId
+        }
+      })
+    }
+    catch(err) {
+      next(err);
+      return;
+    }
+
+    // グループを削除する
+    try{
+      await db.Groups.destroy({
+        where: {
+          groupId: req.body.groupId
+        }
+      })    
+    }
+    catch(err) {
+      next(err);
+      return;
+    }
+
+    res.status(200).json({
+      deletedGroup: deletion_group,
+      message: "success! deleted " + deletion_group.groupName,
+      isConnectDatabase: true,
     });
-  })
-  
-  res.status(200).json({
-    deletedGroup: deletion_group,
-    message: "success! deleted " + deletion_group.groupName,
-    isConnectDatabase: true,
-  });
-})
+  }
+)

@@ -40,7 +40,7 @@ userRouter.get('/', async function(req: Request, res: Response, next: NextFuncti
 });
 
 
-/** create a User *****************************************
+/** create a User ******************************************
  *
  * 送られてきたデータでユーザを作成
  *
@@ -49,7 +49,7 @@ userRouter.get('/', async function(req: Request, res: Response, next: NextFuncti
  * @param req.body.email: string
  * @param req.body.introduction: string | undefined,
  *
- *********************************************************/
+ **********************************************************/
 interface reqUserRead extends reqMsg {
   createdUser: excludedPersonalInfomationUserAttributes
 }
@@ -101,14 +101,14 @@ userRouter.post(
 );
 
 
-/** read Users table **************************************
+/** read Users table ***************************************
  *
  * 全てのユーザを検索して返す
  * 大きなデータの取り出しをしたいのでページングはしない
  *
  * @param req.body: {}
  *
- **********************************************************/
+ ***********************************************************/
 interface reqUserRead extends reqMsg {
   users: Array< excludedPersonalInfomationUserAttributes >
 }
@@ -138,7 +138,7 @@ userRouter.get(
 });
 
 
-/** update a User *****************************************
+/** update a User ******************************************
  *
  * リクエストを受けたuserIdを持つユーザを更新する。
  *
@@ -148,13 +148,14 @@ userRouter.get(
  * @param req.body.email: string | undefined
  * @param req.body.introduction: string | undefined
  *
- **********************************************************/
+ ***********************************************************/
 interface reqUserUpdate extends reqMsg {
   updatedUser: excludedPersonalInfomationUserAttributes
 }
 userRouter.post(
   '/update', 
 
+  // = Validation ================================
   // 空か判定した後、型を判定
   body('userId')
     .notEmpty()
@@ -176,19 +177,21 @@ userRouter.post(
     return true;
   }).withMessage(APPMSG.General.notEvenTheMinimum),
 
-  // emailが存在する場合のみemailのチェックをする
+  // emailが存在する場合のみemailのフォーマットをチェックをする
   body('email').custom(value => {
     if (typeof value == 'undefined') return true
     if (validator.isEmail(value)) return true 
     throw new Error();
   }).withMessage(APPMSG.User.regular.email),
 
+  // = Processing ================================
   async function(req: Request, res: Response, next: NextFunction) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       res.status(400).json({ errors: errors.array()});
       return;
     }
+
     // 送られてきたデータを格納。
     let user_request_data: UserCommonAttributes = {
       firstName: req.body.firstName || undefined,
@@ -234,13 +237,13 @@ userRouter.post(
 );
 
 
-/** delete user *******************************************
+/** delete user ********************************************
  *
  * リクエストを受けたuserIdを持つユーザを削除する
  * 
  * @param req.body.userId: number
  *
- **********************************************************/
+ ***********************************************************/
 interface reqUserDelete extends reqMsg {
   deletedUser: excludedPersonalInfomationUserAttributes
 }

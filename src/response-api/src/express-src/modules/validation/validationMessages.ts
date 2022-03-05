@@ -19,6 +19,9 @@ export const APPMSG = {
       groupId: "GroupID is a required field",
       groupName: "GroupName is a required field",
     },
+    regular: {
+      groupId: "GroupID is a number",
+    },
   },
 
   General: {

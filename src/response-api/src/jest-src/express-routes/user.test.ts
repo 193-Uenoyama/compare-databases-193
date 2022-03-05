@@ -196,6 +196,7 @@ export default describe("Usersテーブルを操作するテスト", () =>{
           .set('Accept', 'application/json')
           .then(response => {
             expect(response.statusCode).toBe(400);
+            expect(response.body.errors.length).toBe(1);
             expect(response.body.errors[0].msg).toBe("UserID is a required field");
           });
       });
@@ -209,6 +210,7 @@ export default describe("Usersテーブルを操作するテスト", () =>{
           .set('Accept', 'application/json')
           .then(response => {
             expect(response.statusCode).toBe(400);
+            expect(response.body.errors.length).toBe(1);
             expect(response.body.errors[0].msg).toBe("UserID is a number");
           });
       });
