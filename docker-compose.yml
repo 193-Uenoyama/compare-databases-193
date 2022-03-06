@@ -12,10 +12,9 @@ services:
       - ./src/response-api:/home/response-api
       - ./logs:/home/logs/
     environment:
-      NODE_PATH: "/home/response-api/"
       LOG_PATH: "/home/logs/new/"
-      PATH: "${SDP_PATH}"
-    user: "${SDP_UID}:${SDP_GID}"
+      PATH: "${CD_SERVER_PATH}"
+    user: "${CD_UID}:${CD_GID}"
     tty: true
 
   node-client:
@@ -30,7 +29,8 @@ services:
       - ./logs:/home/logs/
     environment:
       LOG_PATH: "/home/logs/"
-    user: "${SDP_UID}:${SDP_GID}"
+      PATH: "${CD_CLIENT_PATH}"
+    user: "${CD_UID}:${CD_GID}"
     tty: true
 
   db:
