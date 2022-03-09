@@ -4,6 +4,8 @@ import {
   Optional,
 } from 'sequelize';
 import { sequelize } from '@/sequelize-src/defineSequelize'
+import { User } from '@/sequelize-src/models/user'
+import { Group } from '@/sequelize-src/models/group'
 
 interface GroupMemberAttributes {
   groupId: number;
@@ -15,6 +17,15 @@ interface GroupMemberCreationAttributes extends Optional<GroupMemberAttributes, 
 class GroupMember extends Model<GroupMemberAttributes, GroupMemberCreationAttributes> implements GroupMemberAttributes {
   declare groupId: number;
   declare memberId: number;
+
+  static associate(DB: any) {
+    DB.GroupMembers.belongsTo(DB.Users, {
+      foreignKey: "memberId",
+    });
+    DB.GroupMembers.belongsTo(DB.Groups, {
+      foreignKey: "groupId",
+    });
+  }
 };
 
 GroupMember.init({

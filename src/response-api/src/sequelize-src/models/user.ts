@@ -4,6 +4,7 @@ import {
   Optional,
 } from 'sequelize';
 import { Group } from '@/sequelize-src/models/group'
+import GroupMembers from '@/sequelize-src/models/groupmember'
 import CalculateProcessingTimeModel from '@/sequelize-src/CalculateProcessingTimeModel'
 import { sequelize } from '@/sequelize-src/defineSequelize'
 
@@ -42,16 +43,20 @@ export class User extends CalculateProcessingTimeModel<UserAttributes, UserCreat
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
 
-  associate() {
-    User.belongsToMany(User, {
-      through: 'Follows',
-      foreignKey: 'followedUserId',
-      targetKey: 'followingUserId',
-    });
-    User.belongsToMany(Group, { 
+  associate(DB: any) {
+    // DB.Users.belongsToMany(DB.Users, {
+    //   through: 'Follows',
+    //   foreignKey: 'followedUserId',
+    //   targetKey: 'followingUserId',
+    // });
+    DB.Users.belongsToMany(DB.Groups, { 
       through: 'GroupMembers',
       foreignKey: 'memberId',
-      targetKey: 'groupId',
+      otherKey: 'groupId',
+    });
+    DB.Users.hasMany(DB.GroupMembers, {
+      foreignKey: 'memberId',
+      sourceKey: 'userId',
     });
   }
 };

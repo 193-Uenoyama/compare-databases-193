@@ -5,6 +5,7 @@ import {
 } from 'sequelize';
 import { sequelize } from '@/sequelize-src/defineSequelize'
 import { User } from '@/sequelize-src/models/user'
+import GroupMembers from '@/sequelize-src/models/groupmember'
 
 export interface GroupCommonAttributes {
   groupName?: string;
@@ -24,11 +25,15 @@ export class Group extends Model<GroupAttributes, GroupCreationAttributes> imple
   declare groupName: string;
   declare groupIntroduction: string;
 
-  associate() {
-    Group.belongsToMany(User, { 
+  static associate(DB: any) {
+    DB.Groups.belongsToMany(DB.Users, { 
       through: 'GroupMembers',
       foreignKey: 'groupId',
-      targetKey: 'memberId'
+      otherKey: 'memberId',
+    });
+    DB.Groups.hasMany(DB.GroupMembers, {
+      foreignKey: 'groupId',
+      sourceKey: 'groupId',
     });
   }
 };

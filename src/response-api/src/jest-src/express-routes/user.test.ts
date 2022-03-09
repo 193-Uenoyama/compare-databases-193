@@ -1,8 +1,8 @@
 import request from 'supertest';
+import { ValidationError } from 'express-validator';
 import app from '@/express-src/app';
 import { UserCommonAttributes, User } from '@/sequelize-src/models/user';
 import db from '@/sequelize-src/models/index';
-import { ValidationError } from 'express-validator';
 
 export default describe("Usersテーブルを操作するテスト", () =>{
 

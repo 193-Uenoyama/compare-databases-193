@@ -1,4 +1,4 @@
-import appTest from '@/jest-src/express-routes/app.test'
+import appTest from 'src/jest-src/express-routes/app.test'
 import userTest from '@/jest-src/express-routes/user.test'
 import groupTest from '@/jest-src/express-routes/group.test'
 import db from '@/sequelize-src/models/index';
