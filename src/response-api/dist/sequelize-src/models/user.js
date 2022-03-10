@@ -16,13 +16,13 @@ class User extends CalculateProcessingTimeModel_1.default {
         // });
         DB.Users.belongsToMany(DB.Groups, {
             through: 'GroupMembers',
-            // foreignKey: 'memberId',
-            // otherKey: 'groupId',
+            foreignKey: 'memberId',
+            otherKey: 'groupId',
         });
-        // DB.Users.hasMany(DB.GroupMembers, {
-        //   foreignKey: 'memberId',
-        //   sourceKey: 'userId',
-        // });
+        DB.Users.hasMany(DB.GroupMembers, {
+            foreignKey: 'memberId',
+            sourceKey: 'userId',
+        });
     }
 }
 exports.User = User;

@@ -5,7 +5,7 @@ module.exports = {
   testEnvironment: 'node',
   rootDir: "./src/",
   moduleNameMapper: {
-    "/@\/(.*)/": "src/$1"
+    "@/(.*)": "src/$1"
   },
   resolver: undefined
 };

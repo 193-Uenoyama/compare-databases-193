@@ -7,13 +7,13 @@ class Group extends sequelize_1.Model {
     static associate(DB) {
         DB.Groups.belongsToMany(DB.Users, {
             through: 'GroupMembers',
-            // foreignKey: 'groupId',
-            // otherKey: 'memberId',
+            foreignKey: 'groupId',
+            otherKey: 'memberId',
         });
-        // DB.Groups.hasMany(DB.GroupMembers, {
-        //   foreignKey: 'groupId',
-        //   sourceKey: 'groupId',
-        // });
+        DB.Groups.hasMany(DB.GroupMembers, {
+            foreignKey: 'groupId',
+            sourceKey: 'groupId',
+        });
     }
 }
 exports.Group = Group;

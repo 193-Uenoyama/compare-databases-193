@@ -17,7 +17,7 @@ export const belongsToGroupRouter: Router = Router();
 // TODO 型宣言ちゃんとするよん。あとで。
 /** create belongsToGroup **********************************
  *
- * 送られてきたデータでグループを作成
+ * 送られてきたgroupIdのグループにuserIdのユーザを所属させる
  *
  * @param req.body.groupId: number
  * @param req.body.userId: number
@@ -57,7 +57,7 @@ belongsToGroupRouter.post(
 
     let result;
     try {
-      result = await db.GroupMembers.create({ create_data });
+      result = await db.GroupMembers.create(create_data);
     }
     catch(err) {
       console.log(err);
@@ -74,7 +74,7 @@ belongsToGroupRouter.post(
 
 /** read belongsToGroup members ****************************
  *
- * 送られてきたデータでグループを作成
+ * 送られてきたgroupIdのグループに所属しているメンバーを返却
  *
  * @param req.body.groupId: number
  *
@@ -168,7 +168,6 @@ belongsToGroupRouter.post(
     res.status(200).json({
       group: result,
     });
-    next();
   }
 );
 

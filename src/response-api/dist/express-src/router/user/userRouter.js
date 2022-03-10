@@ -59,6 +59,7 @@ exports.userRouter.post('/create',
         created_user = await index_1.default.Users.calculateTimeOfCreate(req.time_keeper, create_data, {});
     }
     catch (err) {
+        console.log(err);
         next(err);
         return;
     }
@@ -71,14 +72,10 @@ exports.userRouter.post('/create',
 exports.userRouter.get('/read', async function (req, res, next) {
     let readed_users;
     try {
-        readed_users = await index_1.default.Users.calculateTimeOfFindAll(req.time_keeper, {})
-            .catch((err) => {
-            console.log(err.stack);
-            next(err);
-            return;
-        });
+        readed_users = await index_1.default.Users.calculateTimeOfFindAll(req.time_keeper, {});
     }
     catch (err) {
+        console.log(err);
         next(err);
         return;
     }
@@ -135,6 +132,7 @@ async function (req, res, next) {
         await index_1.default.Users.calculateTimeOfUpdate(req.time_keeper, update_data, { where: { userId: req.body.userId, } });
     }
     catch (err) {
+        console.log(err);
         next(err);
         return;
     }
@@ -148,6 +146,7 @@ async function (req, res, next) {
         });
     }
     catch (err) {
+        console.log(err);
         next(err);
         return;
     }
@@ -178,6 +177,7 @@ exports.userRouter.post('/delete', (0, express_validator_1.body)('userId')
         });
     }
     catch (err) {
+        console.log(err);
         next(err);
         return;
     }
@@ -190,6 +190,7 @@ exports.userRouter.post('/delete', (0, express_validator_1.body)('userId')
         });
     }
     catch (err) {
+        console.log(err);
         next(err);
         return;
     }

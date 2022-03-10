@@ -28,6 +28,7 @@ exports.groupRouter.post('/create', (0, express_validator_1.body)('groupName').n
         created_group = await index_1.default.Groups.create(create_data, {});
     }
     catch (err) {
+        console.log(err);
         next(err);
         return;
     }
@@ -43,6 +44,7 @@ exports.groupRouter.get('/read', async function (req, res, next) {
         readed_groups = await index_1.default.Groups.findAll({});
     }
     catch (err) {
+        console.log(err);
         next(err);
         return;
     }
@@ -92,6 +94,7 @@ async function (req, res, next) {
         });
     }
     catch (err) {
+        console.log(err);
         next(err);
         return;
     }
@@ -105,6 +108,7 @@ async function (req, res, next) {
         });
     }
     catch (err) {
+        console.log(err);
         next(err);
         return;
     }
@@ -135,6 +139,7 @@ exports.groupRouter.post('/delete', (0, express_validator_1.body)('groupId')
         });
     }
     catch (err) {
+        console.log(err);
         next(err);
         return;
     }
@@ -147,6 +152,7 @@ exports.groupRouter.post('/delete', (0, express_validator_1.body)('groupId')
         });
     }
     catch (err) {
+        console.log(err);
         next(err);
         return;
     }
