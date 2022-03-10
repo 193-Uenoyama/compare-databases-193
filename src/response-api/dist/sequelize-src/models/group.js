@@ -3,13 +3,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Group = void 0;
 const sequelize_1 = require("sequelize");
 const defineSequelize_1 = require("../../sequelize-src/defineSequelize");
-const user_1 = require("../../sequelize-src/models/user");
 class Group extends sequelize_1.Model {
-    associate() {
-        Group.belongsToMany(user_1.User, {
+    static associate(DB) {
+        DB.Groups.belongsToMany(DB.Users, {
             through: 'GroupMembers',
             foreignKey: 'groupId',
-            targetKey: 'memberId'
+            otherKey: 'memberId',
+        });
+        DB.Groups.hasMany(DB.GroupMembers, {
+            foreignKey: 'groupId',
+            sourceKey: 'groupId',
         });
     }
 }

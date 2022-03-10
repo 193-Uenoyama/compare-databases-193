@@ -3,11 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.rootRouter = void 0;
+exports.pretreatmentRouter = void 0;
 const express_1 = require("express");
-const TimeKeeper_1 = __importDefault(require("../../express-src/modules/write_logs/TimeKeeper"));
-exports.rootRouter = (0, express_1.Router)();
-exports.rootRouter.use('/', 
+const TimeKeeper_1 = __importDefault(require("../../../express-src/modules/writeLogs/TimeKeeper"));
+exports.pretreatmentRouter = (0, express_1.Router)();
+exports.pretreatmentRouter.use('/', 
 // TimeKeeperを設定
 function (req, res, next) {
     req.time_keeper = new TimeKeeper_1.default();

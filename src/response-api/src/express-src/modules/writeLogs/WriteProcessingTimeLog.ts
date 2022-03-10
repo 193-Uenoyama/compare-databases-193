@@ -18,6 +18,7 @@ export default class ProcessingTimeLogWriter {
   constructor(request_id: string, request_time: string) {
     this.request_id = request_id;
     this.request_time = request_time;
+    this.ifNotExist_CreateDirectory();
   }
 
   WriteNodeLog(
@@ -25,14 +26,19 @@ export default class ProcessingTimeLogWriter {
     request_name: Process_Server, 
     processing_time: bigint) {
 
-    fs.appendFileSync(
-      this.WRITTEN_FILE_PATH, 
-      process_state + "," +
-      this.request_time + "," + 
-      this.request_id + ","  +
-      request_name + "," +
-      processing_time + "\n"
-    );
+    try {
+      fs.appendFileSync(
+        this.WRITTEN_FILE_PATH, 
+        process_state + "," +
+        this.request_time + "," + 
+        this.request_id + ","  +
+        request_name + "," +
+        processing_time + "\n"
+      );
+    }
+    catch(err) {
+      console.log(err);
+    }
   }
 
   WriteDbLog(
@@ -41,16 +47,32 @@ export default class ProcessingTimeLogWriter {
     target_table: string, 
     processing_time: bigint) {
 
-    fs.appendFileSync(
-      this.WRITTEN_FILE_PATH, 
-      process_state + "," +
-      this.request_time + "," + 
-      this.request_id + "," +
-      "DB" + "," +
-      request_name + "," +
-      target_table + "," +
-      processing_time + "\n"
-    );
+    try{
+      fs.appendFileSync(
+        this.WRITTEN_FILE_PATH, 
+        process_state + "," +
+          this.request_time + "," + 
+          this.request_id + "," +
+          "DB" + "," +
+          request_name + "," +
+          target_table + "," +
+          processing_time + "\n"
+      );
+    }
+    catch(err) {
+      console.log(err);
+    }
+  }
+
+  ifNotExist_CreateDirectory() {
+    try{
+      if(!fs.existsSync(this.WRITTEN_FILE_DIRECTORY)) {
+        fs.mkdirSync(this.WRITTEN_FILE_DIRECTORY);
+      }
+    }
+    catch(err) {
+      console.log(err);
+    }
   }
 
 }

@@ -1,6 +1,7 @@
-import appTest from '@/jest-src/express-routes/app.test'
+import appTest from 'src/jest-src/express-routes/app.test'
 import userTest from '@/jest-src/express-routes/user.test'
 import groupTest from '@/jest-src/express-routes/group.test'
+import belongsToGroupTest from '@/jest-src/express-routes/groupmember.test'
 import db from '@/sequelize-src/models/index';
 
 const userSeed = require('@/sequelize-src/seeders/20220103140603-demo-user');
@@ -9,7 +10,7 @@ const groupMemberSeed = require('@/sequelize-src/seeders/20220205114644-demo-gro
 const relationSeed = require('@/sequelize-src/seeders/20220205114654-demo-follow');
 
 // seeding
-beforeAll( async () => {
+beforeEach( async () => {
   await userSeed.up(db.sequelize.getQueryInterface(), db.sequelize);
   await groupSeed.up(db.sequelize.getQueryInterface(), db.sequelize);
   await groupMemberSeed.up(db.sequelize.getQueryInterface(), db.sequelize);
@@ -17,7 +18,7 @@ beforeAll( async () => {
 });
 
 // delete data
-afterAll( async () => {
+afterEach( async () => {
   await relationSeed.down();
   await groupMemberSeed.down();
   await groupSeed.down();
@@ -28,4 +29,5 @@ describe("compare-databases-serv-test", () => {
   appTest
   userTest
   groupTest
+  belongsToGroupTest
 });

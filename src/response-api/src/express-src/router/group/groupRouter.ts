@@ -49,6 +49,7 @@ groupRouter.post(
       created_group = await db.Groups.create(create_data, {})
     }
     catch(err) {
+      console.log(err);
       next(err);
       return
     }
@@ -82,6 +83,7 @@ groupRouter.get(
       readed_groups = await db.Groups.findAll({})
     }
     catch(err){
+      console.log(err);
       next(err);
       return;
     }
@@ -155,6 +157,7 @@ groupRouter.post(
       })
     }
     catch(err) {
+      console.log(err);
       next(err);
       return;
     }
@@ -169,6 +172,7 @@ groupRouter.post(
       })
     }
     catch(err){
+      console.log(err);
       next(err);
       return;
     }
@@ -219,6 +223,7 @@ groupRouter.post(
       })
     }
     catch(err) {
+      console.log(err);
       next(err);
       return;
     }
@@ -232,6 +237,7 @@ groupRouter.post(
       })    
     }
     catch(err) {
+      console.log(err);
       next(err);
       return;
     }

@@ -88,6 +88,7 @@ userRouter.post(
       created_user = await db.Users.calculateTimeOfCreate(req.time_keeper, create_data, {})
     }
     catch(err){
+      console.log(err);
       next(err);
       return;
     }
@@ -119,13 +120,9 @@ userRouter.get(
   let readed_users: User[]
   try{
     readed_users = await db.Users.calculateTimeOfFindAll(req.time_keeper, {})
-    .catch((err: Error) => {
-      console.log(err.stack);
-      next(err);
-      return;
-    });
   }
   catch(err) {
+    console.log(err);
     next(err);
     return;
   }
@@ -210,6 +207,7 @@ userRouter.post(
       )
     }
     catch(err){
+      console.log(err);
       next(err);
       return;
     }
@@ -224,6 +222,7 @@ userRouter.post(
       }) 
     }
     catch(err){
+      console.log(err);
       next(err);
       return;
     }
@@ -274,6 +273,7 @@ userRouter.post(
       });
     }
     catch(err) {
+      console.log(err);
       next(err);
       return;
     }
@@ -287,6 +287,7 @@ userRouter.post(
       })
     }
     catch(err){
+      console.log(err);
       next(err);
       return;
     }  
