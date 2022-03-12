@@ -1,18 +1,19 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Group = void 0;
 const sequelize_1 = require("sequelize");
 const defineSequelize_1 = require("../../sequelize-src/defineSequelize");
-class Group extends sequelize_1.Model {
+const CalculateProcessingTimeModel_1 = __importDefault(require("../../sequelize-src/CalculateProcessingTimeModel"));
+class Group extends CalculateProcessingTimeModel_1.default {
     static associate(DB) {
         DB.Groups.belongsToMany(DB.Users, {
+            as: 'Members',
             through: 'GroupMembers',
             foreignKey: 'groupId',
             otherKey: 'memberId',
-        });
-        DB.Groups.hasMany(DB.GroupMembers, {
-            foreignKey: 'groupId',
-            sourceKey: 'groupId',
         });
     }
 }

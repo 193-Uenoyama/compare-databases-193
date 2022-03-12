@@ -1,10 +1,7 @@
 import {
   DataTypes,
-  Model,
   Optional,
 } from 'sequelize';
-import { Group } from '@/sequelize-src/models/group'
-import GroupMembers from '@/sequelize-src/models/groupmember'
 import CalculateProcessingTimeModel from '@/sequelize-src/CalculateProcessingTimeModel'
 import { sequelize } from '@/sequelize-src/defineSequelize'
 
@@ -43,20 +40,30 @@ export class User extends CalculateProcessingTimeModel<UserAttributes, UserCreat
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
 
-  associate(DB: any) {
-    // DB.Users.belongsToMany(DB.Users, {
-    //   through: 'Follows',
-    //   foreignKey: 'followedUserId',
-    //   targetKey: 'followingUserId',
-    // });
+  static associate(DB: any) {
     DB.Users.belongsToMany(DB.Groups, { 
+      as: 'Teams',
       through: 'GroupMembers',
       foreignKey: 'memberId',
       otherKey: 'groupId',
     });
-    DB.Users.hasMany(DB.GroupMembers, {
-      foreignKey: 'memberId',
-      sourceKey: 'userId',
+
+    // UserとFollower(Follows)を結びつけるassociation.
+    // Userが自分のフォロワーを操作するためには
+    // 自身のuserIdとfollowedUserId(フォローされているユーザID)
+    // が結びつかなければならない。
+    DB.Users.belongsToMany(DB.Users, {
+      as: 'Follower',
+      through: 'Follows',
+      foreignKey: 'followedUserId',
+      otherKey: 'followerUserId',
+    });
+    // UserとFolloweed(Follows)を結びつけるassociation.
+    DB.Users.belongsToMany(DB.Users, {
+      as: 'Followed',
+      through: 'Follows',
+      foreignKey: 'followerUserId',
+      otherKey: 'followedUserId',
     });
   }
 };

@@ -7,15 +7,17 @@ import {
 module.exports = {
   up: async (queryInterface: QueryInterface, Sequelize: Sequelize) => {
     await queryInterface.createTable('Follows', {
-      followedUserId: {
+      followerUserId: {
         type: DataTypes.INTEGER,
+        primaryKey: true,
         references: {
           model: "Users",
           key: "userId",
         }
       },
-      followingUserId: { 
+      followedUserId: { 
         type: DataTypes.INTEGER ,
+        primaryKey: true,
         references: {
           model: "Users",
           key: "userId",

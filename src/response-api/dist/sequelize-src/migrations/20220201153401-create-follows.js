@@ -4,15 +4,17 @@ const sequelize_1 = require("sequelize");
 module.exports = {
     up: async (queryInterface, Sequelize) => {
         await queryInterface.createTable('Follows', {
-            followedUserId: {
+            followerUserId: {
                 type: sequelize_1.DataTypes.INTEGER,
+                primaryKey: true,
                 references: {
                     model: "Users",
                     key: "userId",
                 }
             },
-            followingUserId: {
+            followedUserId: {
                 type: sequelize_1.DataTypes.INTEGER,
+                primaryKey: true,
                 references: {
                     model: "Users",
                     key: "userId",

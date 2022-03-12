@@ -4,8 +4,6 @@ import {
   Optional,
 } from 'sequelize';
 import { sequelize } from '@/sequelize-src/defineSequelize'
-import { User } from '@/sequelize-src/models/user'
-import { Group } from '@/sequelize-src/models/group'
 
 interface GroupMemberAttributes {
   groupId: number;

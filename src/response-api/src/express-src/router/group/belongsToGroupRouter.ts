@@ -8,8 +8,6 @@ import { param, body, validationResult } from 'express-validator';
 import db from '@/sequelize-src/models/index'
 import { reqMsg, cutUndefinedOutOfAnArgument } from '@/express-src/router/_modules';
 import { GroupCommonAttributes, GroupAttributes, Group } from '@/sequelize-src/models/group';
-import { User } from '@/sequelize-src/models/user';
-import GroupMembers from '@/sequelize-src/models/groupmember';
 import { APPMSG } from '@/express-src/modules/validation/validationMessages';
 
 export const belongsToGroupRouter: Router = Router();
@@ -47,7 +45,6 @@ belongsToGroupRouter.post(
       return;
     }
 
-    //TODO groupName を || undefined やめる
     let group_request_data = {
       groupId: req.body.groupId,
       memberId: req.body.userId
@@ -102,7 +99,7 @@ belongsToGroupRouter.get(
         where: {
           groupId: req.params.groupId,
         },
-        include: [ db.Users ],
+        include: [ 'Members' ],
       });
     }
     catch(err) {

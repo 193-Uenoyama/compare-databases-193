@@ -8,20 +8,24 @@ const sequelize_1 = require("sequelize");
 const CalculateProcessingTimeModel_1 = __importDefault(require("../../sequelize-src/CalculateProcessingTimeModel"));
 const defineSequelize_1 = require("../../sequelize-src/defineSequelize");
 class User extends CalculateProcessingTimeModel_1.default {
-    associate(DB) {
-        // DB.Users.belongsToMany(DB.Users, {
-        //   through: 'Follows',
-        //   foreignKey: 'followedUserId',
-        //   targetKey: 'followingUserId',
-        // });
+    static associate(DB) {
         DB.Users.belongsToMany(DB.Groups, {
+            as: 'Teams',
             through: 'GroupMembers',
             foreignKey: 'memberId',
             otherKey: 'groupId',
         });
-        DB.Users.hasMany(DB.GroupMembers, {
-            foreignKey: 'memberId',
-            sourceKey: 'userId',
+        DB.Users.belongsToMany(DB.Users, {
+            as: 'Follower',
+            through: 'Follows',
+            foreignKey: 'followerUserId',
+            otherKey: 'followedUserId',
+        });
+        DB.Users.belongsToMany(DB.Users, {
+            as: 'Followed',
+            through: 'Follows',
+            foreignKey: 'followedUserId',
+            otherKey: 'followerUserId',
         });
     }
 }

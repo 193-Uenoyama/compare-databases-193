@@ -36,9 +36,8 @@ groupRouter.post(
       return;
     }
 
-    //TODO groupName を || undefined やめる
     let group_request_data: GroupCommonAttributes = {
-      groupName: req.body.groupName || undefined,
+      groupName: req.body.groupName,
       groupIntroduction: req.body.groupIntroduction || undefined,
     }
     // undefinedのデータを削除

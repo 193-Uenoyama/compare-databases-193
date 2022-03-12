@@ -35,7 +35,6 @@ exports.belongsToGroupRouter.post('/create', (0, express_validator_1.body)('user
         res.status(400).json({ errors: errors.array() });
         return;
     }
-    //TODO groupName を || undefined やめる
     let group_request_data = {
         groupId: req.body.groupId,
         memberId: req.body.userId
@@ -79,7 +78,7 @@ exports.belongsToGroupRouter.get('/read/:groupId', (0, express_validator_1.param
             where: {
                 groupId: req.params.groupId,
             },
-            include: [index_1.default.Users],
+            include: ['Members'],
         });
     }
     catch (err) {

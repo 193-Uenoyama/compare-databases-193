@@ -3,8 +3,20 @@ import app from '@/express-src/app';
 import { UserCommonAttributes, User } from '@/sequelize-src/models/user';
 import { Group } from '@/sequelize-src/models/group';
 import db from '@/sequelize-src/models/index';
+import { Seeding } from '@/jest-src/test-reserve/seeding'
+import { CleanUp } from '@/jest-src/test-reserve/cleanup'
 
 export default describe("GroupMembersテーブルを操作するテスト", () => {
+  // seeding
+  beforeEach( async () => {
+    await Seeding();
+  });
+
+  // delete data
+  afterEach( async () => {
+    await CleanUp();
+  });
+
   describe("登録", () => {
     it("Groupに新しいMemberを挿入するテスト", async function() {
       // ユーザとグループを用意
@@ -34,9 +46,9 @@ export default describe("GroupMembersテーブルを操作するテスト", () =
         where: {
           groupId: response_body.group.groupId,
         },
-        include: [ db.Users ],
+        include: [ 'Members' ],
       });
-      expect(belonged_to_group[0].Users[0].firstName).toBe('yamada');
+      expect(belonged_to_group[0].Members[0].firstName).toBe('yamada');
     });
 
     describe("GroupMember挿入 validationエラー", () => {
@@ -132,8 +144,8 @@ export default describe("GroupMembersテーブルを操作するテスト", () =
           expect(response.statusCode).toBe(200);
         });
 
-      expect(response_body.group.Users[0].firstName).toBe('John');
-      expect(response_body.group.Users[1].firstName).toBe('Kitamura');
+      expect(response_body.group.Members[0].firstName).toBe('John');
+      expect(response_body.group.Members[1].firstName).toBe('Kitamura');
     });
 
     describe("GroupMember参照 validationエラー", () => {
@@ -179,10 +191,10 @@ export default describe("GroupMembersテーブルを操作するテスト", () =
         where: {
           groupId: test_target_group.groupId,
         },
-        include: [ db.Users ],
+        include: [ 'Members' ],
       });
-      expect(member_reduced_group[0].Users[0].firstName).toBe('Kitamura');
-      expect(member_reduced_group[0].Users[1]).toBe(undefined);
+      expect(member_reduced_group[0].Members[0].firstName).toBe('Kitamura');
+      expect(member_reduced_group[0].Members[1]).toBe(undefined);
     });
 
     describe("GroupMember削除 validationエラー", () => {

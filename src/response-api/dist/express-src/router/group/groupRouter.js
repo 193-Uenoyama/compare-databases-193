@@ -16,9 +16,8 @@ exports.groupRouter.post('/create', (0, express_validator_1.body)('groupName').n
         res.status(400).json({ errors: errors.array() });
         return;
     }
-    //TODO groupName を || undefined やめる
     let group_request_data = {
-        groupName: req.body.groupName || undefined,
+        groupName: req.body.groupName,
         groupIntroduction: req.body.groupIntroduction || undefined,
     };
     // undefinedのデータを削除

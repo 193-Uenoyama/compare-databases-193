@@ -3,8 +3,19 @@ import app from '@/express-src/app';
 import { UserCommonAttributes, User } from '@/sequelize-src/models/user';
 import { Group } from '@/sequelize-src/models/group';
 import db from '@/sequelize-src/models/index';
+import { Seeding } from '@/jest-src/test-reserve/seeding'
+import { CleanUp } from '@/jest-src/test-reserve/cleanup'
 
 export default describe("Groupsテーブルを操作するテスト", () =>{
+  // seeding
+  beforeEach( async () => {
+    await Seeding();
+  });
+
+  // delete data
+  afterEach( async () => {
+    await CleanUp();
+  });
 
   describe("登録", () => {
     it("Groupに新しいデータを挿入するテスト", async function() {
