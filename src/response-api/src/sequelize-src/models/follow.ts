@@ -6,19 +6,28 @@ import {
 import { sequelize } from '@/sequelize-src/defineSequelize'
 
 interface FollowAttributes {
+  followerUserId: number;
   followedUserId: number;
-  followingUserId: number;
 }
 
-interface FollowCreationAttributes extends Optional<FollowAttributes, "followingUserId"> {}
+interface FollowCreationAttributes extends Optional<FollowAttributes, "followerUserId"> {}
 
 class Follow extends Model<FollowAttributes, FollowCreationAttributes> implements FollowAttributes {
+  declare followerUserId: number;
   declare followedUserId: number;
-  declare followingUserId: number;
+
+  static associate(DB: any) {
+    DB.Follows.belongsTo(DB.Users, {
+      foreignKey: "followerUserId",
+    });
+    DB.Follows.belongsTo(DB.Users, {
+      foreignKey: "followedUserId",
+    });
+  }
 };
 
 Follow.init({
-  followedUserId: {
+  followerUserId: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     references: {
@@ -26,7 +35,7 @@ Follow.init({
       key: "userId",
     }
   },
-  followingUserId: { 
+  followedUserId: { 
     type: DataTypes.INTEGER ,
     primaryKey: true,
     references: {

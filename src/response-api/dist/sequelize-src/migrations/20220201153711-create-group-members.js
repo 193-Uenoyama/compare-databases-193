@@ -6,7 +6,6 @@ module.exports = {
         await queryInterface.createTable('GroupMembers', {
             groupId: {
                 type: sequelize_1.DataTypes.INTEGER,
-                primaryKey: true,
                 references: {
                     model: "Groups",
                     key: "groupId",
@@ -14,7 +13,6 @@ module.exports = {
             },
             memberId: {
                 type: sequelize_1.DataTypes.INTEGER,
-                primaryKey: true,
                 references: {
                     model: "Users",
                     key: "userId",

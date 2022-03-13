@@ -36,9 +36,8 @@ groupRouter.post(
       return;
     }
 
-    //TODO groupName を || undefined やめる
     let group_request_data: GroupCommonAttributes = {
-      groupName: req.body.groupName || undefined,
+      groupName: req.body.groupName,
       groupIntroduction: req.body.groupIntroduction || undefined,
     }
     // undefinedのデータを削除
@@ -49,6 +48,7 @@ groupRouter.post(
       created_group = await db.Groups.create(create_data, {})
     }
     catch(err) {
+      console.log(err);
       next(err);
       return
     }
@@ -82,6 +82,7 @@ groupRouter.get(
       readed_groups = await db.Groups.findAll({})
     }
     catch(err){
+      console.log(err);
       next(err);
       return;
     }
@@ -155,6 +156,7 @@ groupRouter.post(
       })
     }
     catch(err) {
+      console.log(err);
       next(err);
       return;
     }
@@ -169,6 +171,7 @@ groupRouter.post(
       })
     }
     catch(err){
+      console.log(err);
       next(err);
       return;
     }
@@ -219,6 +222,7 @@ groupRouter.post(
       })
     }
     catch(err) {
+      console.log(err);
       next(err);
       return;
     }
@@ -232,6 +236,7 @@ groupRouter.post(
       })    
     }
     catch(err) {
+      console.log(err);
       next(err);
       return;
     }

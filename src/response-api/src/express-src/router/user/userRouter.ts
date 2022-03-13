@@ -20,7 +20,8 @@ userRouter.get('/', async function(req: Request, res: Response, next: NextFuncti
   let firstName: string = Math.random().toString(32).substring(2);
   let lastName: string = Math.random().toString(32).substring(2);
   let email: string = Math.random().toString(32).substring(2);
-  await db.Users.calculateTimeOfCreate(req.time_keeper, {
+  await db.Users.calculateTimeOfCreate(
+    req.process_logging.log_detail, {
     firstName: firstName,
     lastName: lastName,
     email: email,
@@ -29,14 +30,14 @@ userRouter.get('/', async function(req: Request, res: Response, next: NextFuncti
     return
   });
 
-  return_data = await db.Users.calculateTimeOfFindAll(req.time_keeper, {})  
+  return_data = await db.Users.calculateTimeOfFindAll(
+    req.process_logging.log_detail, {})  
   .catch((err: Error) => {
     next(err);
     return
   })
 
   res.status(200).json(return_data);
-  next();
 });
 
 
@@ -85,9 +86,12 @@ userRouter.post(
 
     let created_user;
     try {
-      created_user = await db.Users.calculateTimeOfCreate(req.time_keeper, create_data, {})
+      created_user = await db.Users.calculateTimeOfCreate(
+        req.process_logging.log_detail, 
+        create_data, {})
     }
     catch(err){
+      console.log(err);
       next(err);
       return;
     }
@@ -118,14 +122,11 @@ userRouter.get(
   async function(req: Request, res: Response<reqUserRead | reqMsg>, next: NextFunction) {
   let readed_users: User[]
   try{
-    readed_users = await db.Users.calculateTimeOfFindAll(req.time_keeper, {})
-    .catch((err: Error) => {
-      console.log(err.stack);
-      next(err);
-      return;
-    });
+    readed_users = await db.Users.calculateTimeOfFindAll(
+      req.process_logging.log_detail, {})
   }
   catch(err) {
+    console.log(err);
     next(err);
     return;
   }
@@ -204,12 +205,13 @@ userRouter.post(
 
     try { 
       await db.Users.calculateTimeOfUpdate(
-        req.time_keeper, 
+        req.process_logging.log_detail,
         update_data ,
         { where: { userId: req.body.userId, } }
       )
     }
     catch(err){
+      console.log(err);
       next(err);
       return;
     }
@@ -224,6 +226,7 @@ userRouter.post(
       }) 
     }
     catch(err){
+      console.log(err);
       next(err);
       return;
     }
@@ -274,19 +277,22 @@ userRouter.post(
       });
     }
     catch(err) {
+      console.log(err);
       next(err);
       return;
     }
 
     // ユーザを削除する
     try {
-      await db.Users.calculateTimeOfDelete(req.time_keeper, {
+      await db.Users.calculateTimeOfDelete(
+        req.process_logging.log_detail, {
         where: {
           userId: req.body.userId
         }
       })
     }
     catch(err){
+      console.log(err);
       next(err);
       return;
     }  

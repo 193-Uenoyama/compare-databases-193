@@ -4,7 +4,7 @@ import {
   Optional,
 } from 'sequelize';
 import { sequelize } from '@/sequelize-src/defineSequelize'
-import { User } from '@/sequelize-src/models/user'
+import CalculateProcessingTimeModel from '@/sequelize-src/CalculateProcessingTimeModel'
 
 export interface GroupCommonAttributes {
   groupName?: string;
@@ -19,16 +19,17 @@ export interface GroupAttributes {
 
 interface GroupCreationAttributes extends Optional<GroupAttributes, "groupId"> {}
 
-export class Group extends Model<GroupAttributes, GroupCreationAttributes> implements GroupAttributes {
+export class Group extends CalculateProcessingTimeModel<GroupAttributes, GroupCreationAttributes> implements GroupAttributes {
   declare groupId: number;
   declare groupName: string;
   declare groupIntroduction: string;
 
-  associate() {
-    Group.belongsToMany(User, { 
+  static associate(DB: any) {
+    DB.Groups.belongsToMany(DB.Users, { 
+      as: 'Members',
       through: 'GroupMembers',
       foreignKey: 'groupId',
-      targetKey: 'memberId'
+      otherKey: 'memberId',
     });
   }
 };

@@ -9,7 +9,6 @@ import {
 export const errorHandleRouter: Router = Router();
 
 errorHandleRouter.use((err: ErrorRequestHandler, req: Request, res: Response, next: NextFunction) => {
-  console.log(err);
   let message: string = '500 server error : ' + req.path
   console.log(message);
 

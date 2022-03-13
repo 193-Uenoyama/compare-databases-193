@@ -3,6 +3,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const defineSequelize_1 = require("../../sequelize-src/defineSequelize");
 class GroupMember extends sequelize_1.Model {
+    static associate(DB) {
+        DB.GroupMembers.belongsTo(DB.Users, {
+            foreignKey: "memberId",
+        });
+        DB.GroupMembers.belongsTo(DB.Groups, {
+            foreignKey: "groupId",
+        });
+    }
 }
 ;
 GroupMember.init({

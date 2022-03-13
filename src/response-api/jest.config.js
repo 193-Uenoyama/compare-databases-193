@@ -6,5 +6,6 @@ module.exports = {
   rootDir: "./src/",
   moduleNameMapper: {
     "@/(.*)": "src/$1"
-  }
+  },
+  resolver: undefined
 };

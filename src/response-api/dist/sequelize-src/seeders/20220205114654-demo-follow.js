@@ -12,12 +12,16 @@ module.exports = {
         });
         let now = new Date();
         return queryInterface.bulkInsert('Follows', [{
+                followerUserId: data[2].userId,
                 followedUserId: data[0].userId,
-                followingUserId: data[2].userId,
                 createdAt: now,
             }, {
+                followerUserId: data[2].userId,
                 followedUserId: data[1].userId,
-                followingUserId: data[2].userId,
+                createdAt: now,
+            }, {
+                followerUserId: data[1].userId,
+                followedUserId: data[2].userId,
                 createdAt: now,
             }]);
     },

@@ -3,8 +3,19 @@ import app from '@/express-src/app';
 import { UserCommonAttributes, User } from '@/sequelize-src/models/user';
 import { Group } from '@/sequelize-src/models/group';
 import db from '@/sequelize-src/models/index';
+import { Seeding } from '@/jest-src/test-reserve/seeding'
+import { CleanUp } from '@/jest-src/test-reserve/cleanup'
 
 export default describe("Groupsテーブルを操作するテスト", () =>{
+  // seeding
+  beforeEach( async () => {
+    await Seeding();
+  });
+
+  // delete data
+  afterEach( async () => {
+    await CleanUp();
+  });
 
   describe("登録", () => {
     it("Groupに新しいデータを挿入するテスト", async function() {
@@ -43,7 +54,7 @@ export default describe("Groupsテーブルを操作するテスト", () =>{
         .then(response => {
           expect(response.statusCode).toBe(200);
           let test_target_group: Group = response.body.groups.find(( item: Group ) => {
-            return item.groupName == 'new! team';
+            return item.groupName == 'A project team';
           });
           expect(test_target_group.groupIntroduction).toBe(null);
         });
@@ -54,7 +65,7 @@ export default describe("Groupsテーブルを操作するテスト", () =>{
     it("Groupを更新するテスト", async function() {
       let test_target_group: Group = await db.Groups.findOne({
         where: {
-          groupName: 'new! team',
+          groupName: 'A project team',
         }
       });
       await request(app)
@@ -102,10 +113,15 @@ export default describe("Groupsテーブルを操作するテスト", () =>{
       })
 
       it("groupId以外が空", async function() {
+        let test_target_group: Group = await db.Groups.findOne({
+          where: {
+            groupName: 'A project team',
+          }
+        });
         await request(app)
           .post("/group/update")
           .send({
-            groupId: 5,
+            groupId: test_target_group.groupId,
           })
           .set('Accept', 'application/json')
           .then(response => {
@@ -122,7 +138,7 @@ export default describe("Groupsテーブルを操作するテスト", () =>{
     it("Groupを削除するテスト", async function() {
       let test_target_group: Group = await db.Groups.findOne({
         where: {
-          groupName: 'new! team',
+          groupName: 'A project team',
         }
       });
       await request(app)
