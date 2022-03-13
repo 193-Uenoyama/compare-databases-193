@@ -4,4 +4,4 @@ src/request-page/docs/
 src/response-api/node_modules/
 src/response-api/docs/
 
-logs/*
+logs/

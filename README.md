@@ -8,7 +8,6 @@ make init-prod
 source .env
 ```
 
----
 ## Logs format
 
 ### Log file name
@@ -16,21 +15,27 @@ source .env
 
 ### Log file format
 ```
-yyyy-mm-ddThh:mm:dd,database_processing_time(ns),nodejs_processing_time(ns)
-yyyy-mm-ddThh:mm:dd,database_processing_time(ns),nodejs_processing_time(ns)
-yyyy-mm-ddThh:mm:dd,database_processing_time(ns),nodejs_processing_time(ns)
+{ Time },{ RequestID },{ Node | DB },{ CRUD },{ Table },{ database_processing_time(ns) } <-DB
+{ Time },{ RequestID },{ Node | DB },{ CRUD },{ Table },{ database_processing_time(ns) }
+{ Time },{ RequestID },{ Node | DB },{ CRUD },{ Table },{ database_processing_time(ns) }
+{ Time },{ RequestID },{ Node | DB },{ nodejs_processing_time(ns) }  <-Node
+{ Time },{ RequestID },{ Node | DB },{ CRUD },{ Table },{ database_processing_time(ns) } <-DB
+{ Time },{ RequestID },{ Node | DB },{ CRUD },{ Table },{ database_processing_time(ns) }
+{ Time },{ RequestID },{ Node | DB },{ nodejs_processing_time(ns) }  <-Node
 ...
 ```
 example
 ```
-2022-01-03T08:31:32,340978890,499928023
-2022-02-11T23:25:47,96349186,101443756
-2022-02-11T23:25:47,113210153,117685721
+2022-01-03T08:31:33,av91mo1,DB,Update,Users,Node,96349186   <-request start
+2022-01-03T08:31:33,av91mo1,DB,Read,Users,Node,100879878
+2022-01-03T08:31:32,av91mo1,Node,101443756                  <-request end
+2022-01-03T08:32:22,6oo66ulg,DB,Read,Users,Node,100879878   <-request start
+2022-01-03T08:31:22,6oo66ulg,DB,Delete,Users,Node,95989782
+2022-01-03T08:32:21,6oo66ulg,Node,98736907                  <-request end
 ...
 ```
 
 
----
 ## Used technology
 
 Language
@@ -54,7 +59,6 @@ Infrastructure
   - Docker-Compose
 
 
----
 
 ## TODO
   - fix timezone to Asia/Tokyo createdAt, updatedAt
