@@ -6,11 +6,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.pretreatmentRouter = void 0;
 const express_1 = require("express");
 const TimeKeeper_1 = __importDefault(require("../../../express-src/modules/writeLogs/TimeKeeper"));
+const ReqDetailHolderForLog_1 = __importDefault(require("../../../express-src/modules/writeLogs/ReqDetailHolderForLog"));
 exports.pretreatmentRouter = (0, express_1.Router)();
 exports.pretreatmentRouter.use('/', 
 // TimeKeeperを設定
 function (req, res, next) {
-    req.time_keeper = new TimeKeeper_1.default();
+    const req_log_detail = new ReqDetailHolderForLog_1.default().transferReqDetail();
+    req.process_logging = {
+        log_detail: req_log_detail,
+        time_keeper: new TimeKeeper_1.default(req_log_detail)
+    };
     req.is_return_res = false;
     next();
 }, 

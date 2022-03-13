@@ -15,17 +15,22 @@ class User extends CalculateProcessingTimeModel_1.default {
             foreignKey: 'memberId',
             otherKey: 'groupId',
         });
+        // UserとFollower(Follows)を結びつけるassociation.
+        // Userが自分のフォロワーを操作するためには
+        // 自身のuserIdとfollowedUserId(フォローされているユーザID)
+        // が結びつかなければならない。
         DB.Users.belongsToMany(DB.Users, {
             as: 'Follower',
             through: 'Follows',
-            foreignKey: 'followerUserId',
-            otherKey: 'followedUserId',
+            foreignKey: 'followedUserId',
+            otherKey: 'followerUserId',
         });
+        // UserとFolloweed(Follows)を結びつけるassociation.
         DB.Users.belongsToMany(DB.Users, {
             as: 'Followed',
             through: 'Follows',
-            foreignKey: 'followedUserId',
-            otherKey: 'followerUserId',
+            foreignKey: 'followerUserId',
+            otherKey: 'followedUserId',
         });
     }
 }

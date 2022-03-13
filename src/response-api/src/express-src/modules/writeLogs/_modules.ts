@@ -9,6 +9,8 @@ export type ProcessDetail =
   { state: Process_State, name: Process_Server } |
   { state: Process_State, name: Process_CRUD, target_table: string } 
 
+export type ReqLogDetail = { request_id: string, request_start_time: string }
+
 // ナノ秒をミリ秒に変換
 export function ConvertToMsFromNs(ns: number): number {
   return Math.trunc( ns * 0.000001 );

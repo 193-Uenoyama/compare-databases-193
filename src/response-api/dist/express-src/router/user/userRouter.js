@@ -16,7 +16,7 @@ exports.userRouter.get('/', async function (req, res, next) {
     let firstName = Math.random().toString(32).substring(2);
     let lastName = Math.random().toString(32).substring(2);
     let email = Math.random().toString(32).substring(2);
-    await index_1.default.Users.calculateTimeOfCreate(req.time_keeper, {
+    await index_1.default.Users.calculateTimeOfCreate(req.process_logging.log_detail, {
         firstName: firstName,
         lastName: lastName,
         email: email,
@@ -24,13 +24,12 @@ exports.userRouter.get('/', async function (req, res, next) {
         next(err);
         return;
     });
-    return_data = await index_1.default.Users.calculateTimeOfFindAll(req.time_keeper, {})
+    return_data = await index_1.default.Users.calculateTimeOfFindAll(req.process_logging.log_detail, {})
         .catch((err) => {
         next(err);
         return;
     });
     res.status(200).json(return_data);
-    next();
 });
 exports.userRouter.post('/create', 
 //validation
@@ -56,7 +55,7 @@ exports.userRouter.post('/create',
     let create_data = (0, _modules_1.cutUndefinedOutOfAnArgument)(user_request_data);
     let created_user;
     try {
-        created_user = await index_1.default.Users.calculateTimeOfCreate(req.time_keeper, create_data, {});
+        created_user = await index_1.default.Users.calculateTimeOfCreate(req.process_logging.log_detail, create_data, {});
     }
     catch (err) {
         console.log(err);
@@ -72,7 +71,7 @@ exports.userRouter.post('/create',
 exports.userRouter.get('/read', async function (req, res, next) {
     let readed_users;
     try {
-        readed_users = await index_1.default.Users.calculateTimeOfFindAll(req.time_keeper, {});
+        readed_users = await index_1.default.Users.calculateTimeOfFindAll(req.process_logging.log_detail, {});
     }
     catch (err) {
         console.log(err);
@@ -129,7 +128,7 @@ async function (req, res, next) {
     // undefinedのデータを削除
     let update_data = (0, _modules_1.cutUndefinedOutOfAnArgument)(user_request_data);
     try {
-        await index_1.default.Users.calculateTimeOfUpdate(req.time_keeper, update_data, { where: { userId: req.body.userId, } });
+        await index_1.default.Users.calculateTimeOfUpdate(req.process_logging.log_detail, update_data, { where: { userId: req.body.userId, } });
     }
     catch (err) {
         console.log(err);
@@ -183,7 +182,7 @@ exports.userRouter.post('/delete', (0, express_validator_1.body)('userId')
     }
     // ユーザを削除する
     try {
-        await index_1.default.Users.calculateTimeOfDelete(req.time_keeper, {
+        await index_1.default.Users.calculateTimeOfDelete(req.process_logging.log_detail, {
             where: {
                 userId: req.body.userId
             }

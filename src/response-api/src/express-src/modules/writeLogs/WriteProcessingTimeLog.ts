@@ -3,36 +3,57 @@ import {
   Process_Server,
   Process_CRUD,
   Process_State,
+  ProcessDetail,
+  ReqLogDetail,
 } from '@/express-src/modules/writeLogs/_modules';
 
 export default class ProcessingTimeLogWriter {
-  readonly WRITTEN_FILE_DIRECTORY: string = process.env.LOG_PATH || "/home/logs/new/";
-  readonly WRITTEN_FILE_NAME: string = 
+  static readonly WRITTEN_FILE_DIRECTORY: string = process.env.LOG_PATH || "/home/logs/new/";
+  static readonly WRITTEN_FILE_NAME: string = 
     process.env.DATABASE_SYSTEM + "_" +
     process.env.NODE_ENV + ".log";
-  readonly WRITTEN_FILE_PATH: string = this.WRITTEN_FILE_DIRECTORY + this.WRITTEN_FILE_NAME;
+  static readonly WRITTEN_FILE_PATH: string = this.WRITTEN_FILE_DIRECTORY + this.WRITTEN_FILE_NAME;
 
-  request_id: string;
-  request_time: string;
-
-  constructor(request_id: string, request_time: string) {
-    this.request_id = request_id;
-    this.request_time = request_time;
-    this.ifNotExist_CreateDirectory();
+  static decideLogMethod(
+    log_detail: ReqLogDetail,
+    process_detail: ProcessDetail,
+    processing_time: bigint
+  ): void {
+    if( process_detail.name == "Node" ) {
+      this.WriteNodeLog(
+        process_detail.state,
+        log_detail.request_id,
+        log_detail.request_start_time,
+        process_detail.name,
+        processing_time,
+      );
+    }
+    else {
+      this.WriteDbLog(
+        process_detail.state,
+        log_detail.request_id,
+        log_detail.request_start_time,
+        process_detail.name, 
+        process_detail.target_table, 
+        processing_time,
+      );
+    }
   }
 
-  WriteNodeLog(
+  static WriteNodeLog(
     process_state: Process_State, 
-    request_name: Process_Server, 
+    request_id: string,
+    request_time: string,
+    process_name: Process_Server, 
     processing_time: bigint) {
 
     try {
       fs.appendFileSync(
         this.WRITTEN_FILE_PATH, 
         process_state + "," +
-        this.request_time + "," + 
-        this.request_id + ","  +
-        request_name + "," +
+        request_time + "," + 
+        request_id + ","  +
+        process_name + "," +
         processing_time + "\n"
       );
     }
@@ -41,9 +62,11 @@ export default class ProcessingTimeLogWriter {
     }
   }
 
-  WriteDbLog(
+  static WriteDbLog(
     process_state: Process_State, 
-    request_name: Process_CRUD, 
+    request_id: string,
+    request_time: string,
+    process_name: Process_CRUD, 
     target_table: string, 
     processing_time: bigint) {
 
@@ -51,12 +74,12 @@ export default class ProcessingTimeLogWriter {
       fs.appendFileSync(
         this.WRITTEN_FILE_PATH, 
         process_state + "," +
-          this.request_time + "," + 
-          this.request_id + "," +
-          "DB" + "," +
-          request_name + "," +
-          target_table + "," +
-          processing_time + "\n"
+        request_time + "," + 
+        request_id + "," +
+        "DB" + "," +
+        process_name + "," +
+        target_table + "," +
+        processing_time + "\n"
       );
     }
     catch(err) {
@@ -64,7 +87,7 @@ export default class ProcessingTimeLogWriter {
     }
   }
 
-  ifNotExist_CreateDirectory() {
+  static reservWriteLog() {
     try{
       if(!fs.existsSync(this.WRITTEN_FILE_DIRECTORY)) {
         fs.mkdirSync(this.WRITTEN_FILE_DIRECTORY);

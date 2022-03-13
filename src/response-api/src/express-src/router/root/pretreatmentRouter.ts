@@ -5,6 +5,8 @@ import {
   Router,
 } from 'express'
 import TimeKeeper from '@/express-src/modules/writeLogs/TimeKeeper'
+import ReqLogDetailHolder from '@/express-src/modules/writeLogs/ReqDetailHolderForLog';
+import { ReqLogDetail } from '@/express-src/modules/writeLogs/_modules';
 
 export const pretreatmentRouter: Router = Router();
 
@@ -12,7 +14,13 @@ pretreatmentRouter.use( '/',
 
   // TimeKeeperを設定
   function(req: Request, res: Response, next: NextFunction) {
-    req.time_keeper = new TimeKeeper();
+    const req_log_detail: ReqLogDetail = new ReqLogDetailHolder().transferReqDetail();
+
+    req.process_logging = {
+      log_detail: req_log_detail,
+      time_keeper: new TimeKeeper(req_log_detail)
+    }
+
     req.is_return_res = false;
     next();
   },

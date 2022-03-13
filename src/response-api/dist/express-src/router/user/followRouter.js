@@ -20,15 +20,15 @@ exports.followRouter = (0, express_1.Router)();
  **********************************************************/
 exports.followRouter.post('/create', (0, express_validator_1.body)('followedUserId')
     .notEmpty()
-    .withMessage(validationMessages_1.APPMSG.User.require.userId)
+    .withMessage(validationMessages_1.APPMSG.Follows.require.followedUserId)
     .bail()
     .isInt()
-    .withMessage(validationMessages_1.APPMSG.User.regular.userId), (0, express_validator_1.body)('followerUserId')
+    .withMessage(validationMessages_1.APPMSG.Follows.regular.followedUserId), (0, express_validator_1.body)('followerUserId')
     .notEmpty()
-    .withMessage(validationMessages_1.APPMSG.Group.require.groupId)
+    .withMessage(validationMessages_1.APPMSG.Follows.require.followerUserId)
     .bail()
     .isInt()
-    .withMessage(validationMessages_1.APPMSG.Group.regular.groupId), async function (req, res, next) {
+    .withMessage(validationMessages_1.APPMSG.Follows.regular.followerUserId), async function (req, res, next) {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
         res.status(400).json({ errors: errors.array() });
@@ -50,10 +50,10 @@ exports.followRouter.post('/create', (0, express_validator_1.body)('followedUser
         return;
     }
     res.status(200).json({
-        group: result,
+        follow: result,
     });
 });
-/** read following *****************************************
+/** read follower ******************************************
  *
  * 対象ユーザ(followedUser)をフォローしているユーザを取り出す
  *
@@ -62,10 +62,10 @@ exports.followRouter.post('/create', (0, express_validator_1.body)('followedUser
  **********************************************************/
 exports.followRouter.get('/read/getfollower/:followedUserId', (0, express_validator_1.param)('followedUserId')
     .notEmpty()
-    .withMessage(validationMessages_1.APPMSG.User.require.userId)
+    .withMessage(validationMessages_1.APPMSG.Follows.require.followedUserId)
     .bail()
     .isInt()
-    .withMessage(validationMessages_1.APPMSG.User.regular.userId), async function (req, res, next) {
+    .withMessage(validationMessages_1.APPMSG.Follows.regular.followedUserId), async function (req, res, next) {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
         res.status(400).json({ errors: errors.array() });
@@ -91,17 +91,17 @@ exports.followRouter.get('/read/getfollower/:followedUserId', (0, express_valida
 });
 /** read follower ******************************************
  *
- * 対象ユーザ(followingUser)がフォローしているユーザを取り出す
+ * 対象ユーザ(followerUser)がフォローしているユーザを取り出す
  *
  * @param req.body.followerUserId: number
  *
  **********************************************************/
 exports.followRouter.get('/read/getfollowed/:followerUserId', (0, express_validator_1.param)('followerUserId')
     .notEmpty()
-    .withMessage(validationMessages_1.APPMSG.Group.require.groupId)
+    .withMessage(validationMessages_1.APPMSG.Follows.require.followerUserId)
     .bail()
     .isInt()
-    .withMessage(validationMessages_1.APPMSG.Group.regular.groupId), async function (req, res, next) {
+    .withMessage(validationMessages_1.APPMSG.Follows.regular.followerUserId), async function (req, res, next) {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
         res.status(400).json({ errors: errors.array() });
@@ -135,15 +135,15 @@ exports.followRouter.get('/read/getfollowed/:followerUserId', (0, express_valida
  **********************************************************/
 exports.followRouter.post('/delete', (0, express_validator_1.body)('followedUserId')
     .notEmpty()
-    .withMessage(validationMessages_1.APPMSG.User.require.userId)
+    .withMessage(validationMessages_1.APPMSG.Follows.require.followedUserId)
     .bail()
     .isInt()
-    .withMessage(validationMessages_1.APPMSG.User.regular.userId), (0, express_validator_1.body)('followerUserId')
+    .withMessage(validationMessages_1.APPMSG.Follows.regular.followedUserId), (0, express_validator_1.body)('followerUserId')
     .notEmpty()
-    .withMessage(validationMessages_1.APPMSG.Group.require.groupId)
+    .withMessage(validationMessages_1.APPMSG.Follows.require.followerUserId)
     .bail()
     .isInt()
-    .withMessage(validationMessages_1.APPMSG.Group.regular.groupId), async function (req, res, next) {
+    .withMessage(validationMessages_1.APPMSG.Follows.regular.followerUserId), async function (req, res, next) {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
         res.status(400).json({ errors: errors.array() });
@@ -154,7 +154,7 @@ exports.followRouter.post('/delete', (0, express_validator_1.body)('followedUser
         result = await index_1.default.Follows.destroy({
             where: {
                 followedUserId: req.body.followedUserId,
-                followerUserId: req.body.followerUserId,
+                followerUserId: req.body.followerUserId
             }
         });
     }

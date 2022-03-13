@@ -26,6 +26,16 @@ exports.APPMSG = {
             groupId: "GroupID is a number",
         },
     },
+    Follows: {
+        require: {
+            followedUserId: "followedUserId is a required field",
+            followerUserId: "followerUserId is a required field",
+        },
+        regular: {
+            followedUserId: "followedUserId is a number",
+            followerUserId: "followerUserId is a number",
+        },
+    },
     General: {
         notEvenTheMinimum: "could not find parameter to update",
     },
