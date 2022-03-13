@@ -15,6 +15,15 @@ interface GroupMemberCreationAttributes extends Optional<GroupMemberAttributes, 
 class GroupMember extends Model<GroupMemberAttributes, GroupMemberCreationAttributes> implements GroupMemberAttributes {
   declare groupId: number;
   declare memberId: number;
+
+  static associate(DB: any) {
+    DB.GroupMembers.belongsTo(DB.Users, {
+      foreignKey: "memberId",
+    });
+    DB.GroupMembers.belongsTo(DB.Groups, {
+      foreignKey: "groupId",
+    });
+  }
 };
 
 GroupMember.init({

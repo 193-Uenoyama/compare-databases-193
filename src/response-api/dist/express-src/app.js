@@ -5,31 +5,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
-const user_1 = require("../express-src/routes/user");
-const group_1 = require("../express-src/routes/group");
-const group_member_1 = require("../express-src/routes/group-member");
-const relation_1 = require("../express-src/routes/relation");
+const pretreatmentRouter_1 = require("../express-src/router/root/pretreatmentRouter");
+const userRouter_1 = require("../express-src/router/user/userRouter");
+const followRouter_1 = require("../express-src/router/user/followRouter");
+const groupRouter_1 = require("../express-src/router/group/groupRouter");
+const belongsToGroupRouter_1 = require("../express-src/router/group/belongsToGroupRouter");
+const postprocessingRouter_1 = require("../express-src/router/root/postprocessingRouter");
+const errorHandleRouter_1 = require("../express-src/router/root/errorHandleRouter");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use(body_parser_1.default.json());
-app.get('/', (req, res, next) => {
-    res.status(200).json({ msg: "hello world" });
-});
-app.use('/user', user_1.userRouter);
-app.use('/group', group_1.groupRouter);
-app.use('/group-member', group_member_1.groupMemberRouter);
-app.use('/relation', relation_1.relationRouter);
-app.use((req, res, next) => {
-    let message = '404 notfound request : ' + req.path;
-    console.log(message);
-    res.status(404);
-    res.json({ msg: message });
-});
-app.use((err, req, res, next) => {
-    let message = '500 server error : ' + req.path;
-    console.log(message);
-    res.status(500);
-    res.json({ msg: message });
-});
+app.use('/', pretreatmentRouter_1.pretreatmentRouter);
+app.use('/user', userRouter_1.userRouter);
+app.use('/user/follow', followRouter_1.followRouter);
+app.use('/group', groupRouter_1.groupRouter);
+app.use('/group/member', belongsToGroupRouter_1.belongsToGroupRouter);
+app.use('/', errorHandleRouter_1.errorHandleRouter);
+app.use('/', postprocessingRouter_1.postprocessingRouter);
 exports.default = app;

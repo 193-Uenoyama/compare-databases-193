@@ -1,9 +1,38 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const sequelize_1 = require("sequelize");
+const CalculateProcessingTimeModel_1 = __importDefault(require("../../sequelize-src/CalculateProcessingTimeModel"));
 const defineSequelize_1 = require("../../sequelize-src/defineSequelize");
-class User extends sequelize_1.Model {
+class User extends CalculateProcessingTimeModel_1.default {
+    static associate(DB) {
+        DB.Users.belongsToMany(DB.Groups, {
+            as: 'Teams',
+            through: 'GroupMembers',
+            foreignKey: 'memberId',
+            otherKey: 'groupId',
+        });
+        // UserとFollower(Follows)を結びつけるassociation.
+        // Userが自分のフォロワーを操作するためには
+        // 自身のuserIdとfollowedUserId(フォローされているユーザID)
+        // が結びつかなければならない。
+        DB.Users.belongsToMany(DB.Users, {
+            as: 'Follower',
+            through: 'Follows',
+            foreignKey: 'followedUserId',
+            otherKey: 'followerUserId',
+        });
+        // UserとFolloweed(Follows)を結びつけるassociation.
+        DB.Users.belongsToMany(DB.Users, {
+            as: 'Followed',
+            through: 'Follows',
+            foreignKey: 'followerUserId',
+            otherKey: 'followedUserId',
+        });
+    }
 }
 exports.User = User;
 ;

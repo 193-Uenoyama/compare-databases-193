@@ -1,9 +1,13 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import { userRouter } from '@/express-src/routes/user';
-import { groupRouter } from '@/express-src/routes/group';
-import { groupMemberRouter } from '@/express-src/routes/group-member';
-import { relationRouter } from '@/express-src/routes/relation';
+
+import { pretreatmentRouter } from '@/express-src/router/root/pretreatmentRouter'
+import { userRouter } from '@/express-src/router/user/userRouter';
+import { followRouter } from '@/express-src/router/user/followRouter';
+import { groupRouter } from '@/express-src/router/group/groupRouter';
+import { belongsToGroupRouter } from '@/express-src/router/group/belongsToGroupRouter';
+import { postprocessingRouter } from '@/express-src/router/root/postprocessingRouter'
+import { errorHandleRouter } from '@/express-src/router/root/errorHandleRouter'
 
 const app: express.Express = express();
 
@@ -11,31 +15,16 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
-
-app.get('/', (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  res.status(200).json({msg: "hello world"});
-});
+app.use('/', pretreatmentRouter);
 
 app.use('/user', userRouter);
+app.use('/user/follow', followRouter);
+
 app.use('/group', groupRouter);
-app.use('/group-member', groupMemberRouter);
-app.use('/relation', relationRouter);
+app.use('/group/member', belongsToGroupRouter);
 
+app.use('/', errorHandleRouter);
+app.use('/', postprocessingRouter);
 
-app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
-  let message: string = '404 notfound request : ' + req.path
-  console.log(message);
-
-  res.status(404);
-  res.json({msg: message});
-})
-
-app.use((err: express.ErrorRequestHandler, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  let message: string = '500 server error : ' + req.path
-  console.log(message);
-
-  res.status(500);
-  res.json({msg: message});
-});
 
 export default app

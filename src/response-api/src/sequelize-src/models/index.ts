@@ -5,7 +5,7 @@ import { Sequelize } from 'sequelize';
 import { User } from '@/sequelize-src/models/user'
 import { Group } from '@/sequelize-src/models/group'
 import GroupMember from '@/sequelize-src/models/groupmember'
-import Relation from '@/sequelize-src/models/relation'
+import Follow from '@/sequelize-src/models/follow'
 import { sequelize } from '@/sequelize-src/defineSequelize'
 
 // const basename = path.basename(__filename);
@@ -27,7 +27,7 @@ const DB: any = {};
 DB[User.name] = User;
 DB[Group.name] = Group;
 DB[GroupMember.name] = GroupMember;
-DB[Relation.name] = Relation;
+DB[Follow.name] = Follow;
 
 Object.keys(DB).forEach(modelName => {
   if (DB[modelName].associate) {
