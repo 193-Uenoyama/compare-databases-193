@@ -24,6 +24,8 @@ init:
 	docker run -v `pwd`/src/response-api:/home/response-api/ --rm compare-databases-193_node-server ./node_modules/.bin/tsc
 	docker run -v `pwd`/src/response-api:/home/response-api/ --rm compare-databases-193_node-server ./node_modules/.bin/tsc-alias -p tsconfig.json
 	docker run -v `pwd`/src/response-api:/home/response-api/ --rm compare-databases-193_node-server chown -R `id -u`:`id -g` ./
+	docker run -v `pwd`/src/request-page:/home/request-page/ --rm compare-databases-193_node-client npm ci 
+	docker run -v `pwd`/src/request-page:/home/request-page/ --rm compare-databases-193_node-client chown -R `id -u`:`id -g` ./
 # ---------- コンテナを立ち上げる ----------
 up-mariadb:
 	docker-compose -f docker-compose.mariadb.yml -f docker-compose.env_dev.yml up -d
@@ -89,6 +91,8 @@ serv-test:
 client-install:
 	docker run -v `pwd`/src/request-page:/home/request-page/ --rm compare-databases-193_node-client npm ci 
 	docker run -v `pwd`/src/request-page:/home/request-page/ --rm compare-databases-193_node-client chown -R `id -u`:`id -g` ./node_modules
+client-logs:
+	docker logs compare-databases-193_node-client -f
 
 
 # ---------- dockerコンテナをテストする ----------

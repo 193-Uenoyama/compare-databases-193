@@ -4,8 +4,13 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   rootDir: "./src/",
+
+  // reactの方でmodulesをインストールすると動かなくなる
+  // moduleNameMapper: {
+  //   "@/(.*)": "src/$1"
+  // },
   moduleNameMapper: {
-    "@/(.*)": "src/$1"
+    "@/(.*)": "/home/response-api/src/$1"
   },
   resolver: undefined
 };
