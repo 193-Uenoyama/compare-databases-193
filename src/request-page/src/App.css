@@ -2,26 +2,11 @@
     margin: 0px;
     padding: 0px;
 }
-.App {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    font-family: Arial, Helvetica, sans-serif;
-}
+/* .App { */
+/*     height: 100vh; */
+/*     display: flex; */
+/*     flex-direction: column; */
+/*     justify-content: space-between; */
+/*     font-family: Arial, Helvetica, sans-serif; */
+/* } */
 
-header {
-    height: 10%;
-    color: #fff;
-    background: #444;
-    flex-grow: 0;
-}
-main {
-    flex-grow: 1;
-}
-footer {
-    height: 5%;
-    color: #fff;
-    background: #444;
-    flex-grow: 0;
-}
