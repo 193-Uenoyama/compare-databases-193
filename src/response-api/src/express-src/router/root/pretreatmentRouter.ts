@@ -34,6 +34,12 @@ pretreatmentRouter.use( '/',
       req.body[key] = escapeHTML(req.body[key]);
     });
     next();
+  },
+
+  // ステータスコードを0に設定。
+  function(req: Request, res: Response, next: NextFunction) {
+    res.statusCode=0;
+    next();
   }
 
 );

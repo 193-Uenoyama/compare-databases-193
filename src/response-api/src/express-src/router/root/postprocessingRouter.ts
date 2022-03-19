@@ -20,6 +20,7 @@ postprocessingRouter.use( '/', function(req: Request, res: Response, next: NextF
       .process_logging
       .time_keeper
       .invokeWriter({state: "Error", name: "Node"});
+    next();
     return;
   }
 })

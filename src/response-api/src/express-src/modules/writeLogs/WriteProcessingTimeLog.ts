@@ -8,11 +8,16 @@ import {
 } from '@/express-src/modules/writeLogs/_modules';
 
 export default class ProcessingTimeLogWriter {
-  static readonly WRITTEN_FILE_DIRECTORY: string = process.env.LOG_PATH || "/home/logs/new/";
+  static readonly WRITTEN_FILE_DIRECTORY: string = 
+    process.env.LOG_PATH || "/home/logs/new";
+
   static readonly WRITTEN_FILE_NAME: string = 
     process.env.DATABASE_SYSTEM + "_" +
     process.env.NODE_ENV + ".log";
-  static readonly WRITTEN_FILE_PATH: string = this.WRITTEN_FILE_DIRECTORY + this.WRITTEN_FILE_NAME;
+
+  static readonly WRITTEN_FILE_PATH: string = 
+    this.WRITTEN_FILE_DIRECTORY + "/" +
+    this.WRITTEN_FILE_NAME;
 
   static decideLogMethod(
     log_detail: ReqLogDetail,
@@ -87,6 +92,7 @@ export default class ProcessingTimeLogWriter {
     }
   }
 
+  // ログを格納するためのディレクトリを用意する (サーバーが立ち上がるとき)
   static reservWriteLog() {
     try{
       if(!fs.existsSync(this.WRITTEN_FILE_DIRECTORY)) {

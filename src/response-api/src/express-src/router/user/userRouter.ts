@@ -38,6 +38,7 @@ userRouter.get('/', async function(req: Request, res: Response, next: NextFuncti
   })
 
   res.status(200).json(return_data);
+  next();
 });
 
 
