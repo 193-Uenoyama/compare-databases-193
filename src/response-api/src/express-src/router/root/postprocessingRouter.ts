@@ -8,7 +8,8 @@ import {
 export const postprocessingRouter: Router = Router();
 
 postprocessingRouter.use( '/', function(req: Request, res: Response, next: NextFunction) {
-  if (res.statusCode == 200) {
+  console.log(res.statusCode);
+  if (res.statusCode == 200 || res.statusCode == 304) {
     req
       .process_logging
       .time_keeper

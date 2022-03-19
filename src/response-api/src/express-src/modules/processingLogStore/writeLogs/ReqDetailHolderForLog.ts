@@ -1,4 +1,4 @@
-import { ReqLogDetail } from '@/express-src/modules/writeLogs/_modules';
+import { ReqLogDetail } from '@/express-src/modules/processingLogStore/processingLogModules';
 
 export default class ReqLogDetailHolder {
   request_id: string = Math.random().toString(32).substring(2);

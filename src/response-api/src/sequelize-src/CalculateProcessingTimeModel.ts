@@ -1,15 +1,13 @@
 import { 
   Model,
-  ModelStatic,
   FindOptions,
   BuildOptions,
   CreateOptions,
-  Utils,
   UpdateOptions,
-  DestroyOptions,
+  InstanceDestroyOptions,
 } from 'sequelize';
-import TimeKeeper from '@/express-src/modules/writeLogs/TimeKeeper';
-import { ReqLogDetail } from '@/express-src/modules/writeLogs/_modules';
+import TimeKeeper from '@/express-src/modules/processingLogStore/writeLogs/TimeKeeper';
+import { ReqLogDetail } from '@/express-src/modules/processingLogStore/processingLogModules';
 
 export default abstract class CalculateProcessingTimeModel<
   TModelAttributes extends {} = any, 
@@ -19,17 +17,26 @@ export default abstract class CalculateProcessingTimeModel<
     super(values, options);
   }
 
-  public static async calculateTimeOfCreate<
-    M extends Model,
-    O extends CreateOptions<M['_attributes']> = CreateOptions<M['_attributes']>
-  >(
-    this: ModelStatic<M>,
-    req_log_detail: ReqLogDetail,
-    values?: M['_creationAttributes'],
-    options?: O,
-  ): Promise<O extends { returning: false } | { ignoreDuplicates: true } ? void : M> {
+  // public static async calculateTimeOfCreate<M extends Model>(
+  //   this: { new (): M } & typeof Model,
+  //   req_log_detail: ReqLogDetail,
+  //   values?: object,
+  //   options?: CreateOptions
+  // ): Promise<M> {
 
-    return await TimeKeeper.calculateProcessingTime<Promise<O extends { returning: false } | { ignoreDuplicates: true } ? void : M>>(
+  //   return await TimeKeeper.calculateProcessingTime<Promise<M>>(
+  //     () => { return super.create.bind(this)(values, options) },
+  //     req_log_detail,
+  //     {state: "Success", name: "Create", target_table: this.name}
+  //   );
+  // }
+  public static async calculateTimeOfCreate(
+    req_log_detail: ReqLogDetail,
+    values: object, 
+    options: CreateOptions & { returning: false }
+  ): Promise<void> {
+
+    return await TimeKeeper.calculateProcessingTime<Promise<void>>(
       () => { return super.create.bind(this)(values, options) },
       req_log_detail,
       {state: "Success", name: "Create", target_table: this.name}
@@ -37,9 +44,10 @@ export default abstract class CalculateProcessingTimeModel<
   }
 
   public static async calculateTimeOfFindAll<M extends Model>(
-    this: ModelStatic<M>,
+    this: { new (): M } & typeof Model, 
     req_log_detail: ReqLogDetail,
-    options?: FindOptions<M['_attributes']>): Promise<M[]> {
+    options?: FindOptions
+  ): Promise<M[]> {
 
     return await TimeKeeper.calculateProcessingTime<Promise<M[]>>(
       () => { return super.findAll.bind(this)(options) },
@@ -49,12 +57,10 @@ export default abstract class CalculateProcessingTimeModel<
   }
 
   public static async calculateTimeOfUpdate<M extends Model>(
-    this: ModelStatic<M>,
+    this: { new (): M } & typeof Model,
     req_log_detail: ReqLogDetail,
-    values: {
-        [key in keyof M['_attributes']]?: M['_attributes'][key] | Utils.Fn | Utils.Col | Utils.Literal;
-    },
-    options: UpdateOptions<M['_attributes']>
+    values: object,
+    options: UpdateOptions
   ): Promise<[number, M[]]> {
 
     return await TimeKeeper.calculateProcessingTime<Promise<[number, M[]]>>(
@@ -65,12 +71,11 @@ export default abstract class CalculateProcessingTimeModel<
   }
 
   public static async calculateTimeOfDelete<M extends Model>(
-    this: ModelStatic<M>,
     req_log_detail: ReqLogDetail,
-    options?: DestroyOptions<M['_attributes']>
-  ): Promise<number> {
+    options?: InstanceDestroyOptions,
+  ): Promise<void> {
 
-    return await TimeKeeper.calculateProcessingTime<Promise<number>>(
+    return await TimeKeeper.calculateProcessingTime<Promise<void>>(
       () => { return super.destroy.bind(this)(options) },
       req_log_detail,
       {state: "Success", name: "Delete", target_table: this.name}

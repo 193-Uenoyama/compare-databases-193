@@ -4,9 +4,9 @@ import {
   NextFunction, 
   Router,
 } from 'express'
-import TimeKeeper from '@/express-src/modules/writeLogs/TimeKeeper'
-import ReqLogDetailHolder from '@/express-src/modules/writeLogs/ReqDetailHolderForLog';
-import { ReqLogDetail } from '@/express-src/modules/writeLogs/_modules';
+import TimeKeeper from '@/express-src/modules/processingLogStore/writeLogs/TimeKeeper'
+import ReqLogDetailHolder from '@/express-src/modules/processingLogStore/writeLogs/ReqDetailHolderForLog';
+import { ReqLogDetail } from '@/express-src/modules/processingLogStore/processingLogModules';
 
 export const pretreatmentRouter: Router = Router();
 
