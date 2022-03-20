@@ -1,7 +1,7 @@
 import {
   DataTypes,
   Optional,
-} from 'sequelize';
+} from '@sequelize/core';
 import CalculateProcessingTimeModel from '@/sequelize-src/CalculateProcessingTimeModel'
 import { sequelize } from '@/sequelize-src/defineSequelize'
 

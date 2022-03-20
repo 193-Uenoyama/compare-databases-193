@@ -2,7 +2,7 @@ import {
   DataTypes,
   QueryInterface,
   Sequelize,
-} from 'sequelize'
+} from '@sequelize/core'
 
 module.exports = {
   up: async (queryInterface: QueryInterface, Sequelize: Sequelize) => {
