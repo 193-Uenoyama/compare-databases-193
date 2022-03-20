@@ -1,18 +1,20 @@
 import {
   DataTypes,
   Model,
-  Optional,
+  InferAttributes,
+  InferCreationAttributes,
+  CreationOptional,
 } from '@sequelize/core';
 import { sequelize } from '@/sequelize-src/defineSequelize'
+import CalculateProcessingTimeModel from '@/sequelize-src/CalculateProcessingTimeModel'
 
 interface FollowAttributes {
   followerUserId: number;
   followedUserId: number;
 }
 
-interface FollowCreationAttributes extends Optional<FollowAttributes, "followerUserId"> {}
-
-class Follow extends Model<FollowAttributes, FollowCreationAttributes> implements FollowAttributes {
+// TODO creation optional 調べる
+class Follow extends CalculateProcessingTimeModel<InferAttributes<Follow>, InferCreationAttributes<Follow>> {
   declare followerUserId: number;
   declare followedUserId: number;
 

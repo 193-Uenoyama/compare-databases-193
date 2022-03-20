@@ -1,8 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@sequelize/core");
 const defineSequelize_1 = require("../../sequelize-src/defineSequelize");
-class GroupMember extends core_1.Model {
+const CalculateProcessingTimeModel_1 = __importDefault(require("../../sequelize-src/CalculateProcessingTimeModel"));
+// TODO creation optional 調べる
+class GroupMember extends CalculateProcessingTimeModel_1.default {
     static associate(DB) {
         DB.GroupMembers.belongsTo(DB.Users, {
             foreignKey: "memberId",

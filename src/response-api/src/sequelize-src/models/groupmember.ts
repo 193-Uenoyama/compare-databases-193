@@ -1,18 +1,20 @@
 import {
   DataTypes,
   Model,
-  Optional,
+  InferAttributes,
+  InferCreationAttributes,
+  CreationOptional,
 } from '@sequelize/core';
 import { sequelize } from '@/sequelize-src/defineSequelize'
+import CalculateProcessingTimeModel from '@/sequelize-src/CalculateProcessingTimeModel'
 
 interface GroupMemberAttributes {
   groupId: number;
   memberId: number;
 }
 
-interface GroupMemberCreationAttributes extends Optional<GroupMemberAttributes, "groupId"> {}
-
-class GroupMember extends Model<GroupMemberAttributes, GroupMemberCreationAttributes> implements GroupMemberAttributes {
+// TODO creation optional 調べる
+class GroupMember extends CalculateProcessingTimeModel<InferAttributes<GroupMember>, InferCreationAttributes<GroupMember>> {
   declare groupId: number;
   declare memberId: number;
 

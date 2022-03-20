@@ -9,7 +9,7 @@ import { userRouter } from '@/express-src/router/user/userRouter';
 import { followRouter } from '@/express-src/router/user/followRouter';
 import { groupRouter } from '@/express-src/router/group/groupRouter';
 import { belongsToGroupRouter } from '@/express-src/router/group/belongsToGroupRouter';
-import { logsRouter } from '@/express-src/router/logs/logsRouter';
+import { getLogsRouter } from '@/express-src/router/getlogs/logsRouter';
 
 const app: express.Express = express();
 
@@ -25,7 +25,7 @@ app.use('/user/follow', followRouter);
 app.use('/group', groupRouter);
 app.use('/group/member', belongsToGroupRouter);
 
-app.use('/dirs', logsRouter);
+app.use('/dirs', getLogsRouter);
 
 app.use('/', postprocessingRouter);
 app.use('/', errorHandleRouter);

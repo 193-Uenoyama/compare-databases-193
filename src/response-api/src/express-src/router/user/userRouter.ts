@@ -14,6 +14,7 @@ import { APPMSG } from '@/express-src/modules/validation/validationMessages';
 
 export const userRouter: Router = Router();
 
+// TODO あとで消す
 userRouter.get('/', async function(req: Request, res: Response, next: NextFunction) {
   let return_data: any = {};
 
