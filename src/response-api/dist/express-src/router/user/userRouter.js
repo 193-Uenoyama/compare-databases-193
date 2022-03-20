@@ -30,6 +30,7 @@ exports.userRouter.get('/', async function (req, res, next) {
         return;
     });
     res.status(200).json(return_data);
+    next();
 });
 exports.userRouter.post('/create', 
 //validation

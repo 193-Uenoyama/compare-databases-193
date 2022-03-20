@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const sequelize_1 = require("sequelize");
+const core_1 = require("@sequelize/core");
 const defineSequelize_1 = require("../../sequelize-src/defineSequelize");
-class GroupMember extends sequelize_1.Model {
+class GroupMember extends core_1.Model {
     static associate(DB) {
         DB.GroupMembers.belongsTo(DB.Users, {
             foreignKey: "memberId",
@@ -15,7 +15,7 @@ class GroupMember extends sequelize_1.Model {
 ;
 GroupMember.init({
     groupId: {
-        type: sequelize_1.DataTypes.INTEGER,
+        type: core_1.DataTypes.INTEGER,
         primaryKey: true,
         references: {
             model: "Groups",
@@ -23,7 +23,7 @@ GroupMember.init({
         }
     },
     memberId: {
-        type: sequelize_1.DataTypes.INTEGER,
+        type: core_1.DataTypes.INTEGER,
         primaryKey: true,
         references: {
             model: "Users",

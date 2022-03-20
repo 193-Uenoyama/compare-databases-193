@@ -5,8 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.pretreatmentRouter = void 0;
 const express_1 = require("express");
-const TimeKeeper_1 = __importDefault(require("../../../express-src/modules/writeLogs/TimeKeeper"));
-const ReqDetailHolderForLog_1 = __importDefault(require("../../../express-src/modules/writeLogs/ReqDetailHolderForLog"));
+const TimeKeeper_1 = __importDefault(require("../../../express-src/modules/processingLogStore/writeLogs/TimeKeeper"));
+const ReqDetailHolderForLog_1 = __importDefault(require("../../../express-src/modules/processingLogStore/writeLogs/ReqDetailHolderForLog"));
 exports.pretreatmentRouter = (0, express_1.Router)();
 exports.pretreatmentRouter.use('/', 
 // TimeKeeperを設定
@@ -27,6 +27,11 @@ function (req, res, next) {
         }
         req.body[key] = escapeHTML(req.body[key]);
     });
+    next();
+}, 
+// ステータスコードを0に設定。
+function (req, res, next) {
+    res.statusCode = 0;
     next();
 });
 function escapeHTML(reqString) {

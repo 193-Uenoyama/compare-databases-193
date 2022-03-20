@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const sequelize_1 = require("sequelize");
+const core_1 = require("@sequelize/core");
 const user_1 = require("../../sequelize-src/models/user");
 const group_1 = require("../../sequelize-src/models/group");
 const groupmember_1 = __importDefault(require("../../sequelize-src/models/groupmember"));
@@ -32,5 +32,5 @@ Object.keys(DB).forEach(modelName => {
     }
 });
 DB.sequelize = defineSequelize_1.sequelize;
-DB.Sequelize = sequelize_1.Sequelize;
+DB.Sequelize = core_1.Sequelize;
 exports.default = DB;

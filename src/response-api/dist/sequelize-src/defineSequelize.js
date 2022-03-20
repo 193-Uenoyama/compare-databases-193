@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sequelize = void 0;
-const sequelize_1 = require("sequelize");
+const core_1 = require("@sequelize/core");
 const env = process.env.NODE_ENV || 'development';
 // config.ts を module.exports で書きたいのでrequire?
 // TODO あとでいろいろ調べる
@@ -15,4 +15,4 @@ if (process.env.DATABASE_SYSTEM == 'sqlite') {
 //   console.log(execTime);
 // }
 config.logging = false;
-exports.sequelize = new sequelize_1.Sequelize(config.database, config.username, config.password, config);
+exports.sequelize = new core_1.Sequelize(config.database, config.username, config.password, config);

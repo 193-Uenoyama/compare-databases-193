@@ -3,9 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const sequelize_1 = require("sequelize");
-const TimeKeeper_1 = __importDefault(require("../express-src/modules/writeLogs/TimeKeeper"));
-class CalculateProcessingTimeModel extends sequelize_1.Model {
+const core_1 = require("@sequelize/core");
+const TimeKeeper_1 = __importDefault(require("../express-src/modules/processingLogStore/writeLogs/TimeKeeper"));
+class CalculateProcessingTimeModel extends core_1.Model {
     constructor(values, options) {
         super(values, options);
     }
