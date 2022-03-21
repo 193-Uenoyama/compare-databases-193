@@ -22,7 +22,7 @@ export default class TimeKeeper {
     return value;
   }
 
-  // witerにログを書かせる
+  // writerにログを書かせる
   invokeWriter(process_detail: ProcessDetail) {
     let timer_time_now = process.hrtime.bigint();
     ProcessingTimeLogWriter.decideLogMethod(

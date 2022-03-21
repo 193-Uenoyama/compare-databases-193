@@ -15,7 +15,7 @@ class TimeKeeper {
         processTimer.invokeWriter(process_detail);
         return value;
     }
-    // witerにログを書かせる
+    // writerにログを書かせる
     invokeWriter(process_detail) {
         let timer_time_now = process.hrtime.bigint();
         WriteProcessingTimeLog_1.default.decideLogMethod(this.req_log_detail, process_detail, timer_time_now - this.timer_start_time);

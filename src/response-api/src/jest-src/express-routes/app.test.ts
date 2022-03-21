@@ -20,5 +20,13 @@ export default describe("Test the root path", () => {
         expect(response.statusCode).toBe(404);
       });
   });
+
+  it("404 not found favicon", async function() {
+    await request(app)
+      .get("/favicon.ico")
+      .then(response => {
+        expect(response.statusCode).toBe(404);
+      });
+  });
 });
 

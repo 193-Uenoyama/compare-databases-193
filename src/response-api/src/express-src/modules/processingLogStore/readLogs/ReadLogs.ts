@@ -26,7 +26,6 @@ export default class ReadLogs {
       completelyLogData[log_file] = this.csvFileConvertToArray(log_file_path);
     })
 
-    // this.parser.end();
     return completelyLogData;
   }
 

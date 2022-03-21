@@ -19,7 +19,6 @@ class ReadLogs {
             const log_file_path = this.wanted_dir_path + log_file;
             completelyLogData[log_file] = this.csvFileConvertToArray(log_file_path);
         });
-        // this.parser.end();
         return completelyLogData;
     }
     csvFileConvertToArray(log_file_path) {

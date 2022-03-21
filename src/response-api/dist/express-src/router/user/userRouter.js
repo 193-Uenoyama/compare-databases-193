@@ -11,6 +11,7 @@ const index_1 = __importDefault(require("../../../sequelize-src/models/index"));
 const _modules_1 = require("../../../express-src/router/_modules");
 const validationMessages_1 = require("../../../express-src/modules/validation/validationMessages");
 exports.userRouter = (0, express_1.Router)();
+// TODO あとで消す
 exports.userRouter.get('/', async function (req, res, next) {
     let return_data = {};
     let firstName = Math.random().toString(32).substring(2);

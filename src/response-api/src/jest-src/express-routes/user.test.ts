@@ -1,21 +1,28 @@
+import fs from 'fs';
 import request from 'supertest';
 import { ValidationError } from 'express-validator';
 import app from '@/express-src/app';
 import { UserCommonAttributes, User } from '@/sequelize-src/models/user';
+import { 
+  ProcessingTimeLogFileDetail,
+} from '@/express-src/modules/processingLogStore/processingLogModules';
 import db from '@/sequelize-src/models/index';
 import { Seeding } from '@/jest-src/test-reserve/seeding'
 import { CleanUp } from '@/jest-src/test-reserve/cleanup'
+import { RemoveLogFiles } from '@/jest-src/test-reserve/removeLogFiles';
 
 
 export default describe("Usersテーブルを操作するテスト", () =>{
   // seeding
   beforeEach( async () => {
     await Seeding();
+    await RemoveLogFiles();
   });
 
   // delete data
   afterEach( async () => {
     await CleanUp();
+    await RemoveLogFiles();
   });
 
   describe("登録", () => {
@@ -33,6 +40,13 @@ export default describe("Usersテーブルを操作するテスト", () =>{
           expect(response.body.message).toMatch(/.*success!.*/)
           expect(response.body.createdUser.lastName).toBe("boy");
         });
+
+      const log_content = fs.readFileSync(ProcessingTimeLogFileDetail.path());
+      const log_content_lines = log_content.toString();
+      expect(log_content_lines).toMatch(/Success/);
+      expect(log_content_lines).toMatch(/Create/);
+      expect(log_content_lines).not.toMatch(/Error/);
+      expect(log_content_lines.match(/\n/g)).toBe(null);
     });
 
     describe("Userを作成するときに間違ったリクエストを送信する", () => {
@@ -93,6 +107,13 @@ export default describe("Usersテーブルを操作するテスト", () =>{
           });
           expect(test_target_user.lastName).toBe('193');
         });
+
+      const log_content = fs.readFileSync(ProcessingTimeLogFileDetail.path());
+      const log_content_lines = log_content.toString();
+      expect(log_content_lines).toMatch(/Success/);
+      expect(log_content_lines).toMatch(/Read/);
+      expect(log_content_lines).not.toMatch(/Error/);
+      expect(log_content_lines.match(/\n/g)).toBe(null);
     });
   })
 
@@ -116,6 +137,13 @@ export default describe("Usersテーブルを操作するテスト", () =>{
           expect(response.body.message).toMatch(/.*success!.*/)
           expect(response.body.updatedUser.lastName).toBe('kousaku');
         });
+
+      const log_content = fs.readFileSync(ProcessingTimeLogFileDetail.path());
+      const log_content_lines = log_content.toString();
+      expect(log_content_lines).toMatch(/Success/);
+      expect(log_content_lines).toMatch(/Update/);
+      expect(log_content_lines).not.toMatch(/Error/);
+      expect(log_content_lines.match(/\n/g)).toBe(null);
     })
 
     describe("Userを更新するときに間違ったリクエストを送信する", function() {
@@ -198,6 +226,13 @@ export default describe("Usersテーブルを操作するテスト", () =>{
           expect(response.body.message).toMatch(/.*success!.*/)
           expect(response.body.deletedUser.userId).toBe(delection_user.userId);
         });
+
+      const log_content = fs.readFileSync(ProcessingTimeLogFileDetail.path());
+      const log_content_lines = log_content.toString();
+      expect(log_content_lines).toMatch(/Success/);
+      expect(log_content_lines).toMatch(/Delete/);
+      expect(log_content_lines).not.toMatch(/Error/);
+      expect(log_content_lines.match(/\n/g)).toBe(null);
     });
 
     describe("Userの削除に失敗する", () => {

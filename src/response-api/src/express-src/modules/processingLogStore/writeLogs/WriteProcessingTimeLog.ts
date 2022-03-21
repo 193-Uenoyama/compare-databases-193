@@ -46,11 +46,12 @@ export default class ProcessingTimeLogWriter {
     try {
       fs.appendFileSync(
         ProcessingTimeLogFileDetail.path(),
+        (this.isNecessaryLineFeed()? "\n": "") +
         process_state + "," +
         request_time + "," + 
         request_id + ","  +
         process_name + "," +
-        processing_time + "\n"
+        processing_time
       );
     }
     catch(err) {
@@ -69,13 +70,14 @@ export default class ProcessingTimeLogWriter {
     try{
       fs.appendFileSync(
         ProcessingTimeLogFileDetail.path(),
+        (this.isNecessaryLineFeed()? "\n": "") +
         process_state + "," +
         request_time + "," + 
         request_id + "," +
         "DB" + "," +
         process_name + "," +
         target_table + "," +
-        processing_time + "\n"
+        processing_time
       );
     }
     catch(err) {
@@ -95,4 +97,16 @@ export default class ProcessingTimeLogWriter {
     }
   }
 
+  // 改行が必要かどうか判断
+  static isNecessaryLineFeed() {
+    // データが書き込まれるときにファイルが作成されるので
+    // 存在の確認で十分
+    let is_exist_file: boolean = false;
+    try{
+      is_exist_file = fs.existsSync(ProcessingTimeLogFileDetail.path());
+    }catch(err) {
+      console.log(err);
+    }
+    return is_exist_file;
+  }
 }
