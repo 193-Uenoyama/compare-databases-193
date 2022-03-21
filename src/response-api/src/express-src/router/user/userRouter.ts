@@ -286,7 +286,7 @@ userRouter.post(
 
     // ユーザを削除する
     try {
-      await db.Users.calculateTimeOfDelete(
+      await db.Users.calculateTimeOfDestroy(
         req.process_logging.log_detail, {
         where: {
           userId: req.body.userId

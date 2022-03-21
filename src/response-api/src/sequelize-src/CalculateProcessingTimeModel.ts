@@ -7,6 +7,7 @@ import {
   CreationAttributes,
   UpdateOptions,
   DestroyOptions,
+  NonNullFindOptions,
   Attributes,
   Utils,
 } from '@sequelize/core';
@@ -39,6 +40,30 @@ export default abstract class CalculateProcessingTimeModel<
     );
   }
 
+  public static calculateTimeOfFindOne<M extends Model>(
+    this: ModelStatic<M>,
+    req_log_detail: ReqLogDetail,
+    options: NonNullFindOptions<Attributes<M>>
+  ): Promise<M>;
+  public static calculateTimeOfFindOne<M extends Model>(
+    this: ModelStatic<M>,
+    req_log_detail: ReqLogDetail,
+    options?: FindOptions<Attributes<M>>
+  ): Promise<M | null>;
+
+  public static async calculateTimeOfFindOne<M extends Model>(
+    this: ModelStatic<M>,
+    req_log_detail: ReqLogDetail,
+    options?: NonNullFindOptions<Attributes<M>> | FindOptions<Attributes<M>>
+  ): Promise<M | null> {
+
+    return await TimeKeeper.calculateProcessingTime<Promise<M | null>>(
+      () => { return super.findOne.bind(this)(options) },
+      req_log_detail,
+      {state: "Success", name: "Read", target_table: this.name}
+    );
+  }
+
   public static async calculateTimeOfFindAll<M extends Model>(
     this: ModelStatic<M>,
     req_log_detail: ReqLogDetail,
@@ -67,7 +92,7 @@ export default abstract class CalculateProcessingTimeModel<
     );
   }
 
-  public static async calculateTimeOfDelete<M extends Model>(
+  public static async calculateTimeOfDestroy<M extends Model>(
     this: ModelStatic<M>,
     req_log_detail: ReqLogDetail,
     options?: DestroyOptions<Attributes<M>>
