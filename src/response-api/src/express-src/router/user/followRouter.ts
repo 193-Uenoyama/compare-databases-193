@@ -52,7 +52,10 @@ followRouter.post(
 
     let result;
     try {
-      result = await db.Follows.create(create_data);
+      result = await db.Follows.calculateTimeOfCreate(
+        req.process_logging.log_detail, 
+        create_data
+      );
     }
     catch(err) {
       console.log(err);
@@ -93,7 +96,7 @@ followRouter.get(
 
     let targetUser: User;
     try {
-      targetUser = await db.Users.findOne({
+      targetUser = await db.Users.calculateTimeOfFindOne( req.process_logging.log_detail, {
         where: {
           userId: req.params.followedUserId,
         },
@@ -139,7 +142,7 @@ followRouter.get(
 
     let targetUser: User;
     try {
-      targetUser = await db.Users.findOne({
+      targetUser = await db.Users.calculateTimeOfFindOne( req.process_logging.log_detail, {
         where: {
           userId: req.params.followerUserId,
         },
@@ -193,7 +196,7 @@ followRouter.post(
 
     let result;
     try {
-      result = await db.Follows.destroy({
+      result = await db.Follows.calculateTimeOfDestroy(req.process_logging.log_detail,{
         where: {
           followedUserId: req.body.followedUserId,
           followerUserId: req.body.followerUserId

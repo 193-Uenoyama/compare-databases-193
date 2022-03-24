@@ -54,7 +54,10 @@ belongsToGroupRouter.post(
 
     let result;
     try {
-      result = await db.GroupMembers.create(create_data);
+      result = await db.GroupMembers.calculateTimeOfCreate(
+        req.process_logging.log_detail, 
+        create_data
+      );
     }
     catch(err) {
       console.log(err);
@@ -95,7 +98,7 @@ belongsToGroupRouter.get(
 
     let targetGroup: Group;
     try {
-      targetGroup = await db.Groups.findOne({
+      targetGroup = await db.Groups.calculateTimeOfFindOne(req.process_logging.log_detail, {
         where: {
           groupId: req.params.groupId,
         },
@@ -149,7 +152,7 @@ belongsToGroupRouter.post(
 
     let result;
     try {
-      result = await db.GroupMembers.destroy({
+      result = await db.GroupMembers.calculateTimeOfDestroy(req.process_logging.log_detail, {
         where: {
           groupId: req.body.groupId,
           memberId: req.body.userId,

@@ -45,7 +45,7 @@ groupRouter.post(
 
     let created_group: Group
     try{
-      created_group = await db.Groups.create(create_data, {})
+      created_group = await db.Groups.calculateTimeOfCreate(req.process_logging.log_detail, create_data, {})
     }
     catch(err) {
       console.log(err);
@@ -79,7 +79,8 @@ groupRouter.get(
   async function(req: Request, res: Response, next: NextFunction) {
     let readed_groups: Group[];
     try{
-      readed_groups = await db.Groups.findAll({})
+      readed_groups = await db.Groups.calculateTimeOfFindAll(
+        req.process_logging.log_detail, {})
     }
     catch(err){
       console.log(err);
@@ -149,7 +150,7 @@ groupRouter.post(
 
     // 更新
     try{
-      await db.Groups.update( update_data ,{
+      await db.Groups.calculateTimeOfUpdate( req.process_logging.log_detail, update_data ,{
         where: {
           groupId: req.body.groupId,
         }
@@ -229,7 +230,7 @@ groupRouter.post(
 
     // グループを削除する
     try{
-      await db.Groups.destroy({
+      await db.Groups.calculateTimeOfDestroy(req.process_logging.log_detail, {
         where: {
           groupId: req.body.groupId
         }

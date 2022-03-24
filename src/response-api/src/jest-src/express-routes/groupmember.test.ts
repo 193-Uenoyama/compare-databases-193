@@ -1,20 +1,25 @@
+import fs from 'fs';
 import request from 'supertest';
 import app from '@/express-src/app';
-import { UserCommonAttributes, User } from '@/sequelize-src/models/user';
-import { Group } from '@/sequelize-src/models/group';
+import { 
+  ProcessingTimeLogFileDetail,
+} from '@/express-src/modules/processingLogStore/processingLogModules';
 import db from '@/sequelize-src/models/index';
 import { Seeding } from '@/jest-src/test-reserve/seeding'
 import { CleanUp } from '@/jest-src/test-reserve/cleanup'
+import { RemoveLogFiles } from '@/jest-src/test-reserve/removeLogFiles';
 
 export default describe("GroupMembersテーブルを操作するテスト", () => {
   // seeding
   beforeEach( async () => {
     await Seeding();
+    RemoveLogFiles();
   });
 
   // delete data
   afterEach( async () => {
     await CleanUp();
+    RemoveLogFiles();
   });
 
   describe("登録", () => {
@@ -49,6 +54,13 @@ export default describe("GroupMembersテーブルを操作するテスト", () =
         include: [ 'Members' ],
       });
       expect(belonged_to_group[0].Members[0].firstName).toBe('yamada');
+
+      const log_content = fs.readFileSync(ProcessingTimeLogFileDetail.path());
+      const log_content_lines = log_content.toString();
+      expect(log_content_lines).toMatch(/Success/);
+      expect(log_content_lines).toMatch(/Create/);
+      expect(log_content_lines).not.toMatch(/Error/);
+      expect(log_content_lines.match(/\n/g)).toBe(null);
     });
 
     describe("GroupMember挿入 validationエラー", () => {
@@ -146,6 +158,13 @@ export default describe("GroupMembersテーブルを操作するテスト", () =
 
       expect(response_body.group.Members[0].firstName).toBe('John');
       expect(response_body.group.Members[1].firstName).toBe('Kitamura');
+
+      const log_content = fs.readFileSync(ProcessingTimeLogFileDetail.path());
+      const log_content_lines = log_content.toString();
+      expect(log_content_lines).toMatch(/Success/);
+      expect(log_content_lines).toMatch(/Read/);
+      expect(log_content_lines).not.toMatch(/Error/);
+      expect(log_content_lines.match(/\n/g)).toBe(null);
     });
 
     describe("GroupMember参照 validationエラー", () => {
@@ -195,6 +214,13 @@ export default describe("GroupMembersテーブルを操作するテスト", () =
       });
       expect(member_reduced_group[0].Members[0].firstName).toBe('Kitamura');
       expect(member_reduced_group[0].Members[1]).toBe(undefined);
+
+      const log_content = fs.readFileSync(ProcessingTimeLogFileDetail.path());
+      const log_content_lines = log_content.toString();
+      expect(log_content_lines).toMatch(/Success/);
+      expect(log_content_lines).toMatch(/Delete/);
+      expect(log_content_lines).not.toMatch(/Error/);
+      expect(log_content_lines.match(/\n/g)).toBe(null);
     });
 
     describe("GroupMember削除 validationエラー", () => {

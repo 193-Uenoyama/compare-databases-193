@@ -1,6 +1,6 @@
+import fs from 'fs';
 import request from 'supertest';
 import app from '@/express-src/app';
-import { UserCommonAttributes, User } from '@/sequelize-src/models/user';
 import { Group } from '@/sequelize-src/models/group';
 import db from '@/sequelize-src/models/index';
 import { Seeding } from '@/jest-src/test-reserve/seeding'
@@ -19,116 +19,113 @@ export default describe("Groupsテーブルを操作するテスト", () =>{
 
   describe("登録", () => {
     it("Groupに新しいデータを挿入するテスト", async function() {
-      await request(app)
+      const response = await request(app)
         .post("/group/create")
-        .send({
-          groupName: 'new! team',
-        })
+        .send({ groupName: 'new! team', })
         .set('Accept', 'application/json')
-        .then(response => {
-          expect(response.statusCode).toBe(200);
-          expect(response.body.message).toMatch(/.*success!.*/)
-          expect(response.body.createdGroup.groupName).toBe("new! team");
-        });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body.message).toMatch(/.*success!.*/)
+
+      const response_group: Group = response.body.createdGroup;
+      const created_group: Group = await db.Groups.findOne({
+        where: { groupId: response_group.groupId }
+      });
+      expect(created_group.groupName).toBe("new! team")
     });
 
     describe("Group登録validationエラー", () => {
       it("GroupNameが空っぽ", async function() {
-        await request(app)
+        const response = await request(app)
           .post("/group/create")
           .send({})
           .set('Accept', 'application/json')
-          .then(response => {
-            expect(response.statusCode).toBe(400);
-            expect(response.body.errors.length).toBe(1);
-            expect(response.body.errors[0].msg).toBe("GroupName is a required field");
-          });
+
+        expect(response.statusCode).toBe(400);
+        expect(response.body.errors.length).toBe(1);
+        expect(response.body.errors[0].msg).toBe("GroupName is a required field");
       });
     })
   })
 
   describe("参照", () => {
     it("Groupを読み込むテスト", async function() {
-      await request(app)
-        .get("/group/read")
-        .then(response => {
-          expect(response.statusCode).toBe(200);
-          let test_target_group: Group = response.body.groups.find(( item: Group ) => {
-            return item.groupName == 'A project team';
-          });
-          expect(test_target_group.groupIntroduction).toBe(null);
-        });
+      const response = await request(app).get("/group/read")
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body.message).toMatch(/.*success.*/)
+
+      const will_read_group = await db.Groups.findOne({
+        where: { groupName: 'A project team' }
+      })
+      const readed_group: Group = response.body.groups.find(( group: Group ) => {
+        return group.groupId == will_read_group.groupId
+      });
+
+      expect(will_read_group.groupName).toBe(readed_group.groupName);
+      expect(will_read_group.groupIntroduction).toBe(readed_group.groupIntroduction);
     });
   })
 
   describe("更新", () => {
     it("Groupを更新するテスト", async function() {
-      let test_target_group: Group = await db.Groups.findOne({
-        where: {
-          groupName: 'A project team',
-        }
+      let will_update_group: Group = await db.Groups.findOne({
+        where: { groupName: 'A project team', }
       });
-      await request(app)
+
+      const response = await request(app)
         .post("/group/update")
         .send({
-          groupId: test_target_group.groupId,
-          groupIntroduction: 'We are team!'
-        })
+          groupId: will_update_group.groupId,
+          groupIntroduction: 'We are team!' })
         .set('Accept', 'application/json')
-        .then(response => {
-          expect(response.statusCode).toBe(200);
-          expect(response.body.message).toMatch(/.*success!.*/)
-          expect(response.body.updatedGroup.groupIntroduction).toBe('We are team!');
-        });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body.message).toMatch(/.*success!.*/)
+
+      await will_update_group.reload();
+      expect(response.body.updatedGroup.groupIntroduction).toBe(will_update_group.groupIntroduction);
     })
 
     describe("Group更新 validationエラー", () => {
       it("groupIdが空", async function() {
-        await request(app)
+        const response = await request(app)
           .post("/group/update")
-          .send({
-            groupIntroduction: 'We are team!'
-          })
+          .send({ groupIntroduction: 'We are team!' })
           .set('Accept', 'application/json')
-          .then(response => {
-            expect(response.statusCode).toBe(400);
-            expect(response.body.errors.length).toBe(1);
-            expect(response.body.errors[0].msg).toBe("GroupID is a required field");
-          });
+
+        expect(response.statusCode).toBe(400);
+        expect(response.body.errors.length).toBe(1);
+        expect(response.body.errors[0].msg).toBe("GroupID is a required field");
       })
 
       it("groupIdが文字列", async function() {
-        await request(app)
+        const response = await request(app)
           .post("/group/update")
           .send({
             groupId: "moji",
             groupIntroduction: 'We are team!'
           })
           .set('Accept', 'application/json')
-          .then(response => {
-            expect(response.statusCode).toBe(400);
-            expect(response.body.errors.length).toBe(1);
-            expect(response.body.errors[0].msg).toBe("GroupID is a number");
-          });
+
+        expect(response.statusCode).toBe(400);
+        expect(response.body.errors.length).toBe(1);
+        expect(response.body.errors[0].msg).toBe("GroupID is a number");
       })
 
       it("groupId以外が空", async function() {
-        let test_target_group: Group = await db.Groups.findOne({
-          where: {
-            groupName: 'A project team',
-          }
+        const test_target_group: Group = await db.Groups.findOne({
+          where: { groupName: 'A project team', }
         });
-        await request(app)
+
+        const response = await request(app)
           .post("/group/update")
-          .send({
-            groupId: test_target_group.groupId,
-          })
+          .send({ groupId: test_target_group.groupId, })
           .set('Accept', 'application/json')
-          .then(response => {
-            expect(response.statusCode).toBe(400);
-            expect(response.body.errors.length).toBe(1);
-            expect(response.body.errors[0].msg).toBe("could not find parameter to update");
-          });
+
+        expect(response.statusCode).toBe(400);
+        expect(response.body.errors.length).toBe(1);
+        expect(response.body.errors[0].msg).toBe("could not find parameter to update");
       })
 
     })
@@ -136,49 +133,46 @@ export default describe("Groupsテーブルを操作するテスト", () =>{
 
   describe("削除", () => {
     it("Groupを削除するテスト", async function() {
-      let test_target_group: Group = await db.Groups.findOne({
-        where: {
-          groupName: 'A project team',
-        }
+      const will_delete_group: Group = await db.Groups.findOne({
+        where: { groupName: 'A project team', }
       });
-      await request(app)
+
+      const response = await request(app)
         .post("/group/delete")
-        .send({
-          groupId: test_target_group.groupId
-        })
+        .send({ groupId: will_delete_group.groupId })
         .set('Accept', 'application/json')
-        .then(response => {
-          expect(response.statusCode).toBe(200);
-          expect(response.body.message).toMatch(/.*success!.*/)
-          expect(response.body.deletedGroup.groupId).toBe(test_target_group.groupId);
-        });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body.message).toMatch(/.*success!.*/)
+      expect(response.body.deletedGroup.groupId).toBe(will_delete_group.groupId);
+
+      const deleted_group: Group = await db.Groups.findOne({
+        where: { groupName: 'A project team', }
+      });
+      expect(deleted_group).toBe(null);
     })
 
     describe("Group削除 validationエラー", () => {
       it("groupId入力なし", async function() {
-        await request(app)
+        const response = await request(app)
           .post("/group/delete")
           .send({})
           .set('Accept', 'application/json')
-          .then(response => {
-            expect(response.statusCode).toBe(400);
-            expect(response.body.errors.length).toBe(1);
-            expect(response.body.errors[0].msg).toBe("GroupID is a required field");
-          });
+
+        expect(response.statusCode).toBe(400);
+        expect(response.body.errors.length).toBe(1);
+        expect(response.body.errors[0].msg).toBe("GroupID is a required field");
       })
 
       it("groupId文字列入力", async function() {
-        await request(app)
+        const response = await request(app)
           .post("/group/delete")
-          .send({
-            groupId: "aaa"
-          })
+          .send({ groupId: "aaa" })
           .set('Accept', 'application/json')
-          .then(response => {
-            expect(response.statusCode).toBe(400);
-            expect(response.body.errors.length).toBe(1);
-            expect(response.body.errors[0].msg).toBe("GroupID is a number");
-          });
+
+        expect(response.statusCode).toBe(400);
+        expect(response.body.errors.length).toBe(1);
+        expect(response.body.errors[0].msg).toBe("GroupID is a number");
       })
     })
   })
