@@ -18,20 +18,5 @@ services:
     user: "${SDP_UID}:${SDP_GID}"
     tty: true
 
-  node-client:
-    build: 
-      context: "./container/node-client/"
-    image: compare-databases-193_node-client
-    container_name: compare-databases-193_node-client
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./src/request-page:/home/request-page
-      - ./logs:/home/logs/
-    environment:
-      LOG_PATH: "/home/logs/"
-    user: "${SDP_UID}:${SDP_GID}"
-    tty: true
-
   db:
     container_name: compare-databases-193_db 

@@ -85,12 +85,6 @@ target=index.test
 serv-test:
 	docker exec compare-databases-193_node-server jest $(target)
 
-
-client-install:
-	docker run -v `pwd`/src/request-page:/home/request-page/ --rm compare-databases-193_node-client npm ci 
-	docker run -v `pwd`/src/request-page:/home/request-page/ --rm compare-databases-193_node-client chown -R `id -u`:`id -g` ./node_modules
-
-
 # ---------- dockerコンテナをテストする ----------
 e2e-test:
-	./test/_beginTest.sh
+	./src/request-script/test/index.sh
