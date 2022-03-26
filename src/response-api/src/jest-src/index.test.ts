@@ -7,6 +7,8 @@ import followTest from '@/jest-src/express-routes/follow.test';
 import writeLogTest from '@/jest-src/express-logs/writelogs.test';
 import userLogTest from '@/jest-src/express-logs/userlogs.test';
 import groupLogTest from '@/jest-src/express-logs/grouplogs.test';
+import groupMemberLogTest from '@/jest-src/express-logs/groupmemberlogs.test';
+import followLogTest from '@/jest-src/express-logs/followlogs.test';
 
 // 同期的にテストを実行する
 describe("compare-databases-serv-test", () => {
@@ -19,4 +21,6 @@ describe("compare-databases-serv-test", () => {
   writeLogTest
   userLogTest
   groupLogTest
+  groupMemberLogTest
+  followLogTest
 });
