@@ -1,7 +1,7 @@
 import fs from 'fs';
 import request from 'supertest';
 import app from '@/express-src/app';
-import { UserCommonAttributes, User } from '@/sequelize-src/models/user';
+import { User } from '@/sequelize-src/models/user';
 import { Group } from '@/sequelize-src/models/group';
 import db from '@/sequelize-src/models/index';
 import { 
@@ -42,13 +42,19 @@ export default describe("Followsを操作するときに実行時間を計測す
       .set('Accept', 'application/json')
 
     expect(response.statusCode).toBe(200);
+    expect(response.body.is_success).toBe(true);
 
     const log_content = fs.readFileSync(ProcessingTimeLogFileDetail.path());
-    const log_content_lines = log_content.toString();
-    expect(log_content_lines).toMatch(/Success/);
-    expect(log_content_lines).toMatch(/Create/);
-    expect(log_content_lines).not.toMatch(/Error/);
-    expect(log_content_lines.match(/\n/g)).toBe(null);
+    const log_content_str = log_content.toString();
+    expect(log_content_str).toMatch(/Success/);
+    expect(log_content_str).toMatch(/DB/);
+    expect(log_content_str).toMatch(/Create/);
+    expect(log_content_str).toMatch(/Node/);
+    expect(log_content_str).not.toMatch(/Error/);
+
+    const log_content_lines = log_content_str.match(/\n/g)
+    const log_content_num_lines = log_content_lines == null? 1 : log_content_lines.length + 1;
+    expect(log_content_num_lines).toBe(2);
   });
 
   it("指定したユーザのフォロワーを参照するテスト", async function() {
@@ -66,13 +72,19 @@ export default describe("Followsを操作するときに実行時間を計測す
       .set('Accept', 'application/json')
 
     expect(response.statusCode).toBe(200);
+    expect(response.body.is_success).toBe(true);
 
     const log_content = fs.readFileSync(ProcessingTimeLogFileDetail.path());
-    const log_content_lines = log_content.toString();
-    expect(log_content_lines).toMatch(/Success/);
-    expect(log_content_lines).toMatch(/Read/);
-    expect(log_content_lines).not.toMatch(/Error/);
-    expect(log_content_lines.match(/\n/g)).toBe(null);
+    const log_content_str = log_content.toString();
+    expect(log_content_str).toMatch(/Success/);
+    expect(log_content_str).toMatch(/DB/);
+    expect(log_content_str).toMatch(/Read/);
+    expect(log_content_str).toMatch(/Node/);
+    expect(log_content_str).not.toMatch(/Error/);
+
+    const log_content_lines = log_content_str.match(/\n/g)
+    const log_content_num_lines = log_content_lines == null? 1 : log_content_lines.length + 1;
+    expect(log_content_num_lines).toBe(2);
   });
 
   it("指定したユーザがフォローしているユーザを参照するテスト", async function() {
@@ -90,13 +102,19 @@ export default describe("Followsを操作するときに実行時間を計測す
       .set('Accept', 'application/json')
 
     expect(response.statusCode).toBe(200);
+    expect(response.body.is_success).toBe(true);
 
     const log_content = fs.readFileSync(ProcessingTimeLogFileDetail.path());
-    const log_content_lines = log_content.toString();
-    expect(log_content_lines).toMatch(/Success/);
-    expect(log_content_lines).toMatch(/Read/);
-    expect(log_content_lines).not.toMatch(/Error/);
-    expect(log_content_lines.match(/\n/g)).toBe(null);
+    const log_content_str = log_content.toString();
+    expect(log_content_str).toMatch(/Success/);
+    expect(log_content_str).toMatch(/DB/);
+    expect(log_content_str).toMatch(/Read/);
+    expect(log_content_str).toMatch(/Node/);
+    expect(log_content_str).not.toMatch(/Error/);
+
+    const log_content_lines = log_content_str.match(/\n/g)
+    const log_content_num_lines = log_content_lines == null? 1 : log_content_lines.length + 1;
+    expect(log_content_num_lines).toBe(2);
   });
 
   it("フォローを解除するテスト", async function() {
@@ -121,12 +139,18 @@ export default describe("Followsを操作するときに実行時間を計測す
       .set('Accept', 'application/json')
       
     expect(response.statusCode).toBe(200);
+    expect(response.body.is_success).toBe(true);
 
     const log_content = fs.readFileSync(ProcessingTimeLogFileDetail.path());
-    const log_content_lines = log_content.toString();
-    expect(log_content_lines).toMatch(/Success/);
-    expect(log_content_lines).toMatch(/Delete/);
-    expect(log_content_lines).not.toMatch(/Error/);
-    expect(log_content_lines.match(/\n/g)).toBe(null);
+    const log_content_str = log_content.toString();
+    expect(log_content_str).toMatch(/Success/);
+    expect(log_content_str).toMatch(/DB/);
+    expect(log_content_str).toMatch(/Delete/);
+    expect(log_content_str).toMatch(/Node/);
+    expect(log_content_str).not.toMatch(/Error/);
+
+    const log_content_lines = log_content_str.match(/\n/g)
+    const log_content_num_lines = log_content_lines == null? 1 : log_content_lines.length + 1;
+    expect(log_content_num_lines).toBe(2);
   });
 });

@@ -8,9 +8,9 @@ import {
 export const postprocessingRouter: Router = Router();
 
 postprocessingRouter.use( '/', function(req: Request, res: Response, next: NextFunction) {
-  console.log(
-    "code: " + res.statusCode + " | " + 
-    "path: " + req.path);
+  // console.log(
+  //   "code: " + res.statusCode + " | " + 
+  //   "path: " + req.path);
 
   if (res.statusCode == 200 || res.statusCode == 304) {
     req

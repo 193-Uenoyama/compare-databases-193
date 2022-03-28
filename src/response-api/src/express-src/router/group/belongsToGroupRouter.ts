@@ -6,13 +6,12 @@ import {
 import { param, body, validationResult } from 'express-validator';
 
 import db from '@/sequelize-src/models/index'
-import { reqMsg, cutUndefinedOutOfAnArgument } from '@/express-src/router/_modules';
-import { GroupCommonAttributes, GroupAttributes, Group } from '@/sequelize-src/models/group';
+import { baseResponse, validErrorResponse, cutUndefinedOutOfAnArgument } from '@/express-src/router/_modules';
+import { elasticGroupAttributes, GroupAttributes, Group } from '@/sequelize-src/models/group';
 import { APPMSG } from '@/express-src/modules/validation/validationMessages';
 
 export const belongsToGroupRouter: Router = Router();
 
-// TODO 型宣言ちゃんとするよん。あとで。
 /** create belongsToGroup **********************************
  *
  * 送られてきたgroupIdのグループにuserIdのユーザを所属させる
@@ -21,6 +20,9 @@ export const belongsToGroupRouter: Router = Router();
  * @param req.body.userId: number
  *
  **********************************************************/
+interface createGroupMemberResponse extends baseResponse {
+  belonged_group: GroupAttributes;
+}
 belongsToGroupRouter.post(
   '/create', 
 
@@ -38,10 +40,13 @@ belongsToGroupRouter.post(
     .isInt()
     .withMessage(APPMSG.Group.regular.groupId),
 
-  async function(req: Request, res: Response, next: NextFunction) {
+  async function(req: Request, res: Response<createGroupMemberResponse | validErrorResponse>, next: NextFunction) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array()});
+      res.status(400).json({ 
+        errors: errors.array(),
+        is_success: false,
+      });
       return;
     }
 
@@ -66,8 +71,10 @@ belongsToGroupRouter.post(
     }
 
     res.status(200).json({
-      group: result,
+      belonged_group: result,
+      is_success: true,
     });
+    next();
   }
 );
 
@@ -79,6 +86,9 @@ belongsToGroupRouter.post(
  * @param req.body.groupId: number
  *
  **********************************************************/
+interface readGroupMemberResponse extends baseResponse {
+  readed_group: GroupAttributes,
+}
 belongsToGroupRouter.get(
   '/read/:groupId', 
 
@@ -89,10 +99,13 @@ belongsToGroupRouter.get(
     .isInt()
     .withMessage(APPMSG.Group.regular.groupId),
 
-  async function(req: Request, res: Response, next: NextFunction) {
+  async function(req: Request, res: Response<readGroupMemberResponse | validErrorResponse>, next: NextFunction) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array()});
+      res.status(400).json({ 
+        errors: errors.array(),
+        is_success: false,
+      });
       return;
     }
 
@@ -112,8 +125,10 @@ belongsToGroupRouter.get(
     }
 
     res.status(200).json({
-      group: targetGroup,
+      readed_group: targetGroup,
+      is_success: true,
     });
+    next();
   }
 );
 
@@ -126,6 +141,10 @@ belongsToGroupRouter.get(
  * @param req.body.userId: number
  *
  **********************************************************/
+interface deleteMemberResponse extends baseResponse {
+  // left ... leaveの過去形
+  left_group: GroupAttributes,
+}
 belongsToGroupRouter.post(
   '/delete', 
 
@@ -143,10 +162,13 @@ belongsToGroupRouter.post(
     .isInt()
     .withMessage(APPMSG.Group.regular.groupId),
 
-  async function(req: Request, res: Response, next: NextFunction) {
+  async function(req: Request, res: Response<deleteMemberResponse | validErrorResponse>, next: NextFunction) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array()});
+      res.status(400).json({ 
+        errors: errors.array(),
+        is_success: false,
+      });
       return;
     }
 
@@ -166,8 +188,10 @@ belongsToGroupRouter.post(
     }
 
     res.status(200).json({
-      group: result,
+      left_group: result,
+      is_success: true,
     });
+    next();
   }
 );
 

@@ -8,7 +8,8 @@ import {
 import { sequelize } from '@/sequelize-src/defineSequelize'
 import CalculateProcessingTimeModel from '@/sequelize-src/CalculateProcessingTimeModel'
 
-export interface GroupCommonAttributes {
+export interface elasticGroupAttributes {
+  groupId?: number;
   groupName?: string;
   groupIntroduction?: string;
 }

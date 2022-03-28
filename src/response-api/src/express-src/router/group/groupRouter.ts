@@ -6,8 +6,8 @@ import {
 import { body, validationResult } from 'express-validator';
 
 import db from '@/sequelize-src/models/index'
-import { reqMsg, cutUndefinedOutOfAnArgument } from '@/express-src/router/_modules';
-import { GroupCommonAttributes, GroupAttributes, Group } from '@/sequelize-src/models/group';
+import { baseResponse, validErrorResponse, cutUndefinedOutOfAnArgument } from '@/express-src/router/_modules';
+import { elasticGroupAttributes, GroupAttributes, Group } from '@/sequelize-src/models/group';
 import { APPMSG } from '@/express-src/modules/validation/validationMessages';
 
 export const groupRouter: Router = Router();
@@ -21,27 +21,30 @@ export const groupRouter: Router = Router();
  * @param req.body.groupIntroduction?: string
  *
  **********************************************************/
-interface reqGroupCreate extends reqMsg {
-  createdGroup: GroupAttributes
+interface createGroupResponse extends baseResponse {
+  created_group: GroupAttributes
 }
 groupRouter.post(
   '/create', 
 
   body('groupName').notEmpty().withMessage(APPMSG.Group.require.groupName),
 
-  async function(req: Request, res: Response, next: NextFunction) {
+  async function(req: Request, res: Response<createGroupResponse | validErrorResponse>, next: NextFunction) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array()});
+      res.status(400).json({ 
+        errors: errors.array(),
+        is_success: false,
+      });
       return;
     }
 
-    let group_request_data: GroupCommonAttributes = {
+    let group_request_data: elasticGroupAttributes = {
       groupName: req.body.groupName,
       groupIntroduction: req.body.groupIntroduction || undefined,
     }
     // undefinedのデータを削除
-    let create_data: GroupCommonAttributes = cutUndefinedOutOfAnArgument(group_request_data);
+    let create_data: elasticGroupAttributes = cutUndefinedOutOfAnArgument(group_request_data);
 
     let created_group: Group
     try{
@@ -54,10 +57,10 @@ groupRouter.post(
     }
 
     res.status(200).json({
-      createdGroup: created_group,
-      message: "success! create " + created_group.groupName,
-      isConnectDatabase: true,
+      created_group: created_group,
+      is_success: true,
     });
+    next();
   }
 )
 
@@ -70,13 +73,13 @@ groupRouter.post(
  * @param req.body: {}
  *
  ***********************************************************/
-interface reqGroupRead extends reqMsg {
-  groups: Array< GroupAttributes >
+interface readGroupResponse extends baseResponse {
+  readed_groups: Array< GroupAttributes >
 }
 groupRouter.get(
   '/read', 
 
-  async function(req: Request, res: Response, next: NextFunction) {
+  async function(req: Request, res: Response<readGroupResponse | validErrorResponse>, next: NextFunction) {
     let readed_groups: Group[];
     try{
       readed_groups = await db.Groups.calculateTimeOfFindAll(
@@ -89,10 +92,10 @@ groupRouter.get(
     }
 
     res.status(200).json({ 
-      groups: readed_groups,
-      message: "success connect database",
-      isConnectDatabase: true 
+      readed_groups: readed_groups,
+      is_success: true 
     })
+    next();
   }
 )
 
@@ -106,8 +109,8 @@ groupRouter.get(
  * @param req.body.groupIntroduction: string | undefined
  *
  ***********************************************************/
-interface reqGroupUpdate extends reqMsg {
-  updatedGroup: GroupAttributes
+interface updateGroupResponse extends baseResponse {
+  updated_group: GroupAttributes
 }
 groupRouter.post(
   '/update', 
@@ -133,20 +136,23 @@ groupRouter.post(
   }).withMessage(APPMSG.General.notEvenTheMinimum),
 
   // = Processing ================================
-  async function(req: Request, res: Response, next: NextFunction) {
+  async function(req: Request, res: Response<updateGroupResponse | validErrorResponse>, next: NextFunction) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array()});
+      res.status(400).json({ 
+        errors: errors.array(),
+        is_success: false,
+      });
       return;
     }
 
     // 送られてきたデータを格納。
-    let group_request_data: GroupCommonAttributes = {
+    let group_request_data: elasticGroupAttributes = {
       groupName: req.body.groupName || undefined,
       groupIntroduction: req.body.groupIntroduction || undefined,
     }
     // undefinedのデータを削除
-    let update_data: GroupCommonAttributes = cutUndefinedOutOfAnArgument(group_request_data);
+    let update_data: elasticGroupAttributes = cutUndefinedOutOfAnArgument(group_request_data);
 
     // 更新
     try{
@@ -178,10 +184,10 @@ groupRouter.post(
     }
 
     res.status(200).json({
-      updatedGroup: updated_group,
-      message: "success! update " + updated_group.groupName,
-      isConnectDatabase: true,
+      updated_group: updated_group,
+      is_success: true,
     })
+    next();
   }
 )
 
@@ -193,8 +199,8 @@ groupRouter.post(
  * @param req.body.groupId: number
  *
  ***********************************************************/
-interface reqGroupDelete extends reqMsg {
-  deletedGroup: GroupAttributes
+interface deleteGroupResponse extends baseResponse {
+  deleted_group: GroupAttributes
 }
 groupRouter.post(
   '/delete', 
@@ -206,10 +212,13 @@ groupRouter.post(
     .isInt()
     .withMessage(APPMSG.Group.regular.groupId),
 
-  async function(req: Request, res: Response, next: NextFunction) {
+  async function(req: Request, res: Response<deleteGroupResponse | validErrorResponse>, next: NextFunction) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array()});
+      res.status(400).json({ 
+        errors: errors.array(),
+        is_success: false,
+      });
       return;
     }
 
@@ -243,9 +252,9 @@ groupRouter.post(
     }
 
     res.status(200).json({
-      deletedGroup: deletion_group,
-      message: "success! deleted " + deletion_group.groupName,
-      isConnectDatabase: true,
+      deleted_group: deletion_group,
+      is_success: true,
     });
+    next();
   }
 )

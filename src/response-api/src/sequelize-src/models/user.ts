@@ -14,7 +14,7 @@ export interface excludedPersonalInfomationUserAttributes {
   introduction: string | null;
 }
 
-export interface UserCommonAttributes {
+export interface elasticUserAttributes {
   userId?: number;
   firstName?: string;
   lastName?: string;
@@ -22,7 +22,15 @@ export interface UserCommonAttributes {
   introduction?: string | null;
 }
 
-export class User extends CalculateProcessingTimeModel<InferAttributes<User>, InferCreationAttributes<User>>{
+export interface userAttributes extends elasticUserAttributes{
+  userId: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  introduction: string | null;
+}
+
+export class User extends CalculateProcessingTimeModel<InferAttributes<User>, InferCreationAttributes<User>> implements userAttributes{
   declare userId: CreationOptional<number>;
   declare firstName: string;
   declare lastName: string;

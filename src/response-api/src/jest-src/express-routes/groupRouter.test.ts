@@ -1,4 +1,3 @@
-import fs from 'fs';
 import request from 'supertest';
 import app from '@/express-src/app';
 import { Group } from '@/sequelize-src/models/group';
@@ -25,9 +24,9 @@ export default describe("Groupsテーブルを操作するテスト", () =>{
         .set('Accept', 'application/json')
 
       expect(response.statusCode).toBe(200);
-      expect(response.body.message).toMatch(/.*success!.*/)
+      expect(response.body.is_success).toBe(true);
 
-      const response_group: Group = response.body.createdGroup;
+      const response_group: Group = response.body.created_group;
       const created_group: Group = await db.Groups.findOne({
         where: { groupId: response_group.groupId }
       });
@@ -42,6 +41,7 @@ export default describe("Groupsテーブルを操作するテスト", () =>{
           .set('Accept', 'application/json')
 
         expect(response.statusCode).toBe(400);
+        expect(response.body.is_success).toBe(false);
         expect(response.body.errors.length).toBe(1);
         expect(response.body.errors[0].msg).toBe("GroupName is a required field");
       });
@@ -53,12 +53,12 @@ export default describe("Groupsテーブルを操作するテスト", () =>{
       const response = await request(app).get("/group/read")
 
       expect(response.statusCode).toBe(200);
-      expect(response.body.message).toMatch(/.*success.*/)
+      expect(response.body.is_success).toBe(true);
 
       const will_read_group = await db.Groups.findOne({
         where: { groupName: 'A project team' }
       })
-      const readed_group: Group = response.body.groups.find(( group: Group ) => {
+      const readed_group: Group = response.body.readed_groups.find(( group: Group ) => {
         return group.groupId == will_read_group.groupId
       });
 
@@ -81,10 +81,10 @@ export default describe("Groupsテーブルを操作するテスト", () =>{
         .set('Accept', 'application/json')
 
       expect(response.statusCode).toBe(200);
-      expect(response.body.message).toMatch(/.*success!.*/)
+      expect(response.body.is_success).toBe(true);
 
       await will_update_group.reload();
-      expect(response.body.updatedGroup.groupIntroduction).toBe(will_update_group.groupIntroduction);
+      expect(response.body.updated_group.groupIntroduction).toBe(will_update_group.groupIntroduction);
     })
 
     describe("Group更新 validationエラー", () => {
@@ -95,6 +95,7 @@ export default describe("Groupsテーブルを操作するテスト", () =>{
           .set('Accept', 'application/json')
 
         expect(response.statusCode).toBe(400);
+        expect(response.body.is_success).toBe(false);
         expect(response.body.errors.length).toBe(1);
         expect(response.body.errors[0].msg).toBe("GroupID is a required field");
       })
@@ -109,6 +110,7 @@ export default describe("Groupsテーブルを操作するテスト", () =>{
           .set('Accept', 'application/json')
 
         expect(response.statusCode).toBe(400);
+        expect(response.body.is_success).toBe(false);
         expect(response.body.errors.length).toBe(1);
         expect(response.body.errors[0].msg).toBe("GroupID is a number");
       })
@@ -124,6 +126,7 @@ export default describe("Groupsテーブルを操作するテスト", () =>{
           .set('Accept', 'application/json')
 
         expect(response.statusCode).toBe(400);
+        expect(response.body.is_success).toBe(false);
         expect(response.body.errors.length).toBe(1);
         expect(response.body.errors[0].msg).toBe("could not find parameter to update");
       })
@@ -143,8 +146,8 @@ export default describe("Groupsテーブルを操作するテスト", () =>{
         .set('Accept', 'application/json')
 
       expect(response.statusCode).toBe(200);
-      expect(response.body.message).toMatch(/.*success!.*/)
-      expect(response.body.deletedGroup.groupId).toBe(will_delete_group.groupId);
+      expect(response.body.is_success).toBe(true);
+      expect(response.body.deleted_group.groupId).toBe(will_delete_group.groupId);
 
       const deleted_group: Group = await db.Groups.findOne({
         where: { groupName: 'A project team', }
@@ -160,6 +163,7 @@ export default describe("Groupsテーブルを操作するテスト", () =>{
           .set('Accept', 'application/json')
 
         expect(response.statusCode).toBe(400);
+        expect(response.body.is_success).toBe(false);
         expect(response.body.errors.length).toBe(1);
         expect(response.body.errors[0].msg).toBe("GroupID is a required field");
       })
@@ -171,6 +175,7 @@ export default describe("Groupsテーブルを操作するテスト", () =>{
           .set('Accept', 'application/json')
 
         expect(response.statusCode).toBe(400);
+        expect(response.body.is_success).toBe(false);
         expect(response.body.errors.length).toBe(1);
         expect(response.body.errors[0].msg).toBe("GroupID is a number");
       })
