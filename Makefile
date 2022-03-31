@@ -87,4 +87,8 @@ serv-test:
 
 # ---------- dockerコンテナをテストする ----------
 e2e-test:
-	./src/request-script/test/index.sh
+	./src/request-script/test/e2eTest/index.sh
+
+target=userRequestTest.bats
+shell-test:
+	./src/request-script/test/unitTest/$(target)
