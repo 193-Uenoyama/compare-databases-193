@@ -12,6 +12,6 @@ function createUser() {
     introduction=`getRandomString`
 
     curl -s -X POST -H "Content-Type: application/json" -d '{"firstName":"'$firstName'","lastName":"'$lastName'","email":"'$email'","introduction":"'$introduction'"}' localhost:8000/user/create
-done
+  done
 }
 

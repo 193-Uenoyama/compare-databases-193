@@ -1,14 +1,15 @@
 #!/bin/bash
+source $SDP_ROOT/src/request-script/src/requestModules/getRandomString.sh
 
-# loop_count=$1
-loop_count=2
+function createGroup() {
+  loop_count=${1:-1}
 
+  for (( i=0; i<$loop_count; i++ ))
+  do
+    groupName=`getRandomString`
+    groupIntroduction=`getRandomString`
 
-for (( i=0; i<$loop_count; i++ ))
-do
-  groupName=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1`
+    curl -X POST -H "Content-Type: application/json" -d '{"groupName":"'$groupName'","groupIntroduction":"'$groupIntroduction'"}' localhost:8000/group/create
+  done
+}
 
-  groupIntroduction=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1`
-
-  curl -X POST -H "Content-Type: application/json" -d '{"groupName":"'$groupName'","groupIntroduction":"'$groupIntroduction'"}' localhost:8000/group/create
-done

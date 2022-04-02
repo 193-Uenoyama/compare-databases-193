@@ -85,10 +85,11 @@ target=index.test
 serv-test:
 	docker exec compare-databases-193_node-server jest $(target)
 
-# ---------- dockerコンテナをテストする ----------
-e2e-test:
+# ---------- shellをテストする ----------
+target=userRequestTest.bats
+shell-unit:
+	./src/request-script/test/unitTest/$(target)
+
+shell-e2e:
 	./src/request-script/test/e2eTest/index.sh
 
-target=userRequestTest.bats
-shell-test:
-	./src/request-script/test/unitTest/$(target)

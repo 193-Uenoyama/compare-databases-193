@@ -1,28 +1,16 @@
 #!/bin/bash
+source $SDP_ROOT/src/request-script/src/requestModules/cutArrayToRequireNumber.sh
 
-# loop_count=$1
-loop_count=2
+function deleteGroup() {
+  loop_count=${1:-1}
+  response=`curl -s localhost:8000/group/read`
 
-response=`curl -s localhost:8000/group/read`
+  will_delete_groupId=( `echo $response | jq '.readed_groups[].groupId' | xargs` )
 
-will_update_groupId=( `echo $response | jq '.readed_groups[].groupId' | xargs` )
-
-# 減らす配列の数
-del_element_count=$(( ${#will_update_groupId[*]} - $loop_count ))
-
-# 必要な数まで要素を削除
-for (( i=0; i<$del_element_count; i++ ))
-do
-  unset_groupId=$(( $RANDOM % ${#will_update_groupId[*]} ))
-  unset will_update_groupId[$unset_groupId]
-
-  # 配列を再定義して減った要素を詰める
-  will_update_groupId=(`echo ${will_update_groupId[*]}`)
-done
-
-
-for groupId in ${will_update_groupId[*]}
-do
-  echo $groupId
-  curl -X POST -H "Content-Type: application/json" -d '{"groupId":"'$groupId'"}' localhost:8000/group/delete
-done
+  will_delete_groupId=( `cutArrayToRequireNumber $loop_count "${will_delete_groupId[*]}"` )
+  for groupId in ${will_delete_groupId[*]}
+  do
+    echo $groupId
+    curl -X POST -H "Content-Type: application/json" -d '{"groupId":"'$groupId'"}' localhost:8000/group/delete
+  done
+}

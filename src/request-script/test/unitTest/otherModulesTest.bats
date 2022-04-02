@@ -5,14 +5,15 @@ setup() {
   load $SDP_ROOT/src/request-script/test/testModules/bats-support/load.bash
 }
 
-@test "Should return a random string" {
+# getRandomString
+@test "getRandomString: Should return a random string" {
   source $SDP_ROOT/src/request-script/src/requestModules/getRandomString.sh
 
   run getRandomString
   assert_output -e '[a-zA-Z0-9]{16}'
 }
 
-@test "Should return a random string with the number of digits of the given argument" {
+@test "getRandomString: Should return a random string with the number of digits of the given argument" {
   source $SDP_ROOT/src/request-script/src/requestModules/getRandomString.sh
 
   run getRandomString 6
@@ -22,7 +23,9 @@ setup() {
   assert_output -e '[a-zA-Z0-9]{22}'
 }
 
-@test "Should cut array to loop_count number" {
+
+# cutArrayToRequireNumber
+@test "cutArrayToRequireNumber: Should cut array to loop_count number" {
   source $SDP_ROOT/src/request-script/src/requestModules/cutArrayToRequireNumber.sh
   test_array=("aa" "bb" "cc" "dd" "ee" "ff")
 
@@ -35,7 +38,7 @@ setup() {
   assert [ ${#test_result[*]} -eq $temp_loop_count ]
 }
 
-@test "Must two arguments to execute cutArrayToRequireNumber" {
+@test "cutArrayToRequireNumber: Must two arguments to execute cutArrayToRequireNumber" {
   source $SDP_ROOT/src/request-script/src/requestModules/cutArrayToRequireNumber.sh
 
   run cutArrayToRequireNumber
@@ -48,7 +51,7 @@ setup() {
   assert_output "Wrong number of arguments."
 }
 
-@test "Should return error message when array argument length is less then loop_count argument" {
+@test "cutArrayToRequireNumber: Should return error message when array argument length is less then loop_count argument" {
   source $SDP_ROOT/src/request-script/src/requestModules/cutArrayToRequireNumber.sh
   test_array=("aa" "bb" "cc" "dd" "ee" "ff")
 

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+function showFollower() {
+  loop_count=${1:-1}
+  will_read_userId=( `curl -s localhost:8000/user/read | jq '.readed_users[].userId' | xargs` )
+
+  for (( i=0; i<$loop_count; i++ ))
+  do
+    random_index=$(( $RANDOM % ${#will_read_userId[*]} ))
+    curl -s localhost:8000/user/follow/read/getfollower/${will_read_userId[$random_index]}
+  done
+}
