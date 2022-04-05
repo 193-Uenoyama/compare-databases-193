@@ -7,7 +7,7 @@ import { param, body, validationResult } from 'express-validator';
 
 import db from '@/sequelize-src/models/index'
 import { baseResponse, validErrorResponse, cutUndefinedOutOfAnArgument } from '@/express-src/router/_modules';
-import { elasticGroupAttributes, GroupAttributes, Group } from '@/sequelize-src/models/group';
+import { GroupAttributes, Group } from '@/sequelize-src/models/group';
 import { APPMSG } from '@/express-src/modules/validation/validationMessages';
 
 export const belongsToGroupRouter: Router = Router();
