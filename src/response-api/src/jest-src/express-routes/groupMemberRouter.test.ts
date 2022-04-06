@@ -38,10 +38,11 @@ export default describe("GroupMembersテーブルを操作するテスト", () =
         .set('Accept', 'application/json')
 
       expect(response.statusCode).toBe(200);
+      expect(response.body.is_success).toBe(true);
 
       //用意したユーザが response のグループに所属しているか
       const belonged_to_group = await db.Groups.findAll({
-        where: { groupId: response.body.group.groupId, },
+        where: { groupId: response.body.belonged_group.groupId },
         include: [ 'Members' ],
       });
       expect(belonged_to_group[0].Members[0].firstName).toBe('yamada');
@@ -59,6 +60,7 @@ export default describe("GroupMembersテーブルを操作するテスト", () =
           .set('Accept', 'application/json')
 
         expect(response.statusCode).toBe(400);
+        expect(response.body.is_success).toBe(false);
         expect(response.body.errors.length).toBe(1);
         expect(response.body.errors[0].msg).toBe("UserID is a required field");
       });
@@ -74,6 +76,7 @@ export default describe("GroupMembersテーブルを操作するテスト", () =
           .set('Accept', 'application/json')
 
         expect(response.statusCode).toBe(400);
+        expect(response.body.is_success).toBe(false);
         expect(response.body.errors.length).toBe(1);
         expect(response.body.errors[0].msg).toBe("GroupID is a required field");
       });
@@ -91,6 +94,7 @@ export default describe("GroupMembersテーブルを操作するテスト", () =
           .set('Accept', 'application/json')
 
         expect(response.statusCode).toBe(400);
+        expect(response.body.is_success).toBe(false);
         expect(response.body.errors.length).toBe(1);
         expect(response.body.errors[0].msg).toBe("UserID is a number");
       });
@@ -108,6 +112,7 @@ export default describe("GroupMembersテーブルを操作するテスト", () =
           .set('Accept', 'application/json')
 
         expect(response.statusCode).toBe(400);
+        expect(response.body.is_success).toBe(false);
         expect(response.body.errors.length).toBe(1);
         expect(response.body.errors[0].msg).toBe("GroupID is a number");
       });
@@ -125,9 +130,10 @@ export default describe("GroupMembersテーブルを操作するテスト", () =
         .set('Accept', 'application/json')
 
       expect(response.statusCode).toBe(200);
+      expect(response.body.is_success).toBe(true);
 
-      expect(response.body.group.Members[0].firstName).toBe('John');
-      expect(response.body.group.Members[1].firstName).toBe('Kitamura');
+      expect(response.body.readed_group.Members[0].firstName).toBe('John');
+      expect(response.body.readed_group.Members[1].firstName).toBe('Kitamura');
     });
 
     describe("GroupMember参照 validationエラー", () => {
@@ -137,6 +143,7 @@ export default describe("GroupMembersテーブルを操作するテスト", () =
           .set('Accept', 'application/json')
 
         expect(response.statusCode).toBe(400);
+        expect(response.body.is_success).toBe(false);
         expect(response.body.errors.length).toBe(1);
         expect(response.body.errors[0].msg).toBe("GroupID is a number");
       });
@@ -161,6 +168,7 @@ export default describe("GroupMembersテーブルを操作するテスト", () =
         .set('Accept', 'application/json')
 
       expect(response.statusCode).toBe(200);
+      expect(response.body.is_success).toBe(true);
 
       //用意したユーザが response のグループに所属しているか
       const member_reduced_group = await db.Groups.findAll({
@@ -183,6 +191,7 @@ export default describe("GroupMembersテーブルを操作するテスト", () =
           .set('Accept', 'application/json')
 
         expect(response.statusCode).toBe(400);
+        expect(response.body.is_success).toBe(false);
         expect(response.body.errors.length).toBe(1);
         expect(response.body.errors[0].msg).toBe("UserID is a required field");
       });
@@ -198,6 +207,7 @@ export default describe("GroupMembersテーブルを操作するテスト", () =
           .set('Accept', 'application/json')
 
         expect(response.statusCode).toBe(400);
+        expect(response.body.is_success).toBe(false);
         expect(response.body.errors.length).toBe(1);
         expect(response.body.errors[0].msg).toBe("GroupID is a required field");
       });
@@ -215,6 +225,7 @@ export default describe("GroupMembersテーブルを操作するテスト", () =
           .set('Accept', 'application/json')
 
         expect(response.statusCode).toBe(400);
+        expect(response.body.is_success).toBe(false);
         expect(response.body.errors.length).toBe(1);
         expect(response.body.errors[0].msg).toBe("UserID is a number");
       });
@@ -232,6 +243,7 @@ export default describe("GroupMembersテーブルを操作するテスト", () =
           .set('Accept', 'application/json')
 
         expect(response.statusCode).toBe(400);
+        expect(response.body.is_success).toBe(false);
         expect(response.body.errors.length).toBe(1);
         expect(response.body.errors[0].msg).toBe("GroupID is a number");
       });

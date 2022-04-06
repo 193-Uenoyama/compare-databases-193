@@ -1,8 +1,7 @@
-import fs from 'fs';
 import request from 'supertest';
 import { ValidationError } from 'express-validator';
 import app from '@/express-src/app';
-import { UserCommonAttributes, User } from '@/sequelize-src/models/user';
+import { User } from '@/sequelize-src/models/user';
 import db from '@/sequelize-src/models/index';
 import { Seeding } from '@/jest-src/test-reserve/seeding'
 import { CleanUp } from '@/jest-src/test-reserve/cleanup'
@@ -31,9 +30,9 @@ export default describe("Usersテーブルを操作するテスト", () =>{
         .set('Accept', 'application/json')
 
       expect(response.statusCode).toBe(200);
-      expect(response.body.message).toMatch(/.*success!.*/)
+      expect(response.body.is_success).toBe(true);
 
-      const response_user: User = response.body.createdUser;
+      const response_user: User = response.body.created_user;
       const created_user: User = await db.Users.findOne({
         where: { userId: response_user.userId}
       })
@@ -42,7 +41,7 @@ export default describe("Usersテーブルを操作するテスト", () =>{
 
     describe("Userを作成するときに間違ったリクエストを送信する", () => {
       it("firstName,lastName未入力+emailフォーマット異常", async function() {
-        expect.assertions(5);
+        expect.assertions(6);
 
         const response = await request(app)
           .post("/user/create")
@@ -52,6 +51,7 @@ export default describe("Usersテーブルを操作するテスト", () =>{
           .set('Accept', 'application/json')
 
         expect(response.statusCode).toBe(400);
+        expect(response.body.is_success).toBe(false);
         expect(response.body.errors.length).toBe(3);
         response.body.errors.forEach((item: ValidationError) => {
           switch ( item.param ) {
@@ -79,6 +79,7 @@ export default describe("Usersテーブルを操作するテスト", () =>{
           .set('Accept', 'application/json')
 
         expect(response.statusCode).toBe(400);
+        expect(response.body.is_success).toBe(false);
         expect(response.body.errors.length).toBe(1);
         expect(response.body.errors[0].msg).toBe("E-mail is a required field");
       });
@@ -90,11 +91,12 @@ export default describe("Usersテーブルを操作するテスト", () =>{
       const response = await request(app).get("/user/read")
 
       expect(response.statusCode).toBe(200);
+      expect(response.body.is_success).toBe(true);
 
       const will_read_user = await db.Users.findOne({
         where: { firstName: 'Kitamura' }
       })
-      const readed_user: User = response.body.users.find(( user: User ) => {
+      const readed_user: User = response.body.readed_users.find(( user: User ) => {
         return user.firstName == 'Kitamura';
       });
 
@@ -119,11 +121,11 @@ export default describe("Usersテーブルを操作するテスト", () =>{
         .set('Accept', 'application/json')
 
       expect(response.statusCode).toBe(200);
-      expect(response.body.message).toMatch(/.*success!.*/)
+      expect(response.body.is_success).toBe(true);
 
       await will_update_user.reload();
-      expect(response.body.updatedUser.userId).toBe(will_update_user.userId);
-      expect(response.body.updatedUser.lastName).toBe(will_update_user.lastName);
+      expect(response.body.updated_user.userId).toBe(will_update_user.userId);
+      expect(response.body.updated_user.lastName).toBe(will_update_user.lastName);
     })
 
     describe("Userを更新するときに間違ったリクエストを送信する", function() {
@@ -136,20 +138,21 @@ export default describe("Usersテーブルを操作するテスト", () =>{
           .set("Accept", "application/json")
 
         expect(response.statusCode).toBe(400);
+        expect(response.body.is_success).toBe(false);
         expect(response.body.errors.length).toBe(1);
         expect(response.body.errors[0].msg).toBe("UserID is a required field");
       })
 
       it("間違ったメールアドレス", async function() {
-        expect.assertions(4);
+        expect.assertions(5);
 
         const response = await request(app)
           .post("/user/update")
-          .send({
-            email: "email",
-          })
+          .send({ email: "email" })
           .set("Accept", "application/json")
+
         expect(response.statusCode).toBe(400);
+        expect(response.body.is_success).toBe(false);
         expect(response.body.errors.length).toBe(2);
 
         response.body.errors.forEach((error: ValidationError) => {
@@ -177,6 +180,7 @@ export default describe("Usersテーブルを操作するテスト", () =>{
           .set('Accept', 'application/json')
 
         expect(response.statusCode).toBe(400);
+        expect(response.body.is_success).toBe(false);
         expect(response.body.errors.length).toBe(1);
         expect(response.body.errors[0].msg).toBe("could not find parameter to update");
       })
@@ -195,8 +199,8 @@ export default describe("Usersテーブルを操作するテスト", () =>{
         .set('Accept', 'application/json')
 
       expect(response.statusCode).toBe(200);
-      expect(response.body.message).toMatch(/.*success!.*/)
-      expect(response.body.deletedUser.userId).toBe(will_delete_user.userId);
+      expect(response.body.is_success).toBe(true);
+      expect(response.body.deleted_user.userId).toBe(will_delete_user.userId);
 
       const deleted_user: User = await db.Users.findOne({
         where: { firstName: "yamada", }
@@ -212,6 +216,7 @@ export default describe("Usersテーブルを操作するテスト", () =>{
           .set('Accept', 'application/json')
           
         expect(response.statusCode).toBe(400);
+        expect(response.body.is_success).toBe(false);
         expect(response.body.errors.length).toBe(1);
         expect(response.body.errors[0].msg).toBe("UserID is a required field");
       });
@@ -223,6 +228,7 @@ export default describe("Usersテーブルを操作するテスト", () =>{
           .set('Accept', 'application/json')
 
         expect(response.statusCode).toBe(400);
+        expect(response.body.is_success).toBe(false);
         expect(response.body.errors.length).toBe(1);
         expect(response.body.errors[0].msg).toBe("UserID is a number");
       });

@@ -8,8 +8,8 @@ import { body, validationResult } from 'express-validator';
 import validator from 'validator';
 
 import db from '@/sequelize-src/models/index';
-import { excludedPersonalInfomationUserAttributes, UserCommonAttributes, User } from '@/sequelize-src/models/user';
-import { reqMsg, cutUndefinedOutOfAnArgument } from '@/express-src/router/_modules';
+import { elasticUserAttributes, userAttributes, User } from '@/sequelize-src/models/user';
+import { baseResponse, validErrorResponse, cutUndefinedOutOfAnArgument } from '@/express-src/router/_modules';
 import { APPMSG } from '@/express-src/modules/validation/validationMessages';
 
 export const userRouter: Router = Router();
@@ -53,8 +53,8 @@ userRouter.get('/', async function(req: Request, res: Response, next: NextFuncti
  * @param req.body.introduction: string | undefined,
  *
  **********************************************************/
-interface reqUserRead extends reqMsg {
-  createdUser: excludedPersonalInfomationUserAttributes
+interface createUserResponse extends baseResponse {
+  created_user: userAttributes; 
 }
 userRouter.post(
   '/create', 
@@ -69,22 +69,25 @@ userRouter.post(
     .isEmail()
     .withMessage(APPMSG.User.regular.email),
 
-  async function(req: Request, res: Response, next: NextFunction) {
+  async function(req: Request, res: Response<createUserResponse | validErrorResponse>, next: NextFunction) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array()});
+      res.status(400).json({ 
+        errors: errors.array(),
+        is_success: false,
+      });
       return;
     }
 
     // 送られてきたデータを格納。
-    let user_request_data: UserCommonAttributes = {
+    let user_request_data: elasticUserAttributes = {
       firstName: req.body.firstName || undefined,
       lastName: req.body.lastName || undefined,
       email: req.body.email || undefined,
       introduction: req.body.introduction || undefined,
     }
     // undefinedのデータを削除
-    let create_data: UserCommonAttributes = cutUndefinedOutOfAnArgument(user_request_data);
+    let create_data: elasticUserAttributes = cutUndefinedOutOfAnArgument(user_request_data);
 
     let created_user;
     try {
@@ -99,10 +102,10 @@ userRouter.post(
     }
 
     res.status(200).json({
-      createdUser: created_user,
-      message: "success! create " + created_user.firstName + " " + created_user.lastName,
-      isConnectDatabase: true,
+      created_user: created_user,
+      is_success: true,
     });
+    next();
   }
 );
 
@@ -115,13 +118,13 @@ userRouter.post(
  * @param req.body: {}
  *
  ***********************************************************/
-interface reqUserRead extends reqMsg {
-  users: Array< excludedPersonalInfomationUserAttributes >
+interface readUserResponse extends baseResponse {
+  readed_users: Array< userAttributes >
 }
 userRouter.get(
   '/read', 
 
-  async function(req: Request, res: Response<reqUserRead | reqMsg>, next: NextFunction) {
+  async function(req: Request, res: Response<readUserResponse>, next: NextFunction) {
   let readed_users: User[]
   try{
     readed_users = await db.Users.calculateTimeOfFindAll(
@@ -134,10 +137,10 @@ userRouter.get(
   }
 
   res.status(200).json({ 
-    users: readed_users,
-    message: "success connect database",
-    isConnectDatabase: true 
+    readed_users: readed_users,
+    is_success: true,
   })
+  next();
 });
 
 
@@ -152,8 +155,8 @@ userRouter.get(
  * @param req.body.introduction: string | undefined
  *
  ***********************************************************/
-interface reqUserUpdate extends reqMsg {
-  updatedUser: excludedPersonalInfomationUserAttributes
+interface updateUserResponse extends baseResponse {
+  updated_user: userAttributes;
 }
 userRouter.post(
   '/update', 
@@ -187,23 +190,27 @@ userRouter.post(
     throw new Error();
   }).withMessage(APPMSG.User.regular.email),
 
+
   // = Processing ================================
-  async function(req: Request, res: Response, next: NextFunction) {
+  async function(req: Request, res: Response<updateUserResponse | validErrorResponse>, next: NextFunction) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array()});
+      res.status(400).json({ 
+        errors: errors.array(),
+        is_success: false,
+      });
       return;
     }
 
     // 送られてきたデータを格納。
-    let user_request_data: UserCommonAttributes = {
+    let user_request_data: elasticUserAttributes = {
       firstName: req.body.firstName || undefined,
       lastName: req.body.lastName || undefined,
       email: req.body.email || undefined,
       introduction: req.body.introduction || undefined,
     }
     // undefinedのデータを削除
-    let update_data: UserCommonAttributes = cutUndefinedOutOfAnArgument(user_request_data);
+    let update_data: elasticUserAttributes = cutUndefinedOutOfAnArgument(user_request_data);
 
     try { 
       await db.Users.calculateTimeOfUpdate(
@@ -234,10 +241,10 @@ userRouter.post(
     }
 
     res.status(200).json({
-      updatedUser: updated_user,
-      message: "success! update " + updated_user.firstName + " " + updated_user.lastName,
-      isConnectDatabase: true,
+      updated_user: updated_user,
+      is_success: true,
     })
+    next();
   }
 );
 
@@ -249,8 +256,8 @@ userRouter.post(
  * @param req.body.userId: number
  *
  ***********************************************************/
-interface reqUserDelete extends reqMsg {
-  deletedUser: excludedPersonalInfomationUserAttributes
+interface deleteUserResponse extends baseResponse {
+  deleted_user: userAttributes;
 }
 userRouter.post(
   '/delete', 
@@ -262,10 +269,13 @@ userRouter.post(
     .isInt()
     .withMessage(APPMSG.User.regular.userId),
 
-  async function(req: Request, res: Response, next: NextFunction) {
+  async function(req: Request, res: Response<deleteUserResponse | validErrorResponse>, next: NextFunction) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array()});
+      res.status(400).json({ 
+        errors: errors.array(),
+        is_success: false,
+      });
       return;
     }
 
@@ -300,10 +310,10 @@ userRouter.post(
     }  
 
     res.status(200).json({
-      deletedUser: deletion_user,
-      message: "success! deleted " + deletion_user.firstName + " " + deletion_user.lastName,
-      isConnectDatabase: true,
+      deleted_user: deletion_user,
+      is_success: true,
     });
+    next();
   }
 );
 

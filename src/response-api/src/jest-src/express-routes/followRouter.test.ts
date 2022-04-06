@@ -1,7 +1,6 @@
-import fs from 'fs';
 import request from 'supertest';
 import app from '@/express-src/app';
-import { UserCommonAttributes, User } from '@/sequelize-src/models/user';
+import { User } from '@/sequelize-src/models/user';
 import { Group } from '@/sequelize-src/models/group';
 import db from '@/sequelize-src/models/index';
 import { 
@@ -43,6 +42,9 @@ export default describe("Followsテーブルを操作するテスト", () => {
         .set('Accept', 'application/json')
 
       expect(response.statusCode).toBe(200);
+      expect(response.body.is_success).toBe(true);
+      expect(response.body.created_follow.followedUserId).toBe(test_target_followed.userId);
+      expect(response.body.created_follow.followerUserId).toBe(test_target_follower.userId);
 
       //用意したユーザが response のグループに所属しているか
       await test_target_follower.reload();
@@ -66,6 +68,7 @@ export default describe("Followsテーブルを操作するテスト", () => {
           .set('Accept', 'application/json')
 
         expect(response.statusCode).toBe(400);
+        expect(response.body.is_success).toBe(false);
         expect(response.body.errors.length).toBe(1);
         expect(response.body.errors[0].msg).toBe("followedUserId is a required field");
       });
@@ -75,17 +78,15 @@ export default describe("Followsテーブルを操作するテスト", () => {
           where: { firstName: 'yamada', }
         });
  
-        await request(app)
+        const response = await request(app)
           .post("/user/follow/create")
-          .send({
-            followedUserId: test_target_user.userId,
-          })
+          .send({ followedUserId: test_target_user.userId, })
           .set('Accept', 'application/json')
-          .then(response => {
-            expect(response.statusCode).toBe(400);
-            expect(response.body.errors.length).toBe(1);
-            expect(response.body.errors[0].msg).toBe("followerUserId is a required field");
-          });
+
+        expect(response.statusCode).toBe(400);
+        expect(response.body.is_success).toBe(false);
+        expect(response.body.errors.length).toBe(1);
+        expect(response.body.errors[0].msg).toBe("followerUserId is a required field");
       });
  
  
@@ -94,18 +95,17 @@ export default describe("Followsテーブルを操作するテスト", () => {
           where: { firstName: 'yamada', }
         });
  
-        await request(app)
+        const response = await request(app)
           .post("/user/follow/create")
           .send({
             followedUserId: "aaa",
-            followerUserId: test_target_user.userId,
-          })
+            followerUserId: test_target_user.userId, })
           .set('Accept', 'application/json')
-          .then(response => {
-            expect(response.statusCode).toBe(400);
-            expect(response.body.errors.length).toBe(1);
-            expect(response.body.errors[0].msg).toBe("followedUserId is a number");
-          });
+
+        expect(response.statusCode).toBe(400);
+        expect(response.body.is_success).toBe(false);
+        expect(response.body.errors.length).toBe(1);
+        expect(response.body.errors[0].msg).toBe("followedUserId is a number");
       });
  
       it("followerUserIdが文字列", async () => {
@@ -113,18 +113,17 @@ export default describe("Followsテーブルを操作するテスト", () => {
           where: { firstName: 'yamada', }
         });
  
-        await request(app)
+        const response = await request(app)
           .post("/user/follow/create")
           .send({
             followedUserId: test_target_user.userId,
-            followerUserId: "aaa",
-          })
+            followerUserId: "aaa", })
           .set('Accept', 'application/json')
-          .then(response => {
-            expect(response.statusCode).toBe(400);
-            expect(response.body.errors.length).toBe(1);
-            expect(response.body.errors[0].msg).toBe("followerUserId is a number");
-          });
+
+        expect(response.statusCode).toBe(400);
+        expect(response.body.is_success).toBe(false);
+        expect(response.body.errors.length).toBe(1);
+        expect(response.body.errors[0].msg).toBe("followerUserId is a number");
       });
     });
   })
@@ -147,8 +146,9 @@ export default describe("Followsテーブルを操作するテスト", () => {
           .set('Accept', 'application/json')
 
         expect(response.statusCode).toBe(200);
+        expect(response.body.is_success).toBe(true);
 
-        const Johns_follower = response.body.user.Follower.map((item: User) => {
+        const Johns_follower = response.body.followers.Follower.map((item: User) => {
           return item.firstName;
         })
         expect(Johns_follower).toContain('yamada');
@@ -183,8 +183,9 @@ export default describe("Followsテーブルを操作するテスト", () => {
           .set('Accept', 'application/json')
 
         expect(response.statusCode).toBe(200);
+        expect(response.body.is_success).toBe(true);
 
-        const yamadas_followed = response.body.user.Followed.map((item: User) => {
+        const yamadas_followed = response.body.followeds.Followed.map((item: User) => {
           return item.firstName;
         })
         expect(yamadas_followed).toContain('John');
@@ -228,6 +229,7 @@ export default describe("Followsテーブルを操作するテスト", () => {
         .set('Accept', 'application/json')
         
       expect(response.statusCode).toBe(200);
+      expect(response.body.is_success).toBe(true);
 
       await test_target_followed.reload();
       const followers = await test_target_followed.getFollower();
@@ -251,6 +253,7 @@ export default describe("Followsテーブルを操作するテスト", () => {
           .set('Accept', 'application/json')
           
         expect(response.statusCode).toBe(400);
+        expect(response.body.is_success).toBe(false);
         expect(response.body.errors.length).toBe(1);
         expect(response.body.errors[0].msg).toBe("followedUserId is a required field");
       });
@@ -266,6 +269,7 @@ export default describe("Followsテーブルを操作するテスト", () => {
           .set('Accept', 'application/json')
 
         expect(response.statusCode).toBe(400);
+        expect(response.body.is_success).toBe(false);
         expect(response.body.errors.length).toBe(1);
         expect(response.body.errors[0].msg).toBe("followerUserId is a required field");
       });
@@ -284,6 +288,7 @@ export default describe("Followsテーブルを操作するテスト", () => {
           .set('Accept', 'application/json')
 
         expect(response.statusCode).toBe(400);
+        expect(response.body.is_success).toBe(false);
         expect(response.body.errors.length).toBe(1);
         expect(response.body.errors[0].msg).toBe("followedUserId is a number");
       });
@@ -301,6 +306,7 @@ export default describe("Followsテーブルを操作するテスト", () => {
           .set('Accept', 'application/json')
 
         expect(response.statusCode).toBe(400);
+        expect(response.body.is_success).toBe(false);
         expect(response.body.errors.length).toBe(1);
         expect(response.body.errors[0].msg).toBe("followerUserId is a number");
       });

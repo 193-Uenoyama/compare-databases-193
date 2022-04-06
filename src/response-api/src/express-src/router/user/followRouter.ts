@@ -5,9 +5,9 @@ import {
   Router } from 'express'
 import { param, body, validationResult } from 'express-validator';
 import db from '@/sequelize-src/models/index'
-import { reqMsg, cutUndefinedOutOfAnArgument } from '@/express-src/router/_modules';
+import { baseResponse, validErrorResponse, cutUndefinedOutOfAnArgument } from '@/express-src/router/_modules';
 import { APPMSG } from '@/express-src/modules/validation/validationMessages';
-import { User } from '@/sequelize-src/models/user';
+import { userAttributes, User } from '@/sequelize-src/models/user';
 
 export const followRouter: Router = Router();
 
@@ -19,6 +19,9 @@ export const followRouter: Router = Router();
  * @param req.body.followerUserId: number
  *
  **********************************************************/
+interface createFollowResponse extends baseResponse {
+  created_follow: userAttributes;
+}
 followRouter.post(
   '/create',
 
@@ -36,10 +39,13 @@ followRouter.post(
     .isInt()
     .withMessage(APPMSG.Follows.regular.followerUserId),
 
-  async function(req: Request, res: Response, next: NextFunction) {
+  async function(req: Request, res: Response<createFollowResponse | validErrorResponse>, next: NextFunction) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array()});
+      res.status(400).json({ 
+        errors: errors.array(),
+        is_success: false,
+      });
       return;
     }
 
@@ -64,8 +70,10 @@ followRouter.post(
     }
 
     res.status(200).json({
-      follow: result,
+      created_follow: result,
+      is_success: true,
     });
+    next();
   }
 )
 
@@ -77,6 +85,9 @@ followRouter.post(
  * @param req.body.followedUserId: number
  *
  **********************************************************/
+interface readFollowerResponse extends baseResponse {
+  followers: userAttributes,
+}
 followRouter.get(
   '/read/getfollower/:followedUserId',
 
@@ -87,10 +98,13 @@ followRouter.get(
     .isInt()
     .withMessage(APPMSG.Follows.regular.followedUserId),
 
-  async function(req: Request, res: Response, next: NextFunction) {
+  async function(req: Request, res: Response<readFollowerResponse | validErrorResponse>, next: NextFunction) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array()});
+      res.status(400).json({ 
+        errors: errors.array(),
+        is_success: false,
+      });
       return;
     }
 
@@ -110,8 +124,10 @@ followRouter.get(
     }
 
     res.status(200).json({
-      user: targetUser,
+      followers: targetUser,
+      is_success: true,
     });
+    next();
   }
 )
 
@@ -123,6 +139,9 @@ followRouter.get(
  * @param req.body.followerUserId: number
  *
  **********************************************************/
+interface readFollowedResponse extends baseResponse {
+  followeds: userAttributes,
+}
 followRouter.get(
   '/read/getfollowed/:followerUserId',
 
@@ -133,10 +152,13 @@ followRouter.get(
     .isInt()
     .withMessage(APPMSG.Follows.regular.followerUserId),
 
-  async function(req: Request, res: Response, next: NextFunction) {
+  async function(req: Request, res: Response<readFollowedResponse | validErrorResponse>, next: NextFunction) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array()});
+      res.status(400).json({ 
+        errors: errors.array(),
+        is_success: false,
+      });
       return;
     }
 
@@ -156,8 +178,10 @@ followRouter.get(
     }
 
     res.status(200).json({
-      user: targetUser,
+      followeds: targetUser,
+      is_success: true,
     });
+    next();
   }
 )
 
@@ -170,6 +194,10 @@ followRouter.get(
  * @param req.body.followerUserId: number
  *
  **********************************************************/
+// TODO 要素の名前変える
+interface deleteFollowResponse extends baseResponse {
+  deleted_followed: userAttributes,
+}
 followRouter.post(
   '/delete',
 
@@ -187,10 +215,13 @@ followRouter.post(
     .isInt()
     .withMessage(APPMSG.Follows.regular.followerUserId),
 
-  async function(req: Request, res: Response, next: NextFunction) {
+  async function(req: Request, res: Response<deleteFollowResponse | validErrorResponse>, next: NextFunction) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array()});
+      res.status(400).json({ 
+        errors: errors.array(),
+        is_success: false,
+      });
       return;
     }
 
@@ -210,7 +241,9 @@ followRouter.post(
     }
 
     res.status(200).json({
-      user: result,
+      deleted_followed: result,
+      is_success: true,
     });
+    next();
   }
 )

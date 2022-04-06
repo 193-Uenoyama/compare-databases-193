@@ -1,9 +1,9 @@
-[submodule "src/request-script/test/modules/bats-core"]
-	path = src/request-script/test/modules/bats-core
+[submodule "src/request-script/test/testModules/bats-core"]
+	path = src/request-script/test/testModules/bats-core
 	url = https://github.com/bats-core/bats-core.git
-[submodule "src/request-script/test/modules/bats-support"]
-	path = src/request-script/test/modules/bats-support
+[submodule "src/request-script/test/testModules/bats-support"]
+	path = src/request-script/test/testModules/bats-support
 	url = https://github.com/bats-core/bats-support.git
-[submodule "src/request-script/test/modules/bats-assert"]
-	path = src/request-script/test/modules/bats-assert
+[submodule "src/request-script/test/testModules/bats-assert"]
+	path = src/request-script/test/testModules/bats-assert
 	url = https://github.com/bats-core/bats-assert.git
