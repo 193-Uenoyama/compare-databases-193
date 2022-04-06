@@ -46,7 +46,7 @@ teardown() {
   array_groupId=( `curl -s localhost:8000/group/read | jq '.readed_groups[].groupId' | xargs` )
   limit=$(( ${#array_userId[*]} * ${#array_groupId[*]} ))
 
-  run belongsToGroup $(( $limit + 4 ))
+  run belongsToGroup $(( $limit + 1 ))
 
   assert_output "loop_count must be specified smaller then the combination of userId and groupId."
 }
@@ -77,7 +77,10 @@ teardown() {
 
   logfile_name=`ls $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/`
 
+  # TODO
   cat $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/$logfile_name > /tmp/mylog
   run cat $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/$logfile_name
-  assert_output -e '.*Read.*Delete.*Delete.*Delete.*'
+  assert_output -e '.*Read.*Read.*Delete.*Delete.*Delete.*'
+  assert_output -e '.*Groups.*Groups.*GroupMembers.*GroupMembers.*GroupMembers.*'
+  refute_output -e '.*Read.*Read.*Delete.*Delete.*Delete.*Delete'
 }

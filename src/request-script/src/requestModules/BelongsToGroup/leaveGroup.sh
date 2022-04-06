@@ -15,7 +15,7 @@ function leaveGroup() {
     will_delete_members=( `curl -s localhost:8000/group/member/read/$groupId | jq '.readed_group.Members[].userId'` )
     i=0
     #  グループメンバー全員かループカウントが0になるまで
-    while [ $i -lt ${#will_delete_members[*]} ] || [ $loop_count -gt 0 ]
+    while [ $i -lt ${#will_delete_members[*]} ] && [ $loop_count -gt 0 ]
     do
       userId=${will_delete_members[$i]}
 

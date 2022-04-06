@@ -15,39 +15,33 @@ function followUser() {
   fi
 
   # followerIdごとのリクエスト回数を記憶する配列を初期化
-  random_follower_targets=()
-  for (( i=0; i<${will_create_followerId[*]}; i++ ))
-    ${random_follower_targets[i]}=0
+  each_follower_request_cnt=()
+  for (( i=0; i<${#will_create_followerId[*]}; i++ ))
   do
+    each_follower_request_cnt[$i]=0
   done
 
   # followerIdごとのリクエスト回数をインクリメント
   for (( i=0; i<$loop_count; i++ ))
   do
     random_followerId=$(( $RANDOM % ${#will_create_followerId[*]} ))
-    $(( ${random_follower_targets[$random_followerId]}++ ))
+    each_follower_request_cnt[$random_followerId]=$(( ${each_follower_request_cnt[$random_followerId]} + 1 ))
   done
 
   # groupIdごとのリクエスト回数がuserIdの配列数を超えていないか確認、修正
-  random_follower_targets=( `confirmExceededLimit ${#will_create_followedId[*]} "${random_follower_targets[*]}"` )
+  each_follower_request_cnt=( `confirmExceededLimit ${#will_create_followedId[*]} "${each_follower_request_cnt[*]}"` )
   
-  for (( i=0; i<${#random_follower_targets[*]}; i++ ))
+  for (( i=0; i<${#will_create_followerId[*]}; i++ ))
   do
-    followed_array_duplication=( `echo ${will_create_followedId[*]}` )
+    followed_shuf_array=( `shuf -e ${will_create_followedId[*]} | xargs` )
 
-    while [ ${#followed_array_duplication[*]} -gt ${#random_follower_targets[i]} ]
+    for (( j=0; j<${each_follower_request_cnt[$i]}; j++ ))
     do
-      followed_index=$(( $RANDOM % ${#followed_array_duplication[*]} ))
-      followedUserId=${#followed_array_duplication[$followed_index]}
-      followerUserId=$(( $i + 1 ))
-      curl -s -X POST -H "Content-Type: application/json" -d '{"followedUserId":"'$followedUserId'","followerUserId":"'$followerUserId'"}' localhost:8000/group/member/follow
+      followedUserId=${followed_shuf_array[$j]}
+      followerUserId=${will_create_followerId[$i]}
 
-      unset ${#followed_array_duplication[$followed_index]}
-      # 再代入して要素を詰める
-      followed_array_duplication=( `echo ${followed_array_duplication[*]}` )
+      curl -s -X POST -H "Content-Type: application/json" -d '{"followedUserId":"'$followedUserId'","followerUserId":"'$followerUserId'"}' localhost:8000/user/follow/create
     done
 
   done
-
-  curl -s localhost:8000/user/follow/create/
 }

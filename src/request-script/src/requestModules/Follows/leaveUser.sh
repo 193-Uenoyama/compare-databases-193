@@ -13,20 +13,22 @@ function leaveUser() {
 
     # 取り出したユーザのフォロー対象を取り出し、削除 
     will_delete_followed=( `curl -s localhost:8000/user/follow/read/getfollowed/$follower_userId | jq '.followeds.Followed[].userId'` )
+
     i=0
     #  グループメンバー全員かループカウントが0になるまで
-    while [ $i -le ${#will_delete_followed[*]} ] || [ $loop_count -gt 0 ]
+    while [ $i -lt ${#will_delete_followed[*]} ] && [ $loop_count -gt 0 ]
     do
-      followedUserId=${will_delete_followed[i]}
+      followedUserId=${will_delete_followed[$i]}
 
       # 削除のリクエスト
       curl -s -X POST -H "Content-Type: application/json" -d '{"followedUserId":"'$followedUserId'","followerUserId":"'$followerUserId'"}' localhost:8000/group/member/delete
-      $(( $i++ ))
-      $(( $loop_count-- ))
+      i=$(( $i + 1 ))
+      loop_count=$(( $loop_count - 1 ))
     done
 
-    unset ${#will_delete_followed[$random_user_index]}
+    unset ${#readed_userId[$random_user_index]}
     # 再代入して要素を詰める
-    will_delete_followed=( `echo ${will_delete_followed[*]}` )
+    readed_userId=( `echo ${readed_userId[*]}` )
   done
 }
+
