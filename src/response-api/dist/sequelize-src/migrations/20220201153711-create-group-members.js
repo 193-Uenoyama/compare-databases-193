@@ -1,26 +1,28 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const sequelize_1 = require("sequelize");
+const core_1 = require("@sequelize/core");
 module.exports = {
     up: async (queryInterface, Sequelize) => {
         await queryInterface.createTable('GroupMembers', {
             groupId: {
-                type: sequelize_1.DataTypes.INTEGER,
+                type: core_1.DataTypes.INTEGER,
                 references: {
                     model: "Groups",
                     key: "groupId",
-                }
+                },
+                onDelete: 'cascade',
             },
             memberId: {
-                type: sequelize_1.DataTypes.INTEGER,
+                type: core_1.DataTypes.INTEGER,
                 references: {
                     model: "Users",
                     key: "userId",
-                }
+                },
+                onDelete: 'cascade',
             },
             createdAt: {
                 allowNull: false,
-                type: sequelize_1.DataTypes.DATE,
+                type: core_1.DataTypes.DATE,
             },
         });
     },

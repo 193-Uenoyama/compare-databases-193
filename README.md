@@ -2,6 +2,13 @@
 
 this application allows you to compare the process of accessing a database.
 
+### Getting started
+
+require application
+```
+sudo apt install jq
+```
+
 **start! this application**
 ```
 make init-prod
@@ -46,13 +53,9 @@ Backend
   - Express
   - Sequelize
 
-Frontend
-  - React
-
 Test framework
   - Jest
   - Bats-core
-  - Shellnium
 
 Infrastructure
   - Docker
@@ -63,5 +66,4 @@ Infrastructure
 ## TODO
   - fix timezone to Asia/Tokyo createdAt, updatedAt
   - connect into sqlite database excepting by root user
-  - databases security
   - npm audit fix

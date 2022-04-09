@@ -2,7 +2,7 @@ import {
   DataTypes,
   QueryInterface,
   Sequelize,
-} from 'sequelize'
+} from '@sequelize/core'
 
 module.exports = {
   up: async (queryInterface: QueryInterface, Sequelize: Sequelize) => {
@@ -13,7 +13,8 @@ module.exports = {
         references: {
           model: "Users",
           key: "userId",
-        }
+        },
+        onDelete: "cascade",
       },
       followedUserId: { 
         type: DataTypes.INTEGER ,
@@ -21,7 +22,8 @@ module.exports = {
         references: {
           model: "Users",
           key: "userId",
-        }
+        },
+        onDelete: "cascade",
       },
       createdAt: {
         type: DataTypes.DATE,

@@ -10,15 +10,6 @@ const index_1 = __importDefault(require("../../../sequelize-src/models/index"));
 const _modules_1 = require("../../../express-src/router/_modules");
 const validationMessages_1 = require("../../../express-src/modules/validation/validationMessages");
 exports.belongsToGroupRouter = (0, express_1.Router)();
-// TODO 型宣言ちゃんとするよん。あとで。
-/** create belongsToGroup **********************************
- *
- * 送られてきたgroupIdのグループにuserIdのユーザを所属させる
- *
- * @param req.body.groupId: number
- * @param req.body.userId: number
- *
- **********************************************************/
 exports.belongsToGroupRouter.post('/create', (0, express_validator_1.body)('userId')
     .notEmpty()
     .withMessage(validationMessages_1.APPMSG.User.require.userId)
@@ -32,7 +23,10 @@ exports.belongsToGroupRouter.post('/create', (0, express_validator_1.body)('user
     .withMessage(validationMessages_1.APPMSG.Group.regular.groupId), async function (req, res, next) {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
-        res.status(400).json({ errors: errors.array() });
+        res.status(400).json({
+            errors: errors.array(),
+            is_success: false,
+        });
         return;
     }
     let group_request_data = {
@@ -43,7 +37,7 @@ exports.belongsToGroupRouter.post('/create', (0, express_validator_1.body)('user
     let create_data = (0, _modules_1.cutUndefinedOutOfAnArgument)(group_request_data);
     let result;
     try {
-        result = await index_1.default.GroupMembers.create(create_data);
+        result = await index_1.default.GroupMembers.calculateTimeOfCreate(req.process_logging.log_detail, create_data);
     }
     catch (err) {
         console.log(err);
@@ -51,17 +45,12 @@ exports.belongsToGroupRouter.post('/create', (0, express_validator_1.body)('user
         return;
     }
     res.status(200).json({
-        group: result,
+        belonged_group: result,
+        is_success: true,
     });
+    next();
 });
-/** read belongsToGroup members ****************************
- *
- * 送られてきたgroupIdのグループに所属しているメンバーを返却
- *
- * @param req.body.groupId: number
- *
- **********************************************************/
-exports.belongsToGroupRouter.get('/read/:groupId', (0, express_validator_1.param)('groupId')
+exports.belongsToGroupRouter.post('/read', (0, express_validator_1.body)('groupId')
     .notEmpty()
     .withMessage(validationMessages_1.APPMSG.Group.require.groupId)
     .bail()
@@ -69,14 +58,17 @@ exports.belongsToGroupRouter.get('/read/:groupId', (0, express_validator_1.param
     .withMessage(validationMessages_1.APPMSG.Group.regular.groupId), async function (req, res, next) {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
-        res.status(400).json({ errors: errors.array() });
+        res.status(400).json({
+            errors: errors.array(),
+            is_success: false,
+        });
         return;
     }
     let targetGroup;
     try {
-        targetGroup = await index_1.default.Groups.findOne({
+        targetGroup = await index_1.default.Groups.calculateTimeOfFindOne(req.process_logging.log_detail, {
             where: {
-                groupId: req.params.groupId,
+                groupId: req.body.groupId,
             },
             include: ['Members'],
         });
@@ -87,17 +79,11 @@ exports.belongsToGroupRouter.get('/read/:groupId', (0, express_validator_1.param
         return;
     }
     res.status(200).json({
-        group: targetGroup,
+        readed_group: targetGroup,
+        is_success: true,
     });
+    next();
 });
-/** delete belongsToGroup **********************************
- *
- * 送られてきたデータでグループを作成
- *
- * @param req.body.groupId: number
- * @param req.body.userId: number
- *
- **********************************************************/
 exports.belongsToGroupRouter.post('/delete', (0, express_validator_1.body)('userId')
     .notEmpty()
     .withMessage(validationMessages_1.APPMSG.User.require.userId)
@@ -111,12 +97,15 @@ exports.belongsToGroupRouter.post('/delete', (0, express_validator_1.body)('user
     .withMessage(validationMessages_1.APPMSG.Group.regular.groupId), async function (req, res, next) {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
-        res.status(400).json({ errors: errors.array() });
+        res.status(400).json({
+            errors: errors.array(),
+            is_success: false,
+        });
         return;
     }
     let result;
     try {
-        result = await index_1.default.GroupMembers.destroy({
+        result = await index_1.default.GroupMembers.calculateTimeOfDestroy(req.process_logging.log_detail, {
             where: {
                 groupId: req.body.groupId,
                 memberId: req.body.userId,
@@ -129,6 +118,8 @@ exports.belongsToGroupRouter.post('/delete', (0, express_validator_1.body)('user
         return;
     }
     res.status(200).json({
-        group: result,
+        left_group: result,
+        is_success: true,
     });
+    next();
 });

@@ -5,9 +5,9 @@ import {
   Router } from 'express'
 import { param, body, validationResult } from 'express-validator';
 import db from '@/sequelize-src/models/index'
-import { reqMsg, cutUndefinedOutOfAnArgument } from '@/express-src/router/_modules';
+import { baseResponse, validErrorResponse, cutUndefinedOutOfAnArgument } from '@/express-src/router/_modules';
 import { APPMSG } from '@/express-src/modules/validation/validationMessages';
-import { User } from '@/sequelize-src/models/user';
+import { userAttributes, User } from '@/sequelize-src/models/user';
 
 export const followRouter: Router = Router();
 
@@ -19,6 +19,9 @@ export const followRouter: Router = Router();
  * @param req.body.followerUserId: number
  *
  **********************************************************/
+interface createFollowResponse extends baseResponse {
+  created_follow: userAttributes;
+}
 followRouter.post(
   '/create',
 
@@ -36,10 +39,13 @@ followRouter.post(
     .isInt()
     .withMessage(APPMSG.Follows.regular.followerUserId),
 
-  async function(req: Request, res: Response, next: NextFunction) {
+  async function(req: Request, res: Response<createFollowResponse | validErrorResponse>, next: NextFunction) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array()});
+      res.status(400).json({ 
+        errors: errors.array(),
+        is_success: false,
+      });
       return;
     }
 
@@ -52,7 +58,10 @@ followRouter.post(
 
     let result;
     try {
-      result = await db.Follows.create(create_data);
+      result = await db.Follows.calculateTimeOfCreate(
+        req.process_logging.log_detail, 
+        create_data
+      );
     }
     catch(err) {
       console.log(err);
@@ -61,8 +70,10 @@ followRouter.post(
     }
 
     res.status(200).json({
-      follow: result,
+      created_follow: result,
+      is_success: true,
     });
+    next();
   }
 )
 
@@ -74,28 +85,34 @@ followRouter.post(
  * @param req.body.followedUserId: number
  *
  **********************************************************/
-followRouter.get(
-  '/read/getfollower/:followedUserId',
+interface readFollowerResponse extends baseResponse {
+  followers: userAttributes,
+}
+followRouter.post(
+  '/read/getfollower',
 
-  param('followedUserId')
+  body('followedUserId')
     .notEmpty()
     .withMessage(APPMSG.Follows.require.followedUserId)
     .bail()
     .isInt()
     .withMessage(APPMSG.Follows.regular.followedUserId),
 
-  async function(req: Request, res: Response, next: NextFunction) {
+  async function(req: Request, res: Response<readFollowerResponse | validErrorResponse>, next: NextFunction) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array()});
+      res.status(400).json({ 
+        errors: errors.array(),
+        is_success: false,
+      });
       return;
     }
 
     let targetUser: User;
     try {
-      targetUser = await db.Users.findOne({
+      targetUser = await db.Users.calculateTimeOfFindOne( req.process_logging.log_detail, {
         where: {
-          userId: req.params.followedUserId,
+          userId: req.body.followedUserId,
         },
         include: [ 'Follower' ],
       });
@@ -107,8 +124,10 @@ followRouter.get(
     }
 
     res.status(200).json({
-      user: targetUser,
+      followers: targetUser,
+      is_success: true,
     });
+    next();
   }
 )
 
@@ -120,28 +139,34 @@ followRouter.get(
  * @param req.body.followerUserId: number
  *
  **********************************************************/
-followRouter.get(
-  '/read/getfollowed/:followerUserId',
+interface readFollowedResponse extends baseResponse {
+  followeds: userAttributes,
+}
+followRouter.post(
+  '/read/getfollowed',
 
-  param('followerUserId')
+  body('followerUserId')
     .notEmpty()
     .withMessage(APPMSG.Follows.require.followerUserId)
     .bail()
     .isInt()
     .withMessage(APPMSG.Follows.regular.followerUserId),
 
-  async function(req: Request, res: Response, next: NextFunction) {
+  async function(req: Request, res: Response<readFollowedResponse | validErrorResponse>, next: NextFunction) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array()});
+      res.status(400).json({ 
+        errors: errors.array(),
+        is_success: false,
+      });
       return;
     }
 
     let targetUser: User;
     try {
-      targetUser = await db.Users.findOne({
+      targetUser = await db.Users.calculateTimeOfFindOne( req.process_logging.log_detail, {
         where: {
-          userId: req.params.followerUserId,
+          userId: req.body.followerUserId,
         },
         include: [ 'Followed' ],
       });
@@ -153,10 +178,43 @@ followRouter.get(
     }
 
     res.status(200).json({
-      user: targetUser,
+      followeds: targetUser,
+      is_success: true,
     });
+    next();
   }
 )
+
+
+/** read belongsToGroup members count **********************
+ *
+ * groupMembersテーブルのレコード数を返却する
+ *
+ **********************************************************/
+interface readFollowsCountResponse extends baseResponse {
+  follows_count: number,
+}
+followRouter.post(
+  '/read/rows', 
+
+  async function(req: Request, res: Response<readFollowsCountResponse | validErrorResponse>, next: NextFunction) {
+    let follows_count: number;
+    try {
+      follows_count = await db.Follows.count({});
+    }
+    catch(err) {
+      console.log(err);
+      next(err);
+      return;
+    }
+
+    res.status(200).json({
+      follows_count: follows_count,
+      is_success: true,
+    });
+    next();
+  }
+);
 
 
 /** delete follow ******************************************
@@ -167,6 +225,10 @@ followRouter.get(
  * @param req.body.followerUserId: number
  *
  **********************************************************/
+// TODO 要素の名前変える
+interface deleteFollowResponse extends baseResponse {
+  deleted_followed: userAttributes,
+}
 followRouter.post(
   '/delete',
 
@@ -184,16 +246,19 @@ followRouter.post(
     .isInt()
     .withMessage(APPMSG.Follows.regular.followerUserId),
 
-  async function(req: Request, res: Response, next: NextFunction) {
+  async function(req: Request, res: Response<deleteFollowResponse | validErrorResponse>, next: NextFunction) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array()});
+      res.status(400).json({ 
+        errors: errors.array(),
+        is_success: false,
+      });
       return;
     }
 
     let result;
     try {
-      result = await db.Follows.destroy({
+      result = await db.Follows.calculateTimeOfDestroy(req.process_logging.log_detail,{
         where: {
           followedUserId: req.body.followedUserId,
           followerUserId: req.body.followerUserId
@@ -207,7 +272,9 @@ followRouter.post(
     }
 
     res.status(200).json({
-      user: result,
+      deleted_followed: result,
+      is_success: true,
     });
+    next();
   }
 )

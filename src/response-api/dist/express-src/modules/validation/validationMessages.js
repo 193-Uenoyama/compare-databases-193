@@ -38,5 +38,6 @@ exports.APPMSG = {
     },
     General: {
         notEvenTheMinimum: "could not find parameter to update",
+        directoryNotFound: "The directory not found",
     },
 };

@@ -13,23 +13,8 @@ services:
       - ./logs:/home/logs/
     environment:
       NODE_PATH: "/home/response-api/"
-      LOG_PATH: "/home/logs/new/"
-      PATH: "${SDP_PATH}"
-    user: "${SDP_UID}:${SDP_GID}"
-    tty: true
-
-  node-client:
-    build: 
-      context: "./container/node-client/"
-    image: compare-databases-193_node-client
-    container_name: compare-databases-193_node-client
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./src/request-page:/home/request-page
-      - ./logs:/home/logs/
-    environment:
-      LOG_PATH: "/home/logs/"
+      LOG_PATH: "/home/logs/${SDP_SERV_LOG_DIR}/"
+      PATH: "${SDP_SERV_PATH}"
     user: "${SDP_UID}:${SDP_GID}"
     tty: true
 

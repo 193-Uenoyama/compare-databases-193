@@ -1,36 +1,36 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const sequelize_1 = require("sequelize");
+const core_1 = require("@sequelize/core");
 module.exports = {
     up: async (queryInterface, Sequelize) => {
         await queryInterface.createTable('Users', {
             userId: {
-                type: sequelize_1.DataTypes.INTEGER,
+                type: core_1.DataTypes.INTEGER,
                 autoIncrement: true,
                 primaryKey: true,
             },
             firstName: {
-                type: sequelize_1.DataTypes.STRING,
+                type: core_1.DataTypes.STRING,
                 allowNull: false,
             },
             lastName: {
-                type: sequelize_1.DataTypes.STRING,
+                type: core_1.DataTypes.STRING,
                 allowNull: false,
             },
             email: {
-                type: sequelize_1.DataTypes.STRING,
+                type: core_1.DataTypes.STRING,
                 allowNull: false,
                 unique: true,
             },
             introduction: {
-                type: sequelize_1.DataTypes.STRING,
+                type: core_1.DataTypes.STRING,
             },
             createdAt: {
-                type: sequelize_1.DataTypes.DATE,
+                type: core_1.DataTypes.DATE,
                 allowNull: false,
             },
             updatedAt: {
-                type: sequelize_1.DataTypes.DATE,
+                type: core_1.DataTypes.DATE,
                 allowNull: false,
             }
         });

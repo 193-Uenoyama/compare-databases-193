@@ -81,16 +81,15 @@ serv-seed:
 serv-seed-undo-all:
 	docker exec compare-databases-193_node-server sequelize-cli db:seed:undo:all
 
-target=index.test
+serv-target=index.test
 serv-test:
-	docker exec compare-databases-193_node-server jest $(target)
+	docker exec compare-databases-193_node-server jest $(serv-target)
 
+# ---------- shellをテストする ----------
+shell-target=index.bats
+shell-unit:
+	./src/request-script/test/unitTest/$(shell-target)
 
-client-install:
-	docker run -v `pwd`/src/request-page:/home/request-page/ --rm compare-databases-193_node-client npm ci 
-	docker run -v `pwd`/src/request-page:/home/request-page/ --rm compare-databases-193_node-client chown -R `id -u`:`id -g` ./node_modules
+shell-e2e:
+	./src/request-script/test/e2eTest/index.sh
 
-
-# ---------- dockerコンテナをテストする ----------
-e2e-test:
-	./test/_beginTest.sh

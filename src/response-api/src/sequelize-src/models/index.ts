@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { Sequelize } from 'sequelize';
+import { Sequelize } from '@sequelize/core';
 
 import { User } from '@/sequelize-src/models/user'
 import { Group } from '@/sequelize-src/models/group'

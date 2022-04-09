@@ -1,14 +1,28 @@
-import appTest from 'src/jest-src/express-routes/app.test'
-import userTest from '@/jest-src/express-routes/user.test'
-import groupTest from '@/jest-src/express-routes/group.test'
-import belongsToGroupTest from '@/jest-src/express-routes/groupmember.test'
-import followTest from '@/jest-src/express-routes/follow.test'
+import appTest from '@/jest-src/express-routes/app.test';
+
+import userRouter from '@/jest-src/express-routes/userRouter.test';
+import groupRouter from '@/jest-src/express-routes/groupRouter.test';
+import belongsToGroupRouter from '@/jest-src/express-routes/groupMemberRouter.test';
+import followRouter from '@/jest-src/express-routes/followRouter.test';
+
+import writeLogs from '@/jest-src/express-logs/writeLogs.test';
+import userLogs from '@/jest-src/express-logs/userLogs.test';
+import groupLogs from '@/jest-src/express-logs/groupLogs.test';
+import groupMemberLogs from '@/jest-src/express-logs/groupMemberLogs.test';
+import followLogs from '@/jest-src/express-logs/followLogs.test';
 
 // 同期的にテストを実行する
 describe("compare-databases-serv-test", () => {
   appTest
-  userTest
-  groupTest
-  belongsToGroupTest
-  followTest
+
+  userRouter
+  groupRouter
+  belongsToGroupRouter
+  followRouter 
+                      
+  writeLogs 
+  userLogs 
+  groupLogs 
+  groupMemberLogs 
+  followLogs 
 });
