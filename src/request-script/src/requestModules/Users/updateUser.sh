@@ -1,6 +1,5 @@
 #!/bin/bash
 source $SDP_ROOT/src/request-script/src/requestModules/getRandomString.sh
-source $SDP_ROOT/src/request-script/src/requestModules/cutArrayToRequireNumber.sh
 
 function updateUser() {
   loop_count=${1:-1}
@@ -8,9 +7,10 @@ function updateUser() {
 
   will_update_userId=( `echo $users_response | jq '.readed_users[].userId' | xargs` )
 
-  will_update_userId=( `cutArrayToRequireNumber $loop_count "${will_update_userId[*]}"` )
-  for userId in ${will_update_userId[*]}
+  for (( i=0; i<$loop_count; i++  ))
   do
+    random_user_index=$(( $RANDOM % ${#will_update_userId[*]} ))
+    userId=${will_update_userId[$random_user_index]}
     firstName=`getRandomString` 
     lastName=`getRandomString`
     email=`getRandomString 6`@`getRandomString 3`.com
