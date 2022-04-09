@@ -1,6 +1,11 @@
-export interface reqMsg {
-  message: string,
-  isConnectDatabase: boolean,
+import { ValidationError } from 'express-validator';
+
+export interface baseResponse {
+  is_success: boolean;
+}
+
+export interface validErrorResponse extends baseResponse {
+  errors: ValidationError[];
 }
 
 export function cutUndefinedOutOfAnArgument<T>(argument: T): T {

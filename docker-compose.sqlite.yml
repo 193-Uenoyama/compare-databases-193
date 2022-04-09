@@ -14,11 +14,6 @@ services:
       DATABASE_HOST: /home/db/sqlite.db
       DATABASE_SYSTEM: sqlite
 
-  node-client:
-    extends:
-      file: docker-compose.yml
-      service: node-client
-
 volumes:
    compare-databases-193_sqlite:
     name: compare-databases-193_sqlite

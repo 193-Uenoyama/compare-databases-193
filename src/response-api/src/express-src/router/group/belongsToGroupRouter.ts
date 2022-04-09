@@ -6,13 +6,12 @@ import {
 import { param, body, validationResult } from 'express-validator';
 
 import db from '@/sequelize-src/models/index'
-import { reqMsg, cutUndefinedOutOfAnArgument } from '@/express-src/router/_modules';
-import { GroupCommonAttributes, GroupAttributes, Group } from '@/sequelize-src/models/group';
+import { baseResponse, validErrorResponse, cutUndefinedOutOfAnArgument } from '@/express-src/router/_modules';
+import { GroupAttributes, Group } from '@/sequelize-src/models/group';
 import { APPMSG } from '@/express-src/modules/validation/validationMessages';
 
 export const belongsToGroupRouter: Router = Router();
 
-// TODO 型宣言ちゃんとするよん。あとで。
 /** create belongsToGroup **********************************
  *
  * 送られてきたgroupIdのグループにuserIdのユーザを所属させる
@@ -21,6 +20,9 @@ export const belongsToGroupRouter: Router = Router();
  * @param req.body.userId: number
  *
  **********************************************************/
+interface createGroupMemberResponse extends baseResponse {
+  belonged_group: GroupAttributes;
+}
 belongsToGroupRouter.post(
   '/create', 
 
@@ -38,10 +40,13 @@ belongsToGroupRouter.post(
     .isInt()
     .withMessage(APPMSG.Group.regular.groupId),
 
-  async function(req: Request, res: Response, next: NextFunction) {
+  async function(req: Request, res: Response<createGroupMemberResponse | validErrorResponse>, next: NextFunction) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array()});
+      res.status(400).json({ 
+        errors: errors.array(),
+        is_success: false,
+      });
       return;
     }
 
@@ -54,7 +59,10 @@ belongsToGroupRouter.post(
 
     let result;
     try {
-      result = await db.GroupMembers.create(create_data);
+      result = await db.GroupMembers.calculateTimeOfCreate(
+        req.process_logging.log_detail, 
+        create_data
+      );
     }
     catch(err) {
       console.log(err);
@@ -63,8 +71,10 @@ belongsToGroupRouter.post(
     }
 
     res.status(200).json({
-      group: result,
+      belonged_group: result,
+      is_success: true,
     });
+    next();
   }
 );
 
@@ -76,28 +86,34 @@ belongsToGroupRouter.post(
  * @param req.body.groupId: number
  *
  **********************************************************/
-belongsToGroupRouter.get(
-  '/read/:groupId', 
+interface readGroupMemberResponse extends baseResponse {
+  readed_group: GroupAttributes,
+}
+belongsToGroupRouter.post(
+  '/read', 
 
-  param('groupId')
+  body('groupId')
     .notEmpty()
     .withMessage(APPMSG.Group.require.groupId)
     .bail()
     .isInt()
     .withMessage(APPMSG.Group.regular.groupId),
 
-  async function(req: Request, res: Response, next: NextFunction) {
+  async function(req: Request, res: Response<readGroupMemberResponse | validErrorResponse>, next: NextFunction) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array()});
+      res.status(400).json({ 
+        errors: errors.array(),
+        is_success: false,
+      });
       return;
     }
 
     let targetGroup: Group;
     try {
-      targetGroup = await db.Groups.findOne({
+      targetGroup = await db.Groups.calculateTimeOfFindOne(req.process_logging.log_detail, {
         where: {
-          groupId: req.params.groupId,
+          groupId: req.body.groupId,
         },
         include: [ 'Members' ],
       });
@@ -109,8 +125,41 @@ belongsToGroupRouter.get(
     }
 
     res.status(200).json({
-      group: targetGroup,
+      readed_group: targetGroup,
+      is_success: true,
     });
+    next();
+  }
+);
+
+
+/** read belongsToGroup members count **********************
+ *
+ * groupMembersテーブルのレコード数を返却する
+ *
+ **********************************************************/
+interface readGroupMembersCountResponse extends baseResponse {
+  group_members_count: number,
+}
+belongsToGroupRouter.post(
+  '/read/rows', 
+
+  async function(req: Request, res: Response<readGroupMembersCountResponse | validErrorResponse>, next: NextFunction) {
+    let group_members_count: number;
+    try {
+      group_members_count = await db.GroupMembers.count({});
+    }
+    catch(err) {
+      console.log(err);
+      next(err);
+      return;
+    }
+
+    res.status(200).json({
+      group_members_count: group_members_count,
+      is_success: true,
+    });
+    next();
   }
 );
 
@@ -123,6 +172,10 @@ belongsToGroupRouter.get(
  * @param req.body.userId: number
  *
  **********************************************************/
+interface deleteMemberResponse extends baseResponse {
+  // left ... leaveの過去形
+  left_group: GroupAttributes,
+}
 belongsToGroupRouter.post(
   '/delete', 
 
@@ -140,16 +193,19 @@ belongsToGroupRouter.post(
     .isInt()
     .withMessage(APPMSG.Group.regular.groupId),
 
-  async function(req: Request, res: Response, next: NextFunction) {
+  async function(req: Request, res: Response<deleteMemberResponse | validErrorResponse>, next: NextFunction) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array()});
+      res.status(400).json({ 
+        errors: errors.array(),
+        is_success: false,
+      });
       return;
     }
 
     let result;
     try {
-      result = await db.GroupMembers.destroy({
+      result = await db.GroupMembers.calculateTimeOfDestroy(req.process_logging.log_detail, {
         where: {
           groupId: req.body.groupId,
           memberId: req.body.userId,
@@ -163,8 +219,10 @@ belongsToGroupRouter.post(
     }
 
     res.status(200).json({
-      group: result,
+      left_group: result,
+      is_success: true,
     });
+    next();
   }
 );
 

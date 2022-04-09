@@ -1,7 +1,9 @@
 import {
   DataTypes,
-  Optional,
-} from 'sequelize';
+  InferAttributes,
+  InferCreationAttributes,
+  CreationOptional,
+} from '@sequelize/core';
 import CalculateProcessingTimeModel from '@/sequelize-src/CalculateProcessingTimeModel'
 import { sequelize } from '@/sequelize-src/defineSequelize'
 
@@ -12,7 +14,7 @@ export interface excludedPersonalInfomationUserAttributes {
   introduction: string | null;
 }
 
-export interface UserCommonAttributes {
+export interface elasticUserAttributes {
   userId?: number;
   firstName?: string;
   lastName?: string;
@@ -20,7 +22,7 @@ export interface UserCommonAttributes {
   introduction?: string | null;
 }
 
-export interface UserAttributes extends UserCommonAttributes {
+export interface userAttributes extends elasticUserAttributes{
   userId: number;
   firstName: string;
   lastName: string;
@@ -28,10 +30,8 @@ export interface UserAttributes extends UserCommonAttributes {
   introduction: string | null;
 }
 
-interface UserCreationAttributes extends Optional<UserAttributes, "userId"> {}
-
-export class User extends CalculateProcessingTimeModel<UserAttributes, UserCreationAttributes> implements UserAttributes {
-  declare userId: number;
+export class User extends CalculateProcessingTimeModel<InferAttributes<User>, InferCreationAttributes<User>> implements userAttributes{
+  declare userId: CreationOptional<number>;
   declare firstName: string;
   declare lastName: string;
   declare email: string;

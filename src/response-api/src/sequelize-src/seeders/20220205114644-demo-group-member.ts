@@ -1,7 +1,7 @@
 import {
   QueryInterface,
   Sequelize,
-} from 'sequelize'
+} from '@sequelize/core'
 import db from '@/sequelize-src/models/index'
 
 module.exports = {

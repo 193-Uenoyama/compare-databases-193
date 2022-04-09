@@ -13,7 +13,10 @@ exports.groupRouter = (0, express_1.Router)();
 exports.groupRouter.post('/create', (0, express_validator_1.body)('groupName').notEmpty().withMessage(validationMessages_1.APPMSG.Group.require.groupName), async function (req, res, next) {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
-        res.status(400).json({ errors: errors.array() });
+        res.status(400).json({
+            errors: errors.array(),
+            is_success: false,
+        });
         return;
     }
     let group_request_data = {
@@ -24,7 +27,7 @@ exports.groupRouter.post('/create', (0, express_validator_1.body)('groupName').n
     let create_data = (0, _modules_1.cutUndefinedOutOfAnArgument)(group_request_data);
     let created_group;
     try {
-        created_group = await index_1.default.Groups.create(create_data, {});
+        created_group = await index_1.default.Groups.calculateTimeOfCreate(req.process_logging.log_detail, create_data, {});
     }
     catch (err) {
         console.log(err);
@@ -32,15 +35,15 @@ exports.groupRouter.post('/create', (0, express_validator_1.body)('groupName').n
         return;
     }
     res.status(200).json({
-        createdGroup: created_group,
-        message: "success! create " + created_group.groupName,
-        isConnectDatabase: true,
+        created_group: created_group,
+        is_success: true,
     });
+    next();
 });
-exports.groupRouter.get('/read', async function (req, res, next) {
+exports.groupRouter.post('/read', async function (req, res, next) {
     let readed_groups;
     try {
-        readed_groups = await index_1.default.Groups.findAll({});
+        readed_groups = await index_1.default.Groups.calculateTimeOfFindAll(req.process_logging.log_detail, {});
     }
     catch (err) {
         console.log(err);
@@ -48,10 +51,10 @@ exports.groupRouter.get('/read', async function (req, res, next) {
         return;
     }
     res.status(200).json({
-        groups: readed_groups,
-        message: "success connect database",
-        isConnectDatabase: true
+        readed_groups: readed_groups,
+        is_success: true
     });
+    next();
 });
 exports.groupRouter.post('/update', 
 // = Validation ================================
@@ -74,7 +77,10 @@ exports.groupRouter.post('/update',
 async function (req, res, next) {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
-        res.status(400).json({ errors: errors.array() });
+        res.status(400).json({
+            errors: errors.array(),
+            is_success: false,
+        });
         return;
     }
     // 送られてきたデータを格納。
@@ -86,7 +92,7 @@ async function (req, res, next) {
     let update_data = (0, _modules_1.cutUndefinedOutOfAnArgument)(group_request_data);
     // 更新
     try {
-        await index_1.default.Groups.update(update_data, {
+        await index_1.default.Groups.calculateTimeOfUpdate(req.process_logging.log_detail, update_data, {
             where: {
                 groupId: req.body.groupId,
             }
@@ -112,10 +118,10 @@ async function (req, res, next) {
         return;
     }
     res.status(200).json({
-        updatedGroup: updated_group,
-        message: "success! update " + updated_group.groupName,
-        isConnectDatabase: true,
+        updated_group: updated_group,
+        is_success: true,
     });
+    next();
 });
 exports.groupRouter.post('/delete', (0, express_validator_1.body)('groupId')
     .notEmpty()
@@ -125,7 +131,10 @@ exports.groupRouter.post('/delete', (0, express_validator_1.body)('groupId')
     .withMessage(validationMessages_1.APPMSG.Group.regular.groupId), async function (req, res, next) {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
-        res.status(400).json({ errors: errors.array() });
+        res.status(400).json({
+            errors: errors.array(),
+            is_success: false,
+        });
         return;
     }
     // 削除対象のグループを取り出す。
@@ -144,7 +153,7 @@ exports.groupRouter.post('/delete', (0, express_validator_1.body)('groupId')
     }
     // グループを削除する
     try {
-        await index_1.default.Groups.destroy({
+        await index_1.default.Groups.calculateTimeOfDestroy(req.process_logging.log_detail, {
             where: {
                 groupId: req.body.groupId
             }
@@ -156,8 +165,8 @@ exports.groupRouter.post('/delete', (0, express_validator_1.body)('groupId')
         return;
     }
     res.status(200).json({
-        deletedGroup: deletion_group,
-        message: "success! deleted " + deletion_group.groupName,
-        isConnectDatabase: true,
+        deleted_group: deletion_group,
+        is_success: true,
     });
+    next();
 });

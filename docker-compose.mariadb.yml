@@ -11,11 +11,6 @@ services:
     depends_on: 
       - db
 
-  node-client:
-    extends:
-      file: docker-compose.yml
-      service: node-client
-
   db:
     extends:
       file: docker-compose.yml

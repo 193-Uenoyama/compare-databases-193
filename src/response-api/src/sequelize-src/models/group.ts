@@ -1,12 +1,15 @@
 import {
   DataTypes,
   Model,
-  Optional,
-} from 'sequelize';
+  InferAttributes,
+  InferCreationAttributes,
+  CreationOptional,
+} from '@sequelize/core';
 import { sequelize } from '@/sequelize-src/defineSequelize'
 import CalculateProcessingTimeModel from '@/sequelize-src/CalculateProcessingTimeModel'
 
-export interface GroupCommonAttributes {
+export interface elasticGroupAttributes {
+  groupId?: number;
   groupName?: string;
   groupIntroduction?: string;
 }
@@ -17,10 +20,8 @@ export interface GroupAttributes {
   groupIntroduction: string;
 }
 
-interface GroupCreationAttributes extends Optional<GroupAttributes, "groupId"> {}
-
-export class Group extends CalculateProcessingTimeModel<GroupAttributes, GroupCreationAttributes> implements GroupAttributes {
-  declare groupId: number;
+export class Group extends CalculateProcessingTimeModel<InferAttributes<Group>, InferCreationAttributes<Group>> {
+  declare groupId: CreationOptional<number>;
   declare groupName: string;
   declare groupIntroduction: string;
 
