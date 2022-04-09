@@ -142,7 +142,8 @@ export default describe("Followsテーブルを操作するテスト", () => {
 
         // supertestで通信
         const response = await request(app)
-          .get("/user/follow/read/getfollower/" + test_target_followed.userId)
+          .post("/user/follow/read/getfollower")
+          .send({ followedUserId: test_target_followed.userId, })
           .set('Accept', 'application/json')
 
         expect(response.statusCode).toBe(200);
@@ -157,7 +158,8 @@ export default describe("Followsテーブルを操作するテスト", () => {
       describe("follower参照 validationエラー", () => {
         it("followerUserIdが文字列", async () => {
           const response = await request(app)
-            .get("/user/follow/read/getfollower/mojitetsu")
+            .post("/user/follow/read/getfollower")
+            .send({ followedUserId: "mojiretsu", })
             .set('Accept', 'application/json')
 
           expect(response.statusCode).toBe(400);
@@ -179,7 +181,8 @@ export default describe("Followsテーブルを操作するテスト", () => {
 
         // supertestで通信
         const response = await request(app)
-          .get("/user/follow/read/getfollowed/" + test_target_follower.userId)
+          .post("/user/follow/read/getfollowed")
+          .send({ followerUserId: test_target_follower.userId, })
           .set('Accept', 'application/json')
 
         expect(response.statusCode).toBe(200);
@@ -195,7 +198,8 @@ export default describe("Followsテーブルを操作するテスト", () => {
 
         it("followedUserIdが文字列", async () => {
           const response = await request(app)
-            .get("/user/follow/read/getfollowed/mojitetsu")
+            .post("/user/follow/read/getfollowed")
+            .send({ followerUserId: "mojiretsu", })
             .set('Accept', 'application/json')
             
           expect(response.statusCode).toBe(400);

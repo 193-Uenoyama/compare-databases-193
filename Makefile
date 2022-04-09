@@ -81,14 +81,14 @@ serv-seed:
 serv-seed-undo-all:
 	docker exec compare-databases-193_node-server sequelize-cli db:seed:undo:all
 
-target=index.test
+serv-target=index.test
 serv-test:
-	docker exec compare-databases-193_node-server jest $(target)
+	docker exec compare-databases-193_node-server jest $(serv-target)
 
 # ---------- shellをテストする ----------
-target=userRequestTest.bats
+shell-target=userRequestTest.bats
 shell-unit:
-	./src/request-script/test/unitTest/$(target)
+	./src/request-script/test/unitTest/$(shell-target)
 
 shell-e2e:
 	./src/request-script/test/e2eTest/index.sh

@@ -1,13 +1,19 @@
 import { ReqLogDetail } from '@/express-src/modules/processingLogStore/processingLogModules';
 
-export default class ReqLogDetailHolder {
+export default class ReqLogDetailMaker {
   request_id: string = Math.random().toString(32).substring(2);
   start_time: string = this.Get_FullDateString(new Date());
+  is_necessary_calculate: boolean
+
+  constructor(is_necessary_calculate: boolean) {
+    this.is_necessary_calculate = is_necessary_calculate;
+  }
 
   transferReqDetail(): ReqLogDetail {
     return { 
       request_id: this.request_id, 
-      request_start_time: this.start_time 
+      request_start_time: this.start_time,
+      is_unneed_calculate: this.is_necessary_calculate,
     }
   }
 

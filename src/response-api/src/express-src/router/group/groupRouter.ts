@@ -76,7 +76,7 @@ groupRouter.post(
 interface readGroupResponse extends baseResponse {
   readed_groups: Array< GroupAttributes >
 }
-groupRouter.get(
+groupRouter.post(
   '/read', 
 
   async function(req: Request, res: Response<readGroupResponse | validErrorResponse>, next: NextFunction) {

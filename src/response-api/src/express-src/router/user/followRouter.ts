@@ -88,10 +88,10 @@ followRouter.post(
 interface readFollowerResponse extends baseResponse {
   followers: userAttributes,
 }
-followRouter.get(
-  '/read/getfollower/:followedUserId',
+followRouter.post(
+  '/read/getfollower',
 
-  param('followedUserId')
+  body('followedUserId')
     .notEmpty()
     .withMessage(APPMSG.Follows.require.followedUserId)
     .bail()
@@ -112,7 +112,7 @@ followRouter.get(
     try {
       targetUser = await db.Users.calculateTimeOfFindOne( req.process_logging.log_detail, {
         where: {
-          userId: req.params.followedUserId,
+          userId: req.body.followedUserId,
         },
         include: [ 'Follower' ],
       });
@@ -142,10 +142,10 @@ followRouter.get(
 interface readFollowedResponse extends baseResponse {
   followeds: userAttributes,
 }
-followRouter.get(
-  '/read/getfollowed/:followerUserId',
+followRouter.post(
+  '/read/getfollowed',
 
-  param('followerUserId')
+  body('followerUserId')
     .notEmpty()
     .withMessage(APPMSG.Follows.require.followerUserId)
     .bail()
@@ -166,7 +166,7 @@ followRouter.get(
     try {
       targetUser = await db.Users.calculateTimeOfFindOne( req.process_logging.log_detail, {
         where: {
-          userId: req.params.followerUserId,
+          userId: req.body.followerUserId,
         },
         include: [ 'Followed' ],
       });

@@ -13,8 +13,8 @@ services:
       - ./logs:/home/logs/
     environment:
       NODE_PATH: "/home/response-api/"
-      LOG_PATH: "/home/logs/${SDP_LOGDIR}/"
-      PATH: "${SDP_PATH}"
+      LOG_PATH: "/home/logs/${SDP_SERV_LOG_DIR}/"
+      PATH: "${SDP_SERV_PATH}"
     user: "${SDP_UID}:${SDP_GID}"
     tty: true
 

@@ -9,7 +9,11 @@ export type ProcessDetail =
   { state: Process_State, name: Process_Server } |
   { state: Process_State, name: Process_CRUD, target_table: string } 
 
-export type ReqLogDetail = { request_id: string, request_start_time: string }
+export type ReqLogDetail = { 
+  request_id: string,
+  request_start_time: string,
+  is_unneed_calculate: boolean
+}
 
 // ナノ秒をミリ秒に変換
 export function ConvertToMsFromNs(ns: number): number {

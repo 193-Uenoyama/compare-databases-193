@@ -14,35 +14,6 @@ import { APPMSG } from '@/express-src/modules/validation/validationMessages';
 
 export const userRouter: Router = Router();
 
-// TODO あとで消す
-userRouter.get('/', async function(req: Request, res: Response, next: NextFunction) {
-  let return_data: any = {};
-
-  let firstName: string = Math.random().toString(32).substring(2);
-  let lastName: string = Math.random().toString(32).substring(2);
-  let email: string = Math.random().toString(32).substring(2);
-  await db.Users.calculateTimeOfCreate(
-    req.process_logging.log_detail, {
-    firstName: firstName,
-    lastName: lastName,
-    email: email,
-  }, {}).catch((err: Error) => {
-    next(err);
-    return
-  });
-
-  return_data = await db.Users.calculateTimeOfFindAll(
-    req.process_logging.log_detail, {})  
-  .catch((err: Error) => {
-    next(err);
-    return
-  })
-
-  res.status(200).json(return_data);
-  next();
-});
-
-
 /** create a User ******************************************
  *
  * 送られてきたデータでユーザを作成
@@ -121,7 +92,7 @@ userRouter.post(
 interface readUserResponse extends baseResponse {
   readed_users: Array< userAttributes >
 }
-userRouter.get(
+userRouter.post(
   '/read', 
 
   async function(req: Request, res: Response<readUserResponse>, next: NextFunction) {

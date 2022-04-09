@@ -126,7 +126,8 @@ export default describe("GroupMembersテーブルを操作するテスト", () =
       });
 
       const response = await request(app)
-        .get("/group/member/read/" + test_target_group.groupId)
+        .post("/group/member/read")
+        .send({ groupId: test_target_group.groupId,})
         .set('Accept', 'application/json')
 
       expect(response.statusCode).toBe(200);
@@ -139,7 +140,8 @@ export default describe("GroupMembersテーブルを操作するテスト", () =
     describe("GroupMember参照 validationエラー", () => {
       it("groupIdが文字列", async () => {
         const response = await request(app)
-          .get("/group/member/read/mojitetsu")
+          .post("/group/member/read")
+          .send({ groupId: "mojitetsu",})
           .set('Accept', 'application/json')
 
         expect(response.statusCode).toBe(400);

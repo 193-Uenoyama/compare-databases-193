@@ -88,7 +88,7 @@ export default describe("Usersテーブルを操作するテスト", () =>{
 
   describe("参照", () => {
     it("Userを読み込むテスト", async function() {
-      const response = await request(app).get("/user/read")
+      const response = await request(app).post("/user/read")
 
       expect(response.statusCode).toBe(200);
       expect(response.body.is_success).toBe(true);

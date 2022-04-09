@@ -1,8 +1,6 @@
 import fs from 'fs';
 import request from 'supertest';
-import { ValidationError } from 'express-validator';
 import app from '@/express-src/app';
-import { User } from '@/sequelize-src/models/user';
 import { 
   ProcessingTimeLogFileDetail,
 } from '@/express-src/modules/processingLogStore/processingLogModules';
@@ -11,8 +9,7 @@ import { Seeding } from '@/jest-src/test-reserve/seeding'
 import { CleanUp } from '@/jest-src/test-reserve/cleanup'
 import { RemoveLogFiles } from '@/jest-src/test-reserve/removeLogFiles';
 
-
-export default describe("Userを操作するときに実行時間を計測する", () =>{
+export default describe("GroupMembersを操作するときに実行時間を計測する", () => {
   // seeding
   beforeEach( async () => {
     await Seeding();
@@ -25,16 +22,21 @@ export default describe("Userを操作するときに実行時間を計測する
     RemoveLogFiles();
   });
 
-  describe("登録", () => {
+  describe("登録", () =>{
 
-    it("Userに新しいデータを挿入するテスト", async function() {
+    it("Groupに新しいMemberを挿入するテスト", async function() {
+      const test_target_group = await db.Groups.findOne({
+        where: { groupName: 'A project team', }
+      });
+      const test_target_user = await db.Users.findOne({
+        where: { firstName: 'yamada', }
+      });
+
       const response = await request(app)
-        .post("/user/create")
+        .post("/group/member/create")
         .send({
-          firstName: "happy",
-          lastName: "boy",
-          email: "happy@gmail.com",
-          introduction: "Hello! I am happy!" })
+          groupId: test_target_group.groupId,
+          userId: test_target_user.userId, })
         .set('Accept', 'application/json')
 
       expect(response.statusCode).toBe(200);
@@ -42,7 +44,7 @@ export default describe("Userを操作するときに実行時間を計測する
 
       const log_content = fs.readFileSync(ProcessingTimeLogFileDetail.path());
       const log_content_str = log_content.toString();
-      expect(log_content.toString()).toMatch(/Success,\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2},[^,]*,DB,Create,Users,\d*/);
+      expect(log_content.toString()).toMatch(/Success,\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2},[^,]*,DB,Create,GroupMembers,\d*/);
       expect(log_content.toString()).toMatch(/Success,\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2},[^,]*,Node,\d*/);
       expect(log_content_str).not.toMatch(/Error/);
 
@@ -52,13 +54,18 @@ export default describe("Userを操作するときに実行時間を計測する
     });
 
     it("is_unneed_calculateがtrueの時、時間を測らない", async function() {
+      const test_target_group = await db.Groups.findOne({
+        where: { groupName: 'A project team', }
+      });
+      const test_target_user = await db.Users.findOne({
+        where: { firstName: 'yamada', }
+      });
+
       const response = await request(app)
-        .post("/user/create")
+        .post("/group/member/create")
         .send({
-          firstName: "happy",
-          lastName: "boy",
-          email: "happy@gmail.com",
-          introduction: "Hello! I am happy!",
+          groupId: test_target_group.groupId,
+          userId: test_target_user.userId, 
           is_unneed_calculate: true, })
         .set('Accept', 'application/json')
 
@@ -70,49 +77,14 @@ export default describe("Userを操作するときに実行時間を計測する
   })
 
   describe("参照", () => {
-    it("Userを読み込むテスト", async function() {
-      const response = await request(app)
-        .post("/user/read")
-        .set('Accept', 'application/json');
-
-      expect(response.statusCode).toBe(200);
-      expect(response.body.is_success).toBe(true);
-
-      const log_content = fs.readFileSync(ProcessingTimeLogFileDetail.path());
-      const log_content_str = log_content.toString();
-      expect(log_content.toString()).toMatch(/Success,\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2},[^,]*,DB,Read,Users,\d*/);
-      expect(log_content.toString()).toMatch(/Success,\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2},[^,]*,Node,\d*/);
-      expect(log_content_str).not.toMatch(/Error/);
-
-      const log_content_lines = log_content_str.match(/\n/g)
-      const log_content_num_lines = log_content_lines == null? 0 : log_content_lines.length;
-      expect(log_content_num_lines).toBe(2);
-    });
-
-    it("is_unneed_calculateがtrueの時、時間を測らない", async function() {
-      const response = await request(app)
-        .post("/user/read")
-        .send({ is_unneed_calculate: true })
-        .set('Accept', 'application/json');
-          
-      expect(response.statusCode).toBe(200);
-      expect(response.body.is_success).toBe(true);
-
-      expect( fs.existsSync(ProcessingTimeLogFileDetail.path()) ).toBe(false);
-    });
-  })
-
-  describe("更新", () => {
-    it("Userを更新するテスト", async function() {
-      const will_update_user: User = await db.Users.findOne({
-        where: { firstName: "aaa" }
+    it("groupのmemberを参照するテスト", async function() {
+      const test_target_group = await db.Groups.findOne({
+        where: { groupName: 'kitamura\'s', }
       });
 
       const response = await request(app)
-        .post("/user/update")
-        .send({
-          userId: will_update_user.userId,
-          lastName: 'kousaku' })
+        .post("/group/member/read")
+        .send({ groupId: test_target_group.groupId })
         .set('Accept', 'application/json')
 
       expect(response.statusCode).toBe(200);
@@ -120,25 +92,24 @@ export default describe("Userを操作するときに実行時間を計測する
 
       const log_content = fs.readFileSync(ProcessingTimeLogFileDetail.path());
       const log_content_str = log_content.toString();
-      expect(log_content.toString()).toMatch(/Success,\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2},[^,]*,DB,Update,Users,\d*/);
+      expect(log_content.toString()).toMatch(/Success,\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2},[^,]*,DB,Read,Groups,\d*/);
       expect(log_content.toString()).toMatch(/Success,\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2},[^,]*,Node,\d*/);
       expect(log_content_str).not.toMatch(/Error/);
 
       const log_content_lines = log_content_str.match(/\n/g)
       const log_content_num_lines = log_content_lines == null? 0 : log_content_lines.length;
       expect(log_content_num_lines).toBe(2);
-    })
+    });
 
     it("is_unneed_calculateがtrueの時、時間を測らない", async function() {
-      const will_update_user: User = await db.Users.findOne({
-        where: { firstName: "aaa" }
+      const test_target_group = await db.Groups.findOne({
+        where: { groupName: 'kitamura\'s', }
       });
 
       const response = await request(app)
-        .post("/user/update")
-        .send({
-          userId: will_update_user.userId,
-          lastName: 'kousaku',
+        .post("/group/member/read")
+        .send({ 
+          groupId: test_target_group.groupId,
           is_unneed_calculate: true, })
         .set('Accept', 'application/json')
 
@@ -147,17 +118,23 @@ export default describe("Userを操作するときに実行時間を計測する
 
       expect( fs.existsSync(ProcessingTimeLogFileDetail.path()) ).toBe(false);
     });
+
   })
 
   describe("削除", () => {
-    it("Userを削除するテスト", async function() {
-      const will_delete_user: User = await db.Users.findOne({
-        where: { firstName: "yamada", }
+    it("groupからmemberを削除するテスト", async function() {
+      const test_target_group = await db.Groups.findOne({
+        where: { groupName: 'kitamura\'s', }
+      });
+      const test_target_user = await db.Users.findOne({
+        where: { firstName: 'John', }
       });
 
       const response = await request(app)
-        .post("/user/delete")
-        .send({ userId: will_delete_user.userId })
+        .post("/group/member/delete")
+        .send({
+          groupId: test_target_group.groupId,
+          userId: test_target_user.userId, })
         .set('Accept', 'application/json')
 
       expect(response.statusCode).toBe(200);
@@ -165,7 +142,7 @@ export default describe("Userを操作するときに実行時間を計測する
 
       const log_content = fs.readFileSync(ProcessingTimeLogFileDetail.path());
       const log_content_str = log_content.toString();
-      expect(log_content.toString()).toMatch(/Success,\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2},[^,]*,DB,Delete,Users,\d*/);
+      expect(log_content.toString()).toMatch(/Success,\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2},[^,]*,DB,Delete,GroupMembers,\d*/);
       expect(log_content.toString()).toMatch(/Success,\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2},[^,]*,Node,\d*/);
       expect(log_content_str).not.toMatch(/Error/);
 
@@ -175,14 +152,18 @@ export default describe("Userを操作するときに実行時間を計測する
     });
 
     it("is_unneed_calculateがtrueの時、時間を測らない", async function() {
-      const will_delete_user: User = await db.Users.findOne({
-        where: { firstName: "yamada", }
+      const test_target_group = await db.Groups.findOne({
+        where: { groupName: 'kitamura\'s', }
+      });
+      const test_target_user = await db.Users.findOne({
+        where: { firstName: 'John', }
       });
 
       const response = await request(app)
-        .post("/user/delete")
-        .send({ 
-          userId: will_delete_user.userId,
+        .post("/group/member/delete")
+        .send({
+          groupId: test_target_group.groupId,
+          userId: test_target_user.userId, 
           is_unneed_calculate: true, })
         .set('Accept', 'application/json')
 
@@ -191,5 +172,5 @@ export default describe("Userを操作するときに実行時間を計測する
 
       expect( fs.existsSync(ProcessingTimeLogFileDetail.path()) ).toBe(false);
     });
-  });
+  })
 });

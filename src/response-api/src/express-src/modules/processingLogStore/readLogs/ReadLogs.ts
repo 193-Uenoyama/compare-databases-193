@@ -6,14 +6,14 @@ type CompletelyLogData = {
 }
 
 export default class ReadLogs {
-  wanted_dir: string;
-  wanted_dir_path: string;
+  read_dir: string;
+  read_dir_path: string;
 
   constructor(dir: string) {
-    this.wanted_dir = dir;
-    this.wanted_dir_path = 
+    this.read_dir = dir;
+    this.read_dir_path = 
       ProcessingTimeLogFileDetail.logs_home_dir +
-      this.wanted_dir + "/"
+      this.read_dir + "/"
   }
 
   completelyLogDetail(): CompletelyLogData {
@@ -22,7 +22,7 @@ export default class ReadLogs {
     let completelyLogData: CompletelyLogData = {};
 
     log_files.forEach((log_file) => {
-      const log_file_path = this.wanted_dir_path + log_file;
+      const log_file_path = this.read_dir_path + log_file;
       completelyLogData[log_file] = this.csvFileConvertToArray(log_file_path);
     })
 
@@ -35,6 +35,9 @@ export default class ReadLogs {
     const records: string[][] = [];
 
     for(const line of log_content_lines) {
+      if (line == "")
+        continue;
+
       records.push(line.split(','))
     }
 
@@ -45,7 +48,7 @@ export default class ReadLogs {
     let read_files: string[] = [];
     try {
       read_files = fs.readdirSync(
-        this.wanted_dir_path
+        this.read_dir_path
       );
     }
     catch(err) {

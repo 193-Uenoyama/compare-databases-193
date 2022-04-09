@@ -89,10 +89,10 @@ belongsToGroupRouter.post(
 interface readGroupMemberResponse extends baseResponse {
   readed_group: GroupAttributes,
 }
-belongsToGroupRouter.get(
-  '/read/:groupId', 
+belongsToGroupRouter.post(
+  '/read', 
 
-  param('groupId')
+  body('groupId')
     .notEmpty()
     .withMessage(APPMSG.Group.require.groupId)
     .bail()
@@ -113,7 +113,7 @@ belongsToGroupRouter.get(
     try {
       targetGroup = await db.Groups.calculateTimeOfFindOne(req.process_logging.log_detail, {
         where: {
-          groupId: req.params.groupId,
+          groupId: req.body.groupId,
         },
         include: [ 'Members' ],
       });
