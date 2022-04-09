@@ -3,14 +3,14 @@ source $SDP_ROOT/src/request-script/src/requestModules/cutArrayToRequireNumber.s
 
 function deleteGroup() {
   loop_count=${1:-1}
-  response=`curl -s localhost:8000/group/read`
+  groups_response=`curl -s -X POST -H "Content-Type: application/json" -d '{"is_unneed_calculate":"true"}' localhost:8000/group/read`
 
-  will_delete_groupId=( `echo $response | jq '.readed_groups[].groupId' | xargs` )
+  will_delete_groupId=( `echo $groups_response | jq '.readed_groups[].groupId' | xargs` )
 
   will_delete_groupId=( `cutArrayToRequireNumber $loop_count "${will_delete_groupId[*]}"` )
   for groupId in ${will_delete_groupId[*]}
   do
     echo $groupId
-    curl -X POST -H "Content-Type: application/json" -d '{"groupId":"'$groupId'"}' localhost:8000/group/delete
+    curl -s -X POST -H "Content-Type: application/json" -d '{"groupId":"'$groupId'"}' localhost:8000/group/delete
   done
 }

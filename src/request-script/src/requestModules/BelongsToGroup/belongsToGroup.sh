@@ -3,11 +3,16 @@ source $SDP_ROOT/src/request-script/src/requestModules/confirmExceededLimit.sh
 
 function belongsToGroup() {
   loop_count=${1:-1}
-  will_create_userId=( `curl -s localhost:8000/user/read | jq '.readed_users[].userId' | xargs` )
-  will_create_groupId=( `curl -s localhost:8000/group/read | jq '.readed_groups[].groupId' | xargs` )
+  users_response=`curl -s -X POST -H "Content-Type: application/json" -d '{"is_unneed_calculate":"true"}' localhost:8000/user/read`
+  groups_response=`curl -s -X POST -H "Content-Type: application/json" -d '{"is_unneed_calculate":"true"}' localhost:8000/group/read`
 
-  # loop_countがグループに所属出来る組み合わせより多い場合エラー
+  will_create_userId=( `echo $users_response | jq '.readed_users[].userId' | xargs` )
+  will_create_groupId=( `echo $groups_response | jq '.readed_groups[].groupId' | xargs` )
+
   conbination_of_num=$(( ${#will_create_userId[*]} * ${#will_create_groupId[*]} ))
+  echo $conbination_of_num > /tmp/mylog
+  echo ${#will_create_userId[*]} >> /tmp/mylog
+  echo ${#will_create_groupId[*]} >> /tmp/mylog
   if [ $loop_count -gt $conbination_of_num ] ; then
     echo loop_count must be specified smaller then the combination of userId and groupId.
     exit 1

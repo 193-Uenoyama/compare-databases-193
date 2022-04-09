@@ -3,9 +3,9 @@ source $SDP_ROOT/src/request-script/src/requestModules/cutArrayToRequireNumber.s
 
 function deleteUser() {
   loop_count=${1:-1}
-  response=`curl -s localhost:8000/user/read`
+  users_response=`curl -s -X POST -H "Content-Type: application/json" -d '{"is_unneed_calculate":"true"}' localhost:8000/user/read`
 
-  will_delete_userId=( `echo $response | jq '.readed_users[].userId' | xargs` )
+  will_delete_userId=( `echo $users_response | jq '.readed_users[].userId' | xargs` )
 
   will_delete_userId=( `cutArrayToRequireNumber $loop_count "${will_delete_userId[*]}"` )
   for userId in ${will_delete_userId[*]}

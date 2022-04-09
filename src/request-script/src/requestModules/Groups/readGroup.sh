@@ -5,6 +5,6 @@ function readGroup() {
 
   for (( i=0; i<$loop_count; i++ ))
   do
-    curl -s localhost:8000/group/read
+    curl -s -X POST localhost:8000/group/read
   done
 }

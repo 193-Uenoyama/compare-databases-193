@@ -27,24 +27,21 @@ teardown() {
 
   logfile_name=`ls $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/`
   logfile_content=( `cat $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/$logfile_name | xargs` )
-  assert [ ${#logfile_content[*]} -eq 10 ]
+  assert [ ${#logfile_content[*]} -eq 6 ]
 
-  run echo ${logfile_content[0]}
-  assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,DB,Read,Users,[0-9]*$'
-  run echo ${logfile_content[2]}
-  assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,DB,Read,Groups,[0-9]*$'
   run echo ${logfile_content[4]}
   assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,DB,Create,GroupMembers,[0-9]*$'
   run echo ${logfile_content[5]}
   assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,Node,[0-9]*$'
-  run echo ${logfile_content[8]}
-  assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,DB,Create,GroupMembers,[0-9]*$'
 }
 
 @test "belongsToGroup: if loop_count argument exceed the limit(number of userId and groupId combinations) throw error" {
-  array_userId=( `curl -s localhost:8000/user/read | jq '.readed_users[].userId' | xargs` )
-  array_groupId=( `curl -s localhost:8000/group/read | jq '.readed_groups[].groupId' | xargs` )
-  limit=$(( ${#array_userId[*]} * ${#array_groupId[*]} ))
+  users_response=`curl -s -X POST -H "Content-Type: application/json" -d '{"is_unneed_calculate":"true"}' localhost:8000/user/read`
+  groups_response=`curl -s -X POST -H "Content-Type: application/json" -d '{"is_unneed_calculate":"true"}' localhost:8000/group/read`
+
+  users_id=( `echo $users_response | jq '.readed_users[].userId' | xargs` )
+  groups_id=( `echo $groups_response | jq '.readed_groups[].groupId' | xargs` )
+  limit=$(( ${#users_id[*]} * ${#groups_id[*]} ))
 
   run belongsToGroup $(( $limit + 1 ))
 
@@ -58,15 +55,11 @@ teardown() {
 
   logfile_name=`ls $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/`
   logfile_content=( `cat $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/$logfile_name | xargs` )
-  assert [ ${#logfile_content[*]} -eq 8 ]
+  assert [ ${#logfile_content[*]} -eq 6 ]
 
-  run echo ${logfile_content[0]}
-  assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,DB,Read,Groups,[0-9]*$'
   run echo ${logfile_content[4]}
   assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,DB,Read,Groups,[0-9]*$'
-  run echo ${logfile_content[6]}
-  assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,DB,Read,Groups,[0-9]*$'
-  run echo ${logfile_content[7]}
+  run echo ${logfile_content[5]}
   assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,Node,[0-9]*$'
 }
 
@@ -77,10 +70,11 @@ teardown() {
 
   logfile_name=`ls $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/`
 
-  # TODO
-  cat $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/$logfile_name > /tmp/mylog
   run cat $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/$logfile_name
-  assert_output -e '.*Read.*Read.*Delete.*Delete.*Delete.*'
-  assert_output -e '.*Groups.*Groups.*GroupMembers.*GroupMembers.*GroupMembers.*'
-  refute_output -e '.*Read.*Read.*Delete.*Delete.*Delete.*Delete'
+  assert_output -e '.*Delete.*Delete.*Delete.*'
+  assert_output -e '.*GroupMembers.*GroupMembers.*GroupMembers.*'
+
+  refute_output -e '.*Read.*'
+  refute_output -e '.*Groups.*'
+  refute_output -e '.*Delete.*Delete.*Delete.*Delete'
 }

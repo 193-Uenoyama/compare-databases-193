@@ -4,10 +4,9 @@ source $SDP_ROOT/src/request-script/src/requestModules/cutArrayToRequireNumber.s
 
 function updateUser() {
   loop_count=${1:-1}
+  users_response=`curl -s -X POST -H "Content-Type: application/json" -d '{"is_unneed_calculate":"true"}' localhost:8000/user/read`
 
-  response=`curl -s localhost:8000/user/read`
-
-  will_update_userId=( `echo $response | jq '.readed_users[].userId' | xargs` )
+  will_update_userId=( `echo $users_response | jq '.readed_users[].userId' | xargs` )
 
   will_update_userId=( `cutArrayToRequireNumber $loop_count "${will_update_userId[*]}"` )
   for userId in ${will_update_userId[*]}

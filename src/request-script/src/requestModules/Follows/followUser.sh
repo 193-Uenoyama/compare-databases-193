@@ -3,7 +3,8 @@ source $SDP_ROOT/src/request-script/src/requestModules/confirmExceededLimit.sh
 
 function followUser() {
   loop_count=${1:-1}
-  will_create_followerId=( `curl -s localhost:8000/user/read | jq '.readed_users[].userId' | xargs` )
+  users_response=`curl -s -X POST -H "Content-Type: application/json" -d '{"is_unneed_calculate":"true"}' localhost:8000/user/read`
+  will_create_followerId=( `echo $users_response | jq '.readed_users[].userId' | xargs` )
   will_create_followedId=( `echo ${will_create_followerId[*]}` )
 
   # loop_countがグループに所属出来る組み合わせより多い場合エラー

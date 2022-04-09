@@ -81,15 +81,11 @@ teardown() {
 
   logfile_name=`ls $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/`
   logfile_content=( `cat $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/$logfile_name | xargs` )
-  assert [ ${#logfile_content[*]} -eq 4 ]
+  assert [ ${#logfile_content[*]} -eq 2 ]
 
   run echo ${logfile_content[0]}
-  assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,DB,Read,Groups,[0-9]*$'
-  run echo ${logfile_content[1]}
-  assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,Node,[0-9]*$'
-  run echo ${logfile_content[2]}
   assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,DB,Update,Groups,[0-9]*$'
-  run echo ${logfile_content[3]}
+  run echo ${logfile_content[1]}
   assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,Node,[0-9]*$'
 }
 @test "updateGroup must loop on the numeric value of the first argument" {
@@ -97,15 +93,11 @@ teardown() {
 
   logfile_name=`ls $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/`
   logfile_content=( `cat $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/$logfile_name | xargs` )
-  assert [ ${#logfile_content[*]} -eq 8 ]
+  assert [ ${#logfile_content[*]} -eq 6 ]
 
   run echo ${logfile_content[0]}
-  assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,DB,Read,Groups,[0-9]*$'
-  run echo ${logfile_content[1]}
-  assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,Node,[0-9]*$'
-  run echo ${logfile_content[6]}
   assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,DB,Update,Groups,[0-9]*$'
-  run echo ${logfile_content[7]}
+  run echo ${logfile_content[1]}
   assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,Node,[0-9]*$'
 }
 
@@ -116,15 +108,11 @@ teardown() {
 
   logfile_name=`ls $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/`
   logfile_content=( `cat $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/$logfile_name | xargs` )
-  assert [ ${#logfile_content[*]} -eq 4 ]
+  assert [ ${#logfile_content[*]} -eq 2 ]
 
   run echo ${logfile_content[0]}
-  assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,DB,Read,Groups,[0-9]*$'
-  run echo ${logfile_content[1]}
-  assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,Node,[0-9]*$'
-  run echo ${logfile_content[2]}
   assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,DB,Delete,Groups,[0-9]*$'
-  run echo ${logfile_content[3]}
+  run echo ${logfile_content[1]}
   assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,Node,[0-9]*$'
 }
 @test "deleteGroup must loop on the numeric value of the first argument" {
@@ -132,14 +120,10 @@ teardown() {
 
   logfile_name=`ls $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/`
   logfile_content=( `cat $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/$logfile_name | xargs` )
-  assert [ ${#logfile_content[*]} -eq 8 ]
+  assert [ ${#logfile_content[*]} -eq 6 ]
 
-  run echo ${logfile_content[0]}
-  assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,DB,Read,Groups,[0-9]*$'
-  run echo ${logfile_content[1]}
-  assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,Node,[0-9]*$'
-  run echo ${logfile_content[6]}
+  run echo ${logfile_content[4]}
   assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,DB,Delete,Groups,[0-9]*$'
-  run echo ${logfile_content[7]}
+  run echo ${logfile_content[5]}
   assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,Node,[0-9]*$'
 }

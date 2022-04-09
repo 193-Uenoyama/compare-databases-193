@@ -5,6 +5,6 @@ function readUser() {
 
   for (( i=0; i<$loop_count; i++ ))
   do
-    curl -s localhost:8000/user/read
+    curl -s -X POST localhost:8000/user/read
   done
 }

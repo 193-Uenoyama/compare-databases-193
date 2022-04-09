@@ -86,7 +86,7 @@ serv-test:
 	docker exec compare-databases-193_node-server jest $(serv-target)
 
 # ---------- shellをテストする ----------
-shell-target=userRequestTest.bats
+shell-target=index.bats
 shell-unit:
 	./src/request-script/test/unitTest/$(shell-target)
 
