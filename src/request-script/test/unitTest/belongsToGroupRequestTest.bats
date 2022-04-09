@@ -44,7 +44,6 @@ teardown() {
   limit=$(( ${#users_id[*]} * ${#groups_id[*]} ))
 
   run belongsToGroup $(( $limit + 1 ))
-
   assert_output "loop_count must be specified smaller then the combination of userId and groupId."
 }
 
@@ -77,4 +76,11 @@ teardown() {
   refute_output -e '.*Read.*'
   refute_output -e '.*Groups.*'
   refute_output -e '.*Delete.*Delete.*Delete.*Delete'
+}
+@test "leaveGroup: when loop_count greater then GroupMembers table rows return error message" {
+  groupMembers_rows_response=`curl -s -X POST -H "Content-Type: application/json" -d '{"is_unneed_calculate":"true"}' localhost:8000/group/member/read/rows`
+  limit=`echo $groupMembers_rows_response | jq '.group_members_count'`
+
+  run leaveGroup $(( $limit + 1 ))
+  assert_output "loop_count must be specified smaller then the GroupMembers table rows."
 }

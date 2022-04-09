@@ -5,6 +5,13 @@ function leaveGroup() {
   groups_response=`curl -s -X POST -H "Content-Type: application/json" -d '{"is_unneed_calculate":"true"}' localhost:8000/group/read`
   readed_groupId=( `echo $groups_response | jq '.readed_groups[].groupId' | xargs` )
 
+  groupMembers_rows_response=`curl -s -X POST -H "Content-Type: application/json" -d '{"is_unneed_calculate":"true"}' localhost:8000/group/member/read/rows`
+  deleteable_cnt=`echo $groupMembers_rows_response | jq '.group_members_count'`
+  if [ $loop_count -gt $deleteable_cnt ] ; then
+    echo "loop_count must be specified smaller then the GroupMembers table rows."
+    exit 1
+  fi
+
   while [ $loop_count -gt 0 ]
   do
     # 削除対象のグループIDをランダムに取り出し

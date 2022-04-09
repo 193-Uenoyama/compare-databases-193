@@ -22,7 +22,7 @@ teardown() {
 }
 
 # *** createUser test ******************
-@test "Should write log when request createUser" {
+@test "createUser: Should write log when request createUser" {
   createUser
 
   logfile_name=`ls $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/`
@@ -34,7 +34,7 @@ teardown() {
   run echo ${logfile_content[1]}
   assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,Node,[0-9]*$'
 }
-@test "createUser must loop on the numeric value of the first argument" {
+@test "createUser: createUser must loop on the numeric value of the first argument" {
   createUser 4
 
   logfile_name=`ls $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/`
@@ -49,7 +49,7 @@ teardown() {
 
 
 # *** readUser test ********************
-@test "Should write log when request readUser" {
+@test "readUser: Should write log when request readUser" {
   readUser
 
   logfile_name=`ls $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/`
@@ -61,7 +61,7 @@ teardown() {
   run echo ${logfile_content[1]}
   assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,Node,[0-9]*$'
 }
-@test "readUser must loop on the numeric value of the first argument" {
+@test "readUser: readUser must loop on the numeric value of the first argument" {
   readUser 5
 
   logfile_name=`ls $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/`
@@ -76,7 +76,7 @@ teardown() {
 
 
 # *** updateUser test ******************
-@test "Should write log when request updateUser" {
+@test "updateUser: Should write log when request updateUser" {
   updateUser
 
   logfile_name=`ls $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/`
@@ -88,7 +88,7 @@ teardown() {
   run echo ${logfile_content[1]}
   assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,Node,[0-9]*$'
 }
-@test "updateUser must loop on the numeric value of the first argument" {
+@test "updateUser: updateUser must loop on the numeric value of the first argument" {
   updateUser 3
 
   logfile_name=`ls $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/`
@@ -103,7 +103,7 @@ teardown() {
 
 
 # *** deleteUser test ******************
-@test "Should write log when request deleteUser" {
+@test "deleteUser: Should write log when request deleteUser" {
   deleteUser
 
   logfile_name=`ls $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/`
@@ -115,7 +115,7 @@ teardown() {
   run echo ${logfile_content[1]}
   assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,Node,[0-9]*$'
 }
-@test "deleteUser must loop on the numeric value of the first argument" {
+@test "deleteUser: deleteUser must loop on the numeric value of the first argument" {
   deleteUser 2
 
   logfile_name=`ls $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/`
@@ -126,4 +126,12 @@ teardown() {
   assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,DB,Delete,Users,[0-9]*$'
   run echo ${logfile_content[3]}
   assert_output -e '^Success,[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[^,].*,Node,[0-9]*$'
+}
+@test "deleteUser: when loop_count greater then Users table rows return error message" {
+  users_response=`curl -s -X POST -H "Content-Type: application/json" -d '{"is_unneed_calculate":"true"}' localhost:8000/user/read`
+  users_id=( `echo $users_response | jq '.readed_users[].userId' | xargs` )
+  limit=${#users_id[*]}
+
+  run deleteUser $(( $limit + 1 ))
+  assert_output "loop_count must be specified smaller then the Users table rows."
 }

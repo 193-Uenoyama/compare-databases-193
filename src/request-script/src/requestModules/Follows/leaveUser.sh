@@ -5,6 +5,13 @@ function leaveUser() {
   users_response=`curl -s -X POST -H "Content-Type: application/json" -d '{"is_unneed_calculate":"true"}' localhost:8000/user/read`
   readed_userId=( `echo $users_response | jq '.readed_users[].userId' | xargs` )
 
+  follows_rows_response=`curl -s -X POST -H "Content-Type: application/json" -d '{"is_unneed_calculate":"true"}' localhost:8000/user/follow/read/rows`
+  deleteable_cnt=`echo $follows_rows_response | jq '.follows_count'`
+  if [ $loop_count -gt $deleteable_cnt ] ; then
+    echo "loop_count must be specified smaller then the Follows table rows."
+    exit 1
+  fi
+
   while [ $loop_count -gt 0 ]
   do
     # 削除対象のユーザIDをランダムに取り出し

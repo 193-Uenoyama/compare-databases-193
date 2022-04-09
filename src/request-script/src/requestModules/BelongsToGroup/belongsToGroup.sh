@@ -10,9 +10,6 @@ function belongsToGroup() {
   will_create_groupId=( `echo $groups_response | jq '.readed_groups[].groupId' | xargs` )
 
   conbination_of_num=$(( ${#will_create_userId[*]} * ${#will_create_groupId[*]} ))
-  echo $conbination_of_num > /tmp/mylog
-  echo ${#will_create_userId[*]} >> /tmp/mylog
-  echo ${#will_create_groupId[*]} >> /tmp/mylog
   if [ $loop_count -gt $conbination_of_num ] ; then
     echo loop_count must be specified smaller then the combination of userId and groupId.
     exit 1

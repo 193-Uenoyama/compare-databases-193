@@ -89,3 +89,10 @@ teardown() {
   refute_output -e '.*Users.*'
   refute_output -e '.*Delete.*Delete.*Delete.*Delete'
 }
+@test "leaveUser: when loop_count greater then Follows table rows return error message" {
+  follows_rows_response=`curl -s -X POST -H "Content-Type: application/json" -d '{"is_unneed_calculate":"true"}' localhost:8000/user/follow/read/rows`
+  limit=`echo $follows_rows_response | jq '.follows_count'`
+
+  run leaveUser $(( $limit + 1 ))
+  assert_output "loop_count must be specified smaller then the Follows table rows."
+}
