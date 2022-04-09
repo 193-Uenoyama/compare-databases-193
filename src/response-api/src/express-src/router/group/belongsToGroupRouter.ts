@@ -133,6 +133,37 @@ belongsToGroupRouter.post(
 );
 
 
+/** read belongsToGroup members count **********************
+ *
+ * groupMembersテーブルのレコード数を返却する
+ *
+ **********************************************************/
+interface readGroupMembersCountResponse extends baseResponse {
+  group_members_count: number,
+}
+belongsToGroupRouter.post(
+  '/read/rows', 
+
+  async function(req: Request, res: Response<readGroupMembersCountResponse | validErrorResponse>, next: NextFunction) {
+    let group_members_count: number;
+    try {
+      group_members_count = await db.GroupMembers.count({});
+    }
+    catch(err) {
+      console.log(err);
+      next(err);
+      return;
+    }
+
+    res.status(200).json({
+      group_members_count: group_members_count,
+      is_success: true,
+    });
+    next();
+  }
+);
+
+
 /** delete belongsToGroup **********************************
  *
  * 送られてきたデータでグループを作成

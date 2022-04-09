@@ -186,6 +186,37 @@ followRouter.post(
 )
 
 
+/** read belongsToGroup members count **********************
+ *
+ * groupMembersテーブルのレコード数を返却する
+ *
+ **********************************************************/
+interface readFollowsCountResponse extends baseResponse {
+  follows_count: number,
+}
+followRouter.post(
+  '/read/rows', 
+
+  async function(req: Request, res: Response<readFollowsCountResponse | validErrorResponse>, next: NextFunction) {
+    let follows_count: number;
+    try {
+      follows_count = await db.Follows.count({});
+    }
+    catch(err) {
+      console.log(err);
+      next(err);
+      return;
+    }
+
+    res.status(200).json({
+      follows_count: follows_count,
+      is_success: true,
+    });
+    next();
+  }
+);
+
+
 /** delete follow ******************************************
  *
  * followingUserがfollowedUserのフォローを外す

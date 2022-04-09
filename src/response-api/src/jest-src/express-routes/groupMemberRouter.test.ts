@@ -149,8 +149,17 @@ export default describe("GroupMembersテーブルを操作するテスト", () =
         expect(response.body.errors.length).toBe(1);
         expect(response.body.errors[0].msg).toBe("GroupID is a number");
       });
-
     })
+
+    it("groupMembersのレコード数を参照するテスト", async () => {
+      const group_members_count = await db.GroupMembers.count({});
+      const response = await request(app).post("/group/member/read/rows");
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body.is_success).toBe(true);
+      expect(response.body.group_members_count).toBe(group_members_count);
+      
+    });
   })
 
   describe("削除", () => {

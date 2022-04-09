@@ -140,7 +140,6 @@ export default describe("Followsテーブルを操作するテスト", () => {
         })
         await test_target_followed.addFollower(test_target_follower);
 
-        // supertestで通信
         const response = await request(app)
           .post("/user/follow/read/getfollower")
           .send({ followedUserId: test_target_followed.userId, })
@@ -179,7 +178,6 @@ export default describe("Followsテーブルを操作するテスト", () => {
         })
         await test_target_followed.addFollower(test_target_follower);
 
-        // supertestで通信
         const response = await request(app)
           .post("/user/follow/read/getfollowed")
           .send({ followerUserId: test_target_follower.userId, })
@@ -207,7 +205,18 @@ export default describe("Followsテーブルを操作するテスト", () => {
           expect(response.body.errors[0].msg).toBe("followerUserId is a number");
         });
       })
+
     })
+
+    it("Followsのレコード数を参照するテスト", async () => {
+      const follows_count = await db.Follows.count({});
+      const response = await request(app).post("/user/follow/read/rows");
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body.is_success).toBe(true);
+      expect(response.body.follows_count).toBe(follows_count);
+      
+    });
   })
 
   describe("削除", () => {
@@ -316,4 +325,5 @@ export default describe("Followsテーブルを操作するテスト", () => {
       });
     });
   })
+
 });
