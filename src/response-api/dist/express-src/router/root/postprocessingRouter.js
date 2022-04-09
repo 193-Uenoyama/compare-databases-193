@@ -4,8 +4,9 @@ exports.postprocessingRouter = void 0;
 const express_1 = require("express");
 exports.postprocessingRouter = (0, express_1.Router)();
 exports.postprocessingRouter.use('/', function (req, res, next) {
-    console.log("code: " + res.statusCode + " | " +
-        "path: " + req.path);
+    // console.log(
+    //   "code: " + res.statusCode + " | " + 
+    //   "path: " + req.path);
     if (res.statusCode == 200 || res.statusCode == 304) {
         req
             .process_logging

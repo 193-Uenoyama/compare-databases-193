@@ -11,7 +11,8 @@ exports.pretreatmentRouter = (0, express_1.Router)();
 exports.pretreatmentRouter.use('/', 
 // TimeKeeperを設定
 function (req, res, next) {
-    const req_log_detail = new ReqDetailHolderForLog_1.default().transferReqDetail();
+    const is_unneed_calculate = req.body.is_unneed_calculate || false;
+    const req_log_detail = new ReqDetailHolderForLog_1.default(is_unneed_calculate).transferReqDetail();
     req.process_logging = {
         log_detail: req_log_detail,
         time_keeper: new TimeKeeper_1.default(req_log_detail)
@@ -20,15 +21,16 @@ function (req, res, next) {
     next();
 }, 
 // HTMLのエスケープ処理をする
-function (req, res, next) {
-    Object.keys(req.body).forEach(key => {
-        if (typeof req.body[key] == "number") {
-            req.body[key] = String(req.body[key]);
-        }
-        req.body[key] = escapeHTML(req.body[key]);
-    });
-    next();
-}, 
+// TODO 特定フィールドのみに絞る
+// function(req: Request, res: Response, next: NextFunction) {
+//   Object.keys(req.body).forEach(key => {
+//     if(typeof req.body[key] == "number") {
+//       req.body[key] = String(req.body[key]);
+//     }
+//     req.body[key] = escapeHTML(req.body[key]);
+//   });
+//   next();
+// },
 // ステータスコードを0に設定。
 function (req, res, next) {
     res.statusCode = 0;

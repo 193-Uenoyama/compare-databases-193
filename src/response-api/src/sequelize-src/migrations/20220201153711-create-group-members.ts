@@ -12,14 +12,16 @@ module.exports = {
         references: {
           model: "Groups",
           key: "groupId",
-        }
+        },
+        onDelete: 'cascade',
       },
       memberId: {
         type: DataTypes.INTEGER,
         references: {
           model: "Users",
           key: "userId",
-        }
+        },
+        onDelete: 'cascade',
       },
       createdAt: {
         allowNull: false,

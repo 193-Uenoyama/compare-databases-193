@@ -7,16 +7,16 @@ const fs_1 = __importDefault(require("fs"));
 const processingLogModules_1 = require("../../../../express-src/modules/processingLogStore/processingLogModules");
 class ReadLogs {
     constructor(dir) {
-        this.wanted_dir = dir;
-        this.wanted_dir_path =
+        this.read_dir = dir;
+        this.read_dir_path =
             processingLogModules_1.ProcessingTimeLogFileDetail.logs_home_dir +
-                this.wanted_dir + "/";
+                this.read_dir + "/";
     }
     completelyLogDetail() {
         const log_files = this.getTargetFiles();
         let completelyLogData = {};
         log_files.forEach((log_file) => {
-            const log_file_path = this.wanted_dir_path + log_file;
+            const log_file_path = this.read_dir_path + log_file;
             completelyLogData[log_file] = this.csvFileConvertToArray(log_file_path);
         });
         return completelyLogData;
@@ -26,6 +26,8 @@ class ReadLogs {
         const log_content_lines = log_content.toString().split('\n');
         const records = [];
         for (const line of log_content_lines) {
+            if (line == "")
+                continue;
             records.push(line.split(','));
         }
         return records;
@@ -33,7 +35,7 @@ class ReadLogs {
     getTargetFiles() {
         let read_files = [];
         try {
-            read_files = fs_1.default.readdirSync(this.wanted_dir_path);
+            read_files = fs_1.default.readdirSync(this.read_dir_path);
         }
         catch (err) {
             console.log(err);

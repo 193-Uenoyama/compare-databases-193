@@ -6,8 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const WriteProcessingTimeLog_1 = __importDefault(require("../../../../express-src/modules/processingLogStore/writeLogs/WriteProcessingTimeLog"));
 class TimeKeeper {
     constructor(req_log_detail) {
-        this.timer_start_time = process.hrtime.bigint();
         this.req_log_detail = req_log_detail;
+        this.timer_start_time = process.hrtime.bigint();
     }
     static async calculateProcessingTime(func, req_log_detail, process_detail) {
         const processTimer = new TimeKeeper(req_log_detail);
@@ -17,6 +17,9 @@ class TimeKeeper {
     }
     // writerにログを書かせる
     invokeWriter(process_detail) {
+        if (this.req_log_detail.is_unneed_calculate) {
+            return;
+        }
         let timer_time_now = process.hrtime.bigint();
         WriteProcessingTimeLog_1.default.decideLogMethod(this.req_log_detail, process_detail, timer_time_now - this.timer_start_time);
     }

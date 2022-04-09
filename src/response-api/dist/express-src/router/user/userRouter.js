@@ -11,28 +11,6 @@ const index_1 = __importDefault(require("../../../sequelize-src/models/index"));
 const _modules_1 = require("../../../express-src/router/_modules");
 const validationMessages_1 = require("../../../express-src/modules/validation/validationMessages");
 exports.userRouter = (0, express_1.Router)();
-// TODO あとで消す
-exports.userRouter.get('/', async function (req, res, next) {
-    let return_data = {};
-    let firstName = Math.random().toString(32).substring(2);
-    let lastName = Math.random().toString(32).substring(2);
-    let email = Math.random().toString(32).substring(2);
-    await index_1.default.Users.calculateTimeOfCreate(req.process_logging.log_detail, {
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-    }, {}).catch((err) => {
-        next(err);
-        return;
-    });
-    return_data = await index_1.default.Users.calculateTimeOfFindAll(req.process_logging.log_detail, {})
-        .catch((err) => {
-        next(err);
-        return;
-    });
-    res.status(200).json(return_data);
-    next();
-});
 exports.userRouter.post('/create', 
 //validation
 (0, express_validator_1.body)('firstName').notEmpty().withMessage(validationMessages_1.APPMSG.User.require.firstName), (0, express_validator_1.body)('lastName').notEmpty().withMessage(validationMessages_1.APPMSG.User.require.lastName), (0, express_validator_1.body)('email')
@@ -43,7 +21,10 @@ exports.userRouter.post('/create',
     .withMessage(validationMessages_1.APPMSG.User.regular.email), async function (req, res, next) {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
-        res.status(400).json({ errors: errors.array() });
+        res.status(400).json({
+            errors: errors.array(),
+            is_success: false,
+        });
         return;
     }
     // 送られてきたデータを格納。
@@ -65,12 +46,12 @@ exports.userRouter.post('/create',
         return;
     }
     res.status(200).json({
-        createdUser: created_user,
-        message: "success! create " + created_user.firstName + " " + created_user.lastName,
-        isConnectDatabase: true,
+        created_user: created_user,
+        is_success: true,
     });
+    next();
 });
-exports.userRouter.get('/read', async function (req, res, next) {
+exports.userRouter.post('/read', async function (req, res, next) {
     let readed_users;
     try {
         readed_users = await index_1.default.Users.calculateTimeOfFindAll(req.process_logging.log_detail, {});
@@ -81,10 +62,10 @@ exports.userRouter.get('/read', async function (req, res, next) {
         return;
     }
     res.status(200).json({
-        users: readed_users,
-        message: "success connect database",
-        isConnectDatabase: true
+        readed_users: readed_users,
+        is_success: true,
     });
+    next();
 });
 exports.userRouter.post('/update', 
 // = Validation ================================
@@ -117,7 +98,10 @@ exports.userRouter.post('/update',
 async function (req, res, next) {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
-        res.status(400).json({ errors: errors.array() });
+        res.status(400).json({
+            errors: errors.array(),
+            is_success: false,
+        });
         return;
     }
     // 送られてきたデータを格納。
@@ -152,10 +136,10 @@ async function (req, res, next) {
         return;
     }
     res.status(200).json({
-        updatedUser: updated_user,
-        message: "success! update " + updated_user.firstName + " " + updated_user.lastName,
-        isConnectDatabase: true,
+        updated_user: updated_user,
+        is_success: true,
     });
+    next();
 });
 exports.userRouter.post('/delete', (0, express_validator_1.body)('userId')
     .notEmpty()
@@ -165,7 +149,10 @@ exports.userRouter.post('/delete', (0, express_validator_1.body)('userId')
     .withMessage(validationMessages_1.APPMSG.User.regular.userId), async function (req, res, next) {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
-        res.status(400).json({ errors: errors.array() });
+        res.status(400).json({
+            errors: errors.array(),
+            is_success: false,
+        });
         return;
     }
     // 削除対象のユーザを取り出す。
@@ -184,7 +171,7 @@ exports.userRouter.post('/delete', (0, express_validator_1.body)('userId')
     }
     // ユーザを削除する
     try {
-        await index_1.default.Users.calculateTimeOfDelete(req.process_logging.log_detail, {
+        await index_1.default.Users.calculateTimeOfDestroy(req.process_logging.log_detail, {
             where: {
                 userId: req.body.userId
             }
@@ -196,8 +183,8 @@ exports.userRouter.post('/delete', (0, express_validator_1.body)('userId')
         return;
     }
     res.status(200).json({
-        deletedUser: deletion_user,
-        message: "success! deleted " + deletion_user.firstName + " " + deletion_user.lastName,
-        isConnectDatabase: true,
+        deleted_user: deletion_user,
+        is_success: true,
     });
+    next();
 });

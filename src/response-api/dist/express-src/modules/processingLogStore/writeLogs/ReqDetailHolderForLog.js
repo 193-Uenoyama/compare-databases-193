@@ -1,14 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-class ReqLogDetailHolder {
-    constructor() {
+class ReqLogDetailMaker {
+    constructor(is_necessary_calculate) {
         this.request_id = Math.random().toString(32).substring(2);
         this.start_time = this.Get_FullDateString(new Date());
+        this.is_necessary_calculate = is_necessary_calculate;
     }
     transferReqDetail() {
         return {
             request_id: this.request_id,
-            request_start_time: this.start_time
+            request_start_time: this.start_time,
+            is_unneed_calculate: this.is_necessary_calculate,
         };
     }
     // 日付データ(now)を文字列に変換する
@@ -27,4 +29,4 @@ class ReqLogDetailHolder {
         return (Array(digits + 1).join('0') + target.toString()).slice(-digits);
     }
 }
-exports.default = ReqLogDetailHolder;
+exports.default = ReqLogDetailMaker;

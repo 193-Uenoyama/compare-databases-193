@@ -13,7 +13,8 @@ module.exports = {
         references: {
           model: "Users",
           key: "userId",
-        }
+        },
+        onDelete: "cascade",
       },
       followedUserId: { 
         type: DataTypes.INTEGER ,
@@ -21,7 +22,8 @@ module.exports = {
         references: {
           model: "Users",
           key: "userId",
-        }
+        },
+        onDelete: "cascade",
       },
       createdAt: {
         type: DataTypes.DATE,

@@ -25,7 +25,8 @@ GroupMember.init({
         references: {
             model: "Groups",
             key: "groupId",
-        }
+        },
+        onDelete: 'cascade',
     },
     memberId: {
         type: core_1.DataTypes.INTEGER,
@@ -33,7 +34,8 @@ GroupMember.init({
         references: {
             model: "Users",
             key: "userId",
-        }
+        },
+        onDelete: 'cascade',
     }
 }, {
     sequelize: defineSequelize_1.sequelize,

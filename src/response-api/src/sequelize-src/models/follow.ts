@@ -35,7 +35,8 @@ Follow.init({
     references: {
       model: "Users",
       key: "userId",
-    }
+    },
+    onDelete: "cascade",
   },
   followedUserId: { 
     type: DataTypes.INTEGER ,
@@ -43,7 +44,8 @@ Follow.init({
     references: {
       model: "Users",
       key: "userId",
-    }
+    },
+    onDelete: "cascade",
   },
 }, {
   sequelize,
