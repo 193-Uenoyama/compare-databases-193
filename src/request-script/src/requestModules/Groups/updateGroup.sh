@@ -13,6 +13,6 @@ function updateGroup() {
     groupId=${will_update_groupId[$random_group_index]}
     groupName=`getRandomString`
     groupIntroduction=`getRandomString`
-    curl -X POST -H "Content-Type: application/json" -d '{"groupId":"'$groupId'","groupName":"'$groupName'","groupIntroduction":"'$groupIntroduction'"}' localhost:8000/group/update
+    curl -s -X POST -H "Content-Type: application/json" -d '{"groupId":"'$groupId'","groupName":"'$groupName'","groupIntroduction":"'$groupIntroduction'"}' localhost:8000/group/update
   done
 }
