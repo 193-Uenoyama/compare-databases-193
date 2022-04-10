@@ -12,6 +12,10 @@ up-prod-psql:
 	docker-compose -f docker-compose.psql.yml -f docker-compose.env_prod.yml up -d
 up-prod-sqlite:
 	docker-compose -f docker-compose.sqlite.yml -f docker-compose.env_prod.yml up -d
+# ---------- scenarioの実行 ----------
+scenario=scenarioA.sh
+execute:
+	./src/request-script/src/execute.sh $(scenario)
 
 
 
@@ -81,15 +85,17 @@ serv-seed:
 serv-seed-undo-all:
 	docker exec compare-databases-193_node-server sequelize-cli db:seed:undo:all
 
+
+# ---------- テスト ----------
 serv-target=index.test
 serv-test:
 	docker exec compare-databases-193_node-server jest $(serv-target)
 
-# ---------- shellをテストする ----------
 shell-target=index.bats
 shell-unit:
 	./src/request-script/test/unitTest/$(shell-target)
 
-shell-e2e:
-	./src/request-script/test/e2eTest/index.sh
+e2e-target=index.sh
+e2e:
+	./src/request-script/test/e2eTest/$(e2e-target)
 

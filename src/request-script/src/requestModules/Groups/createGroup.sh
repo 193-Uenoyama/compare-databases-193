@@ -9,7 +9,7 @@ function createGroup() {
     groupName=`getRandomString`
     groupIntroduction=`getRandomString`
 
-    curl -X POST -H "Content-Type: application/json" -d '{"groupName":"'$groupName'","groupIntroduction":"'$groupIntroduction'"}' localhost:8000/group/create
+    curl -s -X POST -H "Content-Type: application/json" -d '{"groupName":"'$groupName'","groupIntroduction":"'$groupIntroduction'"}' localhost:8000/group/create
   done
 }
 
