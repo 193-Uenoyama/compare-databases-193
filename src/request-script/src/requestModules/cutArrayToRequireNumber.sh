@@ -1,7 +1,6 @@
 #!/bin/bash
 
 function cutArrayToRequireNumber() {
-  # ２つの引数が必須。
   if [ $# -ne 2 ] ; then
     echo "Wrong number of arguments."
     exit 1
@@ -12,12 +11,18 @@ function cutArrayToRequireNumber() {
 
   # 減らす配列の数
   del_element_count=$(( ${#will_operate_id_array[*]} - $loop_count ))
-  if [ $del_element_count -le 0 ] ; then
+  # TODO
+  echo $del_element_count > /tmp/mylog
+  if [ $del_element_count -eq 0 ] ; then
+    echo ${will_operate_id_array[*]}
+    exit 0
+  elif [ $del_element_count -lt 0 ] ; then
     echo "Must array argument length is grater then loop_count argument."
     exit 1
   fi
 
 
+  echo "kokomade kita" >> /tmp/mylog
   # 必要な数まで要素を削除
   for (( i=0; i<$del_element_count; i++ ))
   do

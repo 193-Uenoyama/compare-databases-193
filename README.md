@@ -67,3 +67,4 @@ Infrastructure
   - fix timezone to Asia/Tokyo createdAt, updatedAt
   - connect into sqlite database excepting by root user
   - npm audit fix
+

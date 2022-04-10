@@ -3,6 +3,7 @@
 source $SDP_ROOT/src/request-script/src/requestModules/getRandomString.sh
 source $SDP_ROOT/src/request-script/src/requestModules/cutArrayToRequireNumber.sh
 source $SDP_ROOT/src/request-script/src/requestModules/confirmExceededLimit.sh
+source $SDP_ROOT/src/request-script/src/requestModules/extensionManager.sh
 
 setup() {
   load $SDP_ROOT/src/request-script/test/testModules/bats-assert/load.bash
@@ -27,12 +28,12 @@ setup() {
 # cutArrayToRequireNumber
 @test "cutArrayToRequireNumber: Should cut array to loop_count number" {
   test_array=("aa" "bb" "cc" "dd" "ee" "ff")
-
   temp_loop_count=2
   test_result=( `cutArrayToRequireNumber $temp_loop_count "${test_array[*]}"` )
   assert [ ${#test_result[*]} -eq $temp_loop_count ]
 
-  temp_loop_count=4
+  test_array=("cc")
+  temp_loop_count=1
   test_result=( `cutArrayToRequireNumber $temp_loop_count "${test_array[*]}"` )
   assert [ ${#test_result[*]} -eq $temp_loop_count ]
 }
@@ -55,12 +56,12 @@ setup() {
   run cutArrayToRequireNumber $temp_loop_count "${test_array[*]}"
   assert_output "Must array argument length is grater then loop_count argument."
 
-  temp_loop_count=${#test_array[*]}
+  temp_loop_count=$(( ${#test_array[*]} + 1 ))
   run cutArrayToRequireNumber $temp_loop_count "${test_array[*]}"
   assert_output "Must array argument length is grater then loop_count argument."
 }
 
-# reduceExceedTheLimit
+# confirmExceededLimit -> reduceExceedTheLimit
 @test "reduceExceedTheLimit: Should reduce exceeded the limit array of over limit item" {
   test_array=(2 1 4)
   run reduceExceedTheLimit 3 "${test_array[*]}"
@@ -71,21 +72,88 @@ setup() {
   assert_output "4 5 5 5"
 }
 
-# toLevelExceededLimit
-@test "toLevelExceededLimit: Should" {
+# confirmExceededLimit -> toLevelExceededLimit
+@test "toLevelExceededLimit: equalize elements greater then limit" {
   test_array=(2 1 4)
   run toLevelOverCnt 1 3 "${test_array[*]}"
   assert_output "2 2 4"
 }
 
-# confirmExceededLimit
-@test "confirmExceededLimit: Should" {
+# confirmExceededLimit -> confirmExceededLimit
+@test "confirmExceededLimit: check to see if it is exceed the limit" {
   test_array=(1 2 4)
   run confirmExceededLimit 3 "${test_array[*]}"
   assert_output "2 2 3"
+
+  test_array=(1 2 4)
+  run confirmExceededLimit 4 "${test_array[*]}"
+  assert_output "1 2 4"
 
   test_array=(0 4 5 6 7 6)
   run confirmExceededLimit 5 "${test_array[*]}"
   assert_output "4 4 5 5 5 5"
 }
 
+# loadRequests
+@test "loadRequests: When execute 'loadRequests' became executable to 'request scripts'" {
+  source $SDP_ROOT/src/request-script/test/testModules/deleteExistedLogFile.sh
+  source $SDP_ROOT/src/request-script/src/requestModules/loadRequests.sh
+  deleteExistedLogFile
+
+  createUser 
+  createGroup 
+  belongsToGroup 
+  followUser 
+
+  readUser 
+  readGroup 
+  showMembers
+  showFollowed
+  showFollower
+
+  updateUser 
+  updateGroup 
+
+  leaveGroup 
+  leaveUser 
+  deleteUser 
+  deleteGroup 
+
+  logfile_name=`ls $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/`
+  logfile_content=( `cat $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/$logfile_name | xargs` )
+  cat $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/$logfile_name > /tmp/mylog
+  assert [ ${#logfile_content[*]} -eq 30 ]
+  deleteExistedLogFile
+}
+
+# extensionManager -> complementExtension
+@test "complementExtension: inspect file name and if not found extension then correction" {
+  run complementExtension file sh
+  assert_output "file.sh"
+  run complementExtension file bats
+  assert_output "file.bats"
+
+  run complementExtension file_name .sh
+  assert_output "file_name.sh"
+  run complementExtension file_name.bats .bats
+  assert_output "file_name.bats"
+
+  run complementExtension file_name.test.sh sh
+  assert_output "file_name.test.sh"
+  run complementExtension file_name.test.bats .bats
+  assert_output "file_name.test.bats"
+  run complementExtension file_name.test sh
+  assert_output "file_name.test.sh"
+}
+
+# extensionManager -> excludeExtension
+@test "excludeExtension: inspect file name and if found extension then correction" {
+  run excludeExtension file.sh
+  assert_output "file"
+
+  run excludeExtension file.bats
+  assert_output "file"
+
+  run excludeExtension file_name.test.sh
+  assert_output "file_name.test"
+}
