@@ -118,6 +118,22 @@ exports.followRouter.post('/read/getfollowed', (0, express_validator_1.body)('fo
     });
     next();
 });
+exports.followRouter.post('/read/rows', async function (req, res, next) {
+    let follows_count;
+    try {
+        follows_count = await index_1.default.Follows.count({});
+    }
+    catch (err) {
+        console.log(err);
+        next(err);
+        return;
+    }
+    res.status(200).json({
+        follows_count: follows_count,
+        is_success: true,
+    });
+    next();
+});
 exports.followRouter.post('/delete', (0, express_validator_1.body)('followedUserId')
     .notEmpty()
     .withMessage(validationMessages_1.APPMSG.Follows.require.followedUserId)
