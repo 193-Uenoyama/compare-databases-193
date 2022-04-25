@@ -1,26 +1,12 @@
-# ************* production *************
-# ---------- 環境のセットアップ ----------
+# *** 環境のセットアップ *******************************************************
+# --- production ---------------------------------------------------------------
 init-prod:
 	docker-compose -f docker-compose.mariadb.yml build
 	docker-compose -f docker-compose.sqlite.yml build
 	docker run -v `pwd`/src/response-api:/home/response-api/ --rm compare-databases-193_node-server npm ci --only=production
 	docker run -v `pwd`/src/response-api:/home/response-api/ --rm compare-databases-193_node-server chown -R `id -u`:`id -g` ./
-# ---------- コンテナを立ち上げる ----------
-up-prod-mariadb:
-	docker-compose -f docker-compose.mariadb.yml -f docker-compose.env_prod.yml up -d
-up-prod-psql:
-	docker-compose -f docker-compose.psql.yml -f docker-compose.env_prod.yml up -d
-up-prod-sqlite:
-	docker-compose -f docker-compose.sqlite.yml -f docker-compose.env_prod.yml up -d
-# ---------- scenarioの実行 ----------
-scenario=scenarioA.sh
-execute:
-	./src/request-script/src/execute.sh $(scenario)
 
-
-
-# ************* development *************
-# ---------- 環境のセットアップ ----------
+# --- development --------------------------------------------------------------
 init:
 	docker-compose -f docker-compose.mariadb.yml build
 	docker-compose -f docker-compose.sqlite.yml build
@@ -28,13 +14,26 @@ init:
 	docker run -v `pwd`/src/response-api:/home/response-api/ --rm compare-databases-193_node-server ./node_modules/.bin/tsc
 	docker run -v `pwd`/src/response-api:/home/response-api/ --rm compare-databases-193_node-server ./node_modules/.bin/tsc-alias -p tsconfig.json
 	docker run -v `pwd`/src/response-api:/home/response-api/ --rm compare-databases-193_node-server chown -R `id -u`:`id -g` ./
-# ---------- コンテナを立ち上げる ----------
+
+
+# *** シナリオの実行 ***********************************************************
+scenario=scenarioA.sh
+execute:
+	./src/request-script/src/execute.sh $(scenario)
+
+# *** コンテナを立ち上げる *****************************************************
+prod_compose_file=docker-compose.env_prod.yml
+dev_compose_file=docker-compose.env_dev.yml
+target_compose_file=$(dev_compose_file)
+ifeq ($(SDP_ENVIRONMENT),production) 
+	target_compose_file=$(prod_compose_file)
+endif
 up-mariadb:
-	docker-compose -f docker-compose.mariadb.yml -f docker-compose.env_dev.yml up -d
+	docker-compose -f docker-compose.mariadb.yml -f $(target_compose_file) up -d
 up-psql:
-	docker-compose -f docker-compose.psql.yml -f docker-compose.env_dev.yml up -d
+	docker-compose -f docker-compose.psql.yml -f $(target_compose_file) up -d
 up-sqlite:
-	docker-compose -f docker-compose.sqlite.yml -f docker-compose.env_dev.yml up -d
+	docker-compose -f docker-compose.sqlite.yml -f $(target_compose_file) up -d
 
 
 # ---------- コンテナの停止、再起動 ----------

@@ -94,38 +94,6 @@ setup() {
   assert_output "4 4 5 5 5 5"
 }
 
-# loadRequests
-@test "loadRequests: When execute 'loadRequests' became executable to 'request scripts'" {
-  source $SDP_ROOT/src/request-script/test/testModules/deleteExistedLogFile.sh
-  source $SDP_ROOT/src/request-script/src/requestModules/loadRequests.sh
-  deleteExistedLogFile
-
-  createUser 
-  createGroup 
-  belongsToGroup 
-  followUser 
-
-  readUser 
-  readGroup 
-  showMembers
-  showFollowed
-  showFollower
-
-  updateUser 
-  updateGroup 
-
-  leaveGroup 
-  leaveUser 
-  deleteUser 
-  deleteGroup 
-
-  logfile_name=`ls $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/`
-  logfile_content=( `cat $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/$logfile_name | xargs` )
-  cat $SDP_ROOT/logs/$SDP_SERV_LOG_DIR/$logfile_name > /tmp/mylog
-  assert [ ${#logfile_content[*]} -eq 30 ]
-  deleteExistedLogFile
-}
-
 # extensionManager -> complementExtension
 @test "complementExtension: inspect file name and if not found extension then correction" {
   run complementExtension file sh
@@ -157,3 +125,4 @@ setup() {
   run excludeExtension file_name.test.sh
   assert_output "file_name.test"
 }
+

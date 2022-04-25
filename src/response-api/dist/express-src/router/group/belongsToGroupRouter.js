@@ -84,6 +84,22 @@ exports.belongsToGroupRouter.post('/read', (0, express_validator_1.body)('groupI
     });
     next();
 });
+exports.belongsToGroupRouter.post('/read/rows', async function (req, res, next) {
+    let group_members_count;
+    try {
+        group_members_count = await index_1.default.GroupMembers.count({});
+    }
+    catch (err) {
+        console.log(err);
+        next(err);
+        return;
+    }
+    res.status(200).json({
+        group_members_count: group_members_count,
+        is_success: true,
+    });
+    next();
+});
 exports.belongsToGroupRouter.post('/delete', (0, express_validator_1.body)('userId')
     .notEmpty()
     .withMessage(validationMessages_1.APPMSG.User.require.userId)
