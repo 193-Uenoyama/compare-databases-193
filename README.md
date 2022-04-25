@@ -1,7 +1,5 @@
 # compare databases mariadb, postgresql and sqlite!
 
-this application allows you to compare the process of accessing a database.
-
 ### Installation
 
 require application
