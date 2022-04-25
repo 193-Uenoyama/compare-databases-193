@@ -1,25 +1,23 @@
 #!/bin/bash
-
-readonly SLEEP=30
+source $SDP_ROOT/src/request-script/src/requestModules/waitPossibleToCommunication.sh
 
 make db-create-sqlite
 
-
 # ----- mariadb -----
 make up-mariadb
-sleep $SLEEP
+waitPossibleToCommunication
 $SDP_ROOT/src/request-script/test/e2eTest/dev_mariadb.bats
 make down
 
 # ----- postgresql -----
 make up-psql
-sleep $SLEEP
+waitPossibleToCommunication
 $SDP_ROOT/src/request-script/test/e2eTest/dev_psql.bats
 make down
 
 # ----- sqlite -----
 make up-sqlite
-sleep $SLEEP
+waitPossibleToCommunication
 $SDP_ROOT/src/request-script/test/e2eTest/dev_sqlite.bats
 make down
 

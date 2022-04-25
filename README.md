@@ -2,23 +2,27 @@
 
 this application allows you to compare the process of accessing a database.
 
-### Getting started
+### Installation
 
 require application
 ```
 sudo apt install jq
 ```
 
-**start! this application**
+**start this application**
 ```
 make init-prod
 source .env
+make execute scenario=scenarioA.sh
 ```
 
 ## Logs format
 
 ### Log file name
-[database_name].log
+`[database_name].log`
+
+### Log dir name
+`[yyyymmddThhmmss]-[scenario_name]`
 
 ### Log file format
 ```
@@ -67,4 +71,23 @@ Infrastructure
   - fix timezone to Asia/Tokyo createdAt, updatedAt
   - connect into sqlite database excepting by root user
   - npm audit fix
+  - use Sequelize benchmark
+  - use Github Actions
+  - add validation
+    - Users.userId ... check existence
+    - Users.email ... unique check
+    - Groups.groupId ... check existence
+    - GroupMembers ... id combination check
+    - Follows ... id combination check
+  - add HTML escape
+    - Users
+      - firstName
+      - lastName
+      - introduction
+    - Groups
+      - groupName
+      - groupIntroduction
+  - Sequelize Transacatoin
+  - Shell request async
+  - Shell not to do division by zero
 
