@@ -70,8 +70,6 @@ getLogsRouter.get(
       res.status(400).json({ errors: errors.array()});
       return;
     }
-    const records: string[] = [];
-
     const read_logs = new ReadLogs(req.params.dir);
 
     res.status(200).json(read_logs.completelyLogDetail());
@@ -80,3 +78,40 @@ getLogsRouter.get(
 )
 
 
+getLogsRouter.get(
+  '/:dir/:status/:statement/:target',
+
+  param('dir')
+    .custom(value => {
+      try {
+        return fs.readdirSync(
+          ProcessingTimeLogFileDetail.logs_home_dir
+        ).includes(value);
+      }
+      catch(err) {
+        console.log(err);
+        return;
+      }
+    })
+    .withMessage(APPMSG.General.directoryNotFound),
+  // param('statement')
+  //   .custom(value => {
+  //     value == 'Create' || 'Read' 'Update' 'Delete' 'Node' 'All'
+  //   })
+    //
+  async function(req: Request, res: Response, next: NextFunction) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array()});
+      return;
+    }
+    const read_logs = new ReadLogs(req.params.dir);
+
+    res.status(200).json(read_logs.extractLogData(
+      req.params.status,
+      req.params.statement,
+      req.params.target,
+    ));
+    next();
+  }
+)

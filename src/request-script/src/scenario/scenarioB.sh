@@ -15,8 +15,8 @@ showFollower 100
 updateUser 100
 updateGroup 100
 
-deleteUser 100
-deleteGroup 100
 leaveGroup 100
 leaveUser 100
+deleteUser 100
+deleteGroup 100
 
