@@ -37,5 +37,8 @@ export const APPMSG = {
   General: {
     notEvenTheMinimum: "could not find parameter to update",
     directoryNotFound: "The directory not found",
+    statusNotFound: "The status not found",
+    statementNotFound: "The statement not found",
+    targetNotFound: "The target not found",
   },
 }

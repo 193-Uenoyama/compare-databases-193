@@ -34,7 +34,10 @@ getLogsRouter.get(
       return;
     }
 
-    res.status(200).json(read_dirs);
+    res.status(200).json({ 
+      dirs: read_dirs,
+      is_success: true,
+    });
     next();
   }
 );
@@ -72,12 +75,25 @@ getLogsRouter.get(
     }
     const read_logs = new ReadLogs(req.params.dir);
 
-    res.status(200).json(read_logs.completelyLogDetail());
+    res.status(200).json({ 
+      completely_log_data: read_logs.completelyLogDetail(),
+      is_success: true,
+    });
     next();
   }
 )
 
 
+/***********************************************************
+ *
+ * 指定された条件でログを加工、返却
+ *
+ * @param req.params.dir: string // ディレクトリの名前
+ * @param req.params.status: string
+ * @param req.params.statement: string
+ * @param req.params.target: string
+ *
+ **********************************************************/
 getLogsRouter.get(
   '/:dir/:status/:statement/:target',
 
@@ -94,11 +110,31 @@ getLogsRouter.get(
       }
     })
     .withMessage(APPMSG.General.directoryNotFound),
-  // param('statement')
-  //   .custom(value => {
-  //     value == 'Create' || 'Read' 'Update' 'Delete' 'Node' 'All'
-  //   })
-    //
+
+  param('status')
+    .custom(value => {
+      const correct_status = ['Success', 'Error', 'All'];
+      const isInclude = correct_status.includes(value);
+      return isInclude;
+    })
+    .withMessage(APPMSG.General.statusNotFound),
+
+  param('statement')
+    .custom(value => {
+      const correct_statements = ['Create', 'Read', 'Update', 'Delete', 'Node', 'All'];
+      const isInclude = correct_statements.includes(value);
+      return isInclude;
+    })
+    .withMessage(APPMSG.General.statementNotFound),
+
+  param('target')
+    .custom(value => {
+      const correct_targets = ['Users', 'Groups', 'GroupMembers', 'Follows', 'All'];
+      const isInclude = correct_targets.includes(value);
+      return isInclude;
+    })
+    .withMessage(APPMSG.General.targetNotFound),
+    
   async function(req: Request, res: Response, next: NextFunction) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -107,11 +143,15 @@ getLogsRouter.get(
     }
     const read_logs = new ReadLogs(req.params.dir);
 
-    res.status(200).json(read_logs.extractLogData(
+    const extractLogData = read_logs.extractLogData(
       req.params.status,
       req.params.statement,
-      req.params.target,
-    ));
+      req.params.target,); 
+    res.status(200).json({
+      extract_log_data: extractLogData,
+      is_success: true,
+    });
     next();
   }
 )
+

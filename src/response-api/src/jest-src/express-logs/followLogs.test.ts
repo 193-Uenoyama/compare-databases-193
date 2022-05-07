@@ -1,8 +1,6 @@
 import fs from 'fs';
 import request from 'supertest';
 import app from '@/express-src/app';
-import { User } from '@/sequelize-src/models/user';
-import { Group } from '@/sequelize-src/models/group';
 import db from '@/sequelize-src/models/index';
 import { 
   ProcessingTimeLogFileDetail,
